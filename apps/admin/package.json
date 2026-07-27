@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port 3001",
+    "dev": "bash ../../scripts/with-env.sh sh -c 'next dev --turbopack --port ${ADMIN_PORT:-3001}'",
     "build": "next build",
-    "start": "next start --port 3001",
+    "start": "bash ../../scripts/with-env.sh sh -c 'next start --port ${ADMIN_PORT:-3001}'",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },

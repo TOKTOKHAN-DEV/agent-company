@@ -58,14 +58,16 @@ export default async function DashboardPage() {
           <label className="label" htmlFor="author">
             작성자
           </label>
-          <input id="author" name="author" className="field" defaultValue="content-writer" />
+          <input id="author" name="author" className="field" defaultValue="blog-writer" />
         </div>
         <button type="submit" className="btn-primary">
           초안 만들기
         </button>
       </form>
 
-      <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+      {/* `overflow-x-auto`, not `overflow-hidden`: a wide table should scroll
+          inside its container rather than have columns silently clipped. */}
+      <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
         <table className="w-full text-sm">
           <thead className="border-b border-neutral-200 bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
             <tr>

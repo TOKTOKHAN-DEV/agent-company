@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack --port 3000",
+    "dev": "bash ../../scripts/with-env.sh sh -c 'next dev --turbopack --port ${WEB_PORT:-3000}'",
     "build": "next build",
-    "start": "next start --port 3000",
+    "start": "bash ../../scripts/with-env.sh sh -c 'next start --port ${WEB_PORT:-3000}'",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },

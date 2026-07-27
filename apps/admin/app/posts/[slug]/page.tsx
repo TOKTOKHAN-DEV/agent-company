@@ -70,9 +70,12 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
         </div>
       </header>
 
+      {/* `min-w-0` keeps a wide child (tiptap code blocks, long URLs) from
+          stretching the 1fr track past the page container — grid items
+          default to `min-width: auto`. */}
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         {/* ── Body ────────────────────────────────────────── */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <section className="card space-y-4">
             <h2 className="font-semibold">본문</h2>
             <div>
@@ -295,7 +298,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
         </div>
 
         {/* ── Sidebar ─────────────────────────────────────── */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <section className="card space-y-4">
             <h2 className="font-semibold">발행</h2>
             <div>

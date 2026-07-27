@@ -6,9 +6,8 @@ const nextConfig: NextConfig = {
   transpilePackages: ['@orca/content'],
   // Content lives at the repo root, outside this app directory.
   outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
-  experimental: {
-    typedRoutes: true,
-  },
+  // Promoted out of `experimental` in Next.js 16.
+  typedRoutes: true,
 };
 
 export default nextConfig;

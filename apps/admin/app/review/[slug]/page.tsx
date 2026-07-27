@@ -42,8 +42,11 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
         </Link>
       </header>
 
+      {/* `min-w-0` is load-bearing: a grid item defaults to `min-width: auto`,
+          so the JSON-LD <pre> below (single lines of 200+ chars) would stretch
+          the 1fr track past the page container instead of scrolling itself. */}
       <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <section className="card space-y-3">
             <h2 className="font-semibold">자동 검사</h2>
             <p className="text-xs text-neutral-500">
@@ -81,11 +84,11 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
 
           <section className="card space-y-3">
             <h2 className="font-semibold">구조화 데이터 미리보기</h2>
-            <pre className="max-h-72 overflow-auto rounded-lg bg-neutral-900 p-4 text-xs text-neutral-100">
+            <pre className="max-h-72 max-w-full overflow-auto rounded-lg bg-neutral-900 p-4 text-xs text-neutral-100">
               {JSON.stringify(blogPostingJsonLd(post), null, 2)}
             </pre>
             {faq && (
-              <pre className="max-h-72 overflow-auto rounded-lg bg-neutral-900 p-4 text-xs text-neutral-100">
+              <pre className="max-h-72 max-w-full overflow-auto rounded-lg bg-neutral-900 p-4 text-xs text-neutral-100">
                 {JSON.stringify(faq, null, 2)}
               </pre>
             )}
@@ -93,13 +96,13 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
 
           <section className="card space-y-3">
             <h2 className="font-semibold">본문 미리보기</h2>
-            <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-lg bg-neutral-50 p-4 text-sm leading-6">
+            <pre className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words rounded-lg bg-neutral-50 p-4 text-sm leading-6">
               {post.body}
             </pre>
           </section>
         </div>
 
-        <form action={saveReviewAction} className="card h-fit space-y-5">
+        <form action={saveReviewAction} className="card h-fit min-w-0 space-y-5">
           <input type="hidden" name="slug" value={post.slug} />
           <h2 className="font-semibold">사람 검수</h2>
 
