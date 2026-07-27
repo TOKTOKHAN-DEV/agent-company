@@ -1,0 +1,54 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: oklch(0.22 0.02 260);
+  --color-muted: oklch(0.55 0.02 260);
+  --color-accent: oklch(0.58 0.16 255);
+  --font-sans: ui-sans-serif, system-ui, 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  @apply bg-white text-[var(--color-ink)] antialiased dark:bg-neutral-950 dark:text-neutral-100;
+}
+
+/* Minimal prose styling for rendered markdown — no plugin dependency. */
+.prose-body > * + * {
+  @apply mt-5;
+}
+.prose-body h2 {
+  @apply mt-10 text-2xl font-semibold tracking-tight;
+}
+.prose-body h3 {
+  @apply mt-8 text-xl font-semibold tracking-tight;
+}
+.prose-body p {
+  @apply leading-8 text-neutral-700 dark:text-neutral-300;
+}
+.prose-body ul {
+  @apply list-disc space-y-2 pl-6 text-neutral-700 dark:text-neutral-300;
+}
+.prose-body ol {
+  @apply list-decimal space-y-2 pl-6 text-neutral-700 dark:text-neutral-300;
+}
+.prose-body a {
+  @apply text-[var(--color-accent)] underline underline-offset-4;
+}
+.prose-body blockquote {
+  @apply border-l-4 border-neutral-200 pl-4 italic text-neutral-600 dark:border-neutral-700 dark:text-neutral-400;
+}
+.prose-body pre {
+  @apply overflow-x-auto rounded-lg bg-neutral-900 p-4 text-sm text-neutral-100;
+}
+.prose-body code {
+  @apply rounded bg-neutral-100 px-1.5 py-0.5 text-[0.9em] dark:bg-neutral-800;
+}
+.prose-body pre code {
+  @apply bg-transparent p-0;
+}
+.prose-body img {
+  @apply rounded-xl;
+}

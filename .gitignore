@@ -1,0 +1,31 @@
+node_modules/
+.pnpm-store/
+.turbo/
+dist/
+build/
+.next/
+out/
+
+.env
+.env.local
+.env.*.local
+!.env.example
+
+.DS_Store
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+coverage/
+*.tsbuildinfo
+
+# Orca local runtime state (memory is versioned, scratch is not)
+.orca/tmp/
+.orca/cache/
+wiki/memory/short-term/*.local.md
+
+# Local tooling state — session ids and absolute paths, never shared
+.omc/
+
+# Generated images land in the repo, but codex scratch does not
+.codex-tmp/

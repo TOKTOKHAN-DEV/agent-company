@@ -1,0 +1,45 @@
+# ─────────────────────────────────────────────────────────────
+# Agent Registry — 에이전트 · 런타임 · 모델의 단일 진실 공급원
+#
+# 여기 있는 에이전트는 Claude 서브에이전트가 아닙니다.
+# 각자 별도 터미널에서 도는 **독립 프로세스**입니다.
+#   blog-writer  → claude CLI
+#   image-maker  → codex CLI
+#
+# 실행:  pnpm agent <id> "<작업>"        (scripts/run-agent.sh)
+# 추가:  /create-agent                   (손으로 만들지 마세요)
+#
+# 모델 선택 기준
+#   opus     — 판단 · 설계 · 검수. 틀리면 비싼 작업.
+#   sonnet   — 실행 · 구현 · 변환. 명세가 명확한 작업.
+#   haiku    — 분류 · 추출 · 포맷팅. 기계적인 작업.
+#   default  — 해당 CLI 의 기본 모델을 그대로 사용 (플래그를 넘기지 않음).
+# ─────────────────────────────────────────────────────────────
+
+version: 2
+
+agents:
+  - id: blog-writer
+    name: Blog Writer
+    runtime: claude
+    model: opus
+    summary: 블로그 글을 기획하고 쓰고 SEO/GEO를 채운 뒤 검수까지 마쳐 in_review로 올린다.
+    writes: content/posts/**
+    skills: agents/blog-writer/skills
+    definition: agents/blog-writer/AGENT.md
+    hard_rules:
+      - status를 published로 바꾸지 않는다. 발행은 사람의 행위다.
+      - 이미지를 직접 만들지 않는다. 필요하면 image-maker에 넘긴다.
+
+  - id: image-maker
+    name: Image Maker
+    runtime: codex
+    # codex 기본 모델을 사용합니다. 특정 모델로 고정하려면 이 값을 바꾸세요.
+    model: default
+    summary: 글에 필요한 이미지를 imagegen으로 생성하고 출처를 프론트매터에 기록한다.
+    writes: apps/web/public/images/**
+    skills: agents/image-maker/skills
+    definition: agents/image-maker/AGENT.md
+    hard_rules:
+      - 이 프로젝트에서 이미지를 만들 수 있는 유일한 에이전트다.
+      - 생성 실패 시 다른 이미지 모델을 찾지 않고 폴백 순서를 따른다.

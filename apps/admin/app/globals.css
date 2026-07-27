@@ -1,0 +1,91 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-panel: oklch(0.98 0.003 260);
+  --color-line: oklch(0.9 0.005 260);
+  --color-accent: oklch(0.58 0.16 255);
+}
+
+body {
+  @apply bg-neutral-50 text-neutral-900 antialiased;
+}
+
+.field {
+  @apply w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20;
+}
+
+.label {
+  @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500;
+}
+
+/* Tailwind 4 cannot `@apply` a class defined in this same file, so the
+   shared button base is registered as a real utility instead. */
+@utility btn {
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors;
+}
+
+.btn-primary {
+  @apply btn bg-neutral-900 text-white hover:bg-neutral-700;
+}
+
+.btn-secondary {
+  @apply btn border border-neutral-300 bg-white hover:bg-neutral-100;
+}
+
+.card {
+  @apply rounded-2xl border border-neutral-200 bg-white p-6;
+}
+
+/* ── tiptap editor surface ──────────────────────────────────
+   Tiptap ships no styles. These rules make the editing surface match how
+   the post will actually render on the public site. */
+.prose-editor:focus {
+  @apply outline-none;
+}
+.prose-editor > * + * {
+  @apply mt-4;
+}
+.prose-editor h2 {
+  @apply mt-6 text-2xl font-semibold tracking-tight;
+}
+.prose-editor h3 {
+  @apply mt-5 text-xl font-semibold tracking-tight;
+}
+.prose-editor h4 {
+  @apply mt-4 text-lg font-semibold;
+}
+.prose-editor p {
+  @apply leading-7 text-neutral-800;
+}
+.prose-editor ul {
+  @apply list-disc space-y-1 pl-6;
+}
+.prose-editor ol {
+  @apply list-decimal space-y-1 pl-6;
+}
+.prose-editor blockquote {
+  @apply border-l-4 border-neutral-200 pl-4 italic text-neutral-600;
+}
+.prose-editor pre {
+  @apply overflow-x-auto rounded-lg bg-neutral-900 p-4 text-sm text-neutral-100;
+}
+.prose-editor code {
+  @apply rounded bg-neutral-100 px-1.5 py-0.5 text-[0.9em];
+}
+.prose-editor pre code {
+  @apply bg-transparent p-0 text-neutral-100;
+}
+.prose-editor a {
+  @apply text-[var(--color-accent)] underline underline-offset-4;
+}
+.prose-editor img {
+  @apply my-4 max-w-full rounded-xl;
+}
+.prose-editor hr {
+  @apply my-6 border-neutral-200;
+}
+/* Placeholder for an empty document. */
+.prose-editor p.is-editor-empty:first-child::before {
+  @apply pointer-events-none float-left h-0 text-neutral-400;
+  content: attr(data-placeholder);
+}

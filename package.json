@@ -1,0 +1,34 @@
+{
+  "name": "orca-ai-company",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Orca AI Company — an AI-native monorepo template (web + admin + agents + LLM wiki)",
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@orca/web",
+    "dev:admin": "turbo run dev --filter=@orca/admin",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "setup": "bash scripts/orca-setup.sh",
+    "_comment_check": "Named `check`/`audit:content`, not `doctor`/`audit` — pnpm has builtins by those names that would shadow them.",
+    "check": "bash scripts/check-deps.sh",
+    "audit:content": "node --experimental-strip-types --no-warnings scripts/audit.ts",
+    "agent": "bash scripts/run-agent.sh",
+    "context": "bash scripts/load-context.sh",
+    "imagegen": "bash scripts/codex-imagegen.sh",
+    "memory:new": "bash scripts/memory-new.sh",
+    "clean": "rm -rf node_modules apps/*/node_modules apps/*/.next packages/*/node_modules .turbo"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.7",
+    "typescript": "^5.9.3"
+  }
+}
