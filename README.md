@@ -42,28 +42,31 @@ AI에게 프로젝트를 맡기면 반복해서 두 가지가 무너집니다.
 
 ## 설치
 
-### 방법 1 — AI에게 맡기기 (한 줄 복붙)
+### 사람을 위한 설치
 
-`claude` · `codex` · `gemini` 중 아무 CLI나 열고 아래 한 줄을 붙여넣으세요.
-AI가 [INSTALL.md](./INSTALL.md)를 읽고 그대로 설치합니다.
-
-```text
-https://github.com/TOKTOKHAN-DEV/orca-ai-company 를 클론한 뒤 INSTALL.md 를 읽고 거기 적힌 대로 설치해줘. 끝나면 pnpm check 를 실행해서 결과를 보여줘.
-```
-
-<details>
-<summary>영어 버전 (English prompt)</summary>
+이 프롬프트를 당신의 LLM 에이전트(Claude Code, Codex, Cursor, Gemini CLI 등)에 붙여넣으세요.
 
 ```text
-Clone https://github.com/TOKTOKHAN-DEV/orca-ai-company, read its INSTALL.md, and set it up exactly as written. When done, run `pnpm check` and show me the result.
+Install and configure orca-ai-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
 ```
 
-</details>
+아니면 [설치 가이드](./INSTALL.md)를 직접 읽으셔도 됩니다. 다만 에이전트한테 시키는 쪽을 권합니다 —
+사람은 설정 파일을 오타로 망칩니다.
 
-INSTALL.md에 필수/선택 도구, 폴백 절차, 문제 해결이 모두 있으므로 AI가 막히는 지점에서 스스로 판단할 수
-있습니다. 마지막 `pnpm check`가 설치 성공 여부를 결정적으로 알려줍니다.
+### LLM 에이전트를 위한 설치
 
-### 방법 2 — 직접 설치
+설치 가이드를 받아와서 그대로 따르세요.
+
+```bash
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+```
+
+가이드는 **클론부터 검증까지 자기완결적**입니다. 현재 폴더가 비어 있으면 하위 폴더를 만들지 않고 그
+자리에 받고, 필수/선택 도구와 폴백 절차가 모두 적혀 있어 막히는 지점에서 스스로 판단할 수 있습니다.
+마지막 `pnpm check` 가 설치 성공 여부를 결정적으로 알려줍니다.
+
+### 직접 설치
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git

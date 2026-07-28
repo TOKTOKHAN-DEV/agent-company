@@ -44,29 +44,33 @@ Diese Vorlage blockiert beides **strukturell**.
 
 ## Installation
 
-### Variante 1 — Einer KI überlassen (eine Zeile, kopieren und einfügen)
+### Installation für Menschen
 
-Öffnen Sie eine beliebige CLI (`claude`, `codex` oder `gemini`) und fügen Sie die folgende Zeile ein.
-Die KI liest [INSTALL.md](../../INSTALL.md) und arbeitet sie ab.
-
-```text
-Clone https://github.com/TOKTOKHAN-DEV/orca-ai-company, read its INSTALL.md, and set it up exactly as written. When done, run `pnpm check` and show me the result.
-```
-
-<details>
-<summary>Deutsche Fassung</summary>
+Fügen Sie diesen Prompt in Ihren LLM-Agenten ein (Claude Code, Codex, Cursor, Gemini CLI, …):
 
 ```text
-Klone https://github.com/TOKTOKHAN-DEV/orca-ai-company, lies die INSTALL.md und richte das Projekt genau so ein, wie es dort steht. Führe danach `pnpm check` aus und zeig mir das Ergebnis.
+Install and configure orca-ai-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
 ```
 
-</details>
+Oder lesen Sie die [Installationsanleitung](../../INSTALL.md) selbst. Aber im Ernst: Überlassen Sie es
+dem Agenten — Menschen zerlegen Konfigurationsdateien mit Tippfehlern.
 
-INSTALL.md deckt Pflicht- und optionale Werkzeuge, Fallback-Verfahren und Fehlerbehebung ab. Die KI kann
-also überall dort selbst entscheiden, wo sie hängen bleibt. Das abschließende `pnpm check` meldet
-deterministisch, ob die Einrichtung geklappt hat.
+### Installation für LLM-Agenten
 
-### Variante 2 — Selbst installieren
+Holen Sie die Installationsanleitung und arbeiten Sie sie ab:
+
+```bash
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+```
+
+Die Anleitung ist **in sich geschlossen, vom Klonen bis zur Prüfung**. Ist das aktuelle Verzeichnis leer,
+klont sie an Ort und Stelle statt ein Unterverzeichnis zu verschachteln, und sie dokumentiert alle
+Pflicht- und optionalen Werkzeuge samt Fallback-Verfahren — der Agent kann also überall dort selbst
+entscheiden, wo er hängen bleibt. Das abschließende `pnpm check` meldet deterministisch, ob die
+Einrichtung geklappt hat.
+
+### Selbst installieren
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git

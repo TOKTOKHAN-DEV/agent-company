@@ -42,20 +42,32 @@ This template blocks both **structurally**.
 
 ## Install
 
-### Option 1 — Let an AI do it (one line, copy & paste)
+### Installation for humans
 
-Open any of `claude`, `codex`, or `gemini` and paste the line below.
-The AI reads [INSTALL.md](../../INSTALL.md) and follows it.
+Paste this prompt into your LLM agent (Claude Code, Codex, Cursor, Gemini CLI, …):
 
 ```text
-Clone https://github.com/TOKTOKHAN-DEV/orca-ai-company, read its INSTALL.md, and set it up exactly as written. When done, run `pnpm check` and show me the result.
+Install and configure orca-ai-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
 ```
 
-INSTALL.md covers required and optional tools, fallback procedures, and troubleshooting, so the AI can
-decide for itself wherever it gets stuck. The closing `pnpm check` reports deterministically whether the
-setup succeeded.
+Or read the [installation guide](../../INSTALL.md) yourself. Seriously though, let the agent do it —
+humans break config files with typos.
 
-### Option 2 — Install it yourself
+### Installation for LLM agents
+
+Fetch the installation guide and follow it:
+
+```bash
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+```
+
+The guide is **self-contained, from clone to verification**. If the current directory is empty it clones
+in place rather than nesting a subdirectory, and it documents every required and optional tool plus the
+fallback procedures, so the agent can decide for itself wherever it gets stuck. The closing `pnpm check`
+reports deterministically whether the setup succeeded.
+
+### Install it yourself
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git

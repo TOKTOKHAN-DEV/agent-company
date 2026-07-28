@@ -42,29 +42,32 @@
 
 ## Установка
 
-### Вариант 1 — Поручить ИИ (одна строка, скопировать и вставить)
+### Установка для людей
 
-Откройте любой из CLI — `claude`, `codex` или `gemini` — и вставьте строку ниже.
-ИИ прочитает [INSTALL.md](../../INSTALL.md) и сделает всё по нему.
-
-```text
-Clone https://github.com/TOKTOKHAN-DEV/orca-ai-company, read its INSTALL.md, and set it up exactly as written. When done, run `pnpm check` and show me the result.
-```
-
-<details>
-<summary>Версия на русском</summary>
+Вставьте этот промпт в свой LLM-агент (Claude Code, Codex, Cursor, Gemini CLI, …):
 
 ```text
-Склонируй https://github.com/TOKTOKHAN-DEV/orca-ai-company, прочитай INSTALL.md и установи проект строго по нему. Когда закончишь, запусти `pnpm check` и покажи результат.
+Install and configure orca-ai-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
 ```
 
-</details>
+Или прочитайте [руководство по установке](../../INSTALL.md) сами. Но серьёзно — поручите это агенту:
+люди ломают конфигурационные файлы опечатками.
 
-В INSTALL.md описаны обязательные и опциональные инструменты, запасные процедуры и решение проблем, поэтому
-ИИ может сам разобраться там, где застрянет. Финальный `pnpm check` детерминированно сообщает, удалась ли
-установка.
+### Установка для LLM-агентов
 
-### Вариант 2 — Установить самому
+Скачайте руководство по установке и следуйте ему:
+
+```bash
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+```
+
+Руководство **самодостаточно — от клонирования до проверки**. Если текущий каталог пуст, оно клонирует
+прямо в него, а не создаёт вложенный подкаталог, и описывает все обязательные и опциональные инструменты
+вместе с запасными процедурами, так что агент сам разберётся там, где застрянет. Финальный `pnpm check`
+детерминированно сообщает, удалась ли установка.
+
+### Установить самому
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git

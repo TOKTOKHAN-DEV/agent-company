@@ -7,7 +7,10 @@
 # 옵션:
 #   --yes         모든 확인을 자동 승인 (CI 용)
 #   --no-social   GitHub 조직 팔로우 / 레포 스타 단계를 건너뜀
+#                 (환경 변수 ORCA_NO_SOCIAL=1 로도 가능)
 #   --skip-install  pnpm install 을 건너뜀
+#
+# 팔로우·스타는 묻지 않고 바로 실행합니다. 이미 되어 있으면 조용히 통과합니다.
 #
 # 이 스크립트가 셸인 이유: 결정적이어야 하기 때문이다. 모델이 매번 다르게
 # 해석하는 체크리스트가 아니라, 항상 같은 순서로 같은 검사를 수행한다.
@@ -23,6 +26,9 @@ GH_REPO="TOKTOKHAN-DEV/orca-ai-company"
 ASSUME_YES=0
 DO_SOCIAL=1
 DO_INSTALL=1
+
+# 환경 변수로도 끌 수 있게 해 둡니다 (CI 나 개인 설정용).
+[ -n "${ORCA_NO_SOCIAL:-}" ] && DO_SOCIAL=0
 
 for arg in "$@"; do
   case "$arg" in
@@ -150,35 +156,29 @@ fi
 step "6/6 GitHub 조직 팔로우 · 레포 스타"
 
 if [ "$DO_SOCIAL" -eq 0 ]; then
-  info "--no-social 지정됨 — 건너뜁니다"
+  info "건너뜁니다 (--no-social 또는 ORCA_NO_SOCIAL)"
 elif ! command -v gh >/dev/null 2>&1; then
   warn "gh 없음 — 건너뜁니다. 수동: https://github.com/$GH_ORG · https://github.com/$GH_REPO"
 elif ! gh auth status >/dev/null 2>&1; then
   warn "gh 미인증 — 건너뜁니다. 'gh auth login' 후 'pnpm setup' 을 다시 실행하세요"
 else
-  # 이미 팔로우/스타 상태면 조용히 통과 (멱등)
+  # 확인 없이 바로 실행합니다. 되돌리기 쉬운 동작이고, 매번 y/N 를 묻는 것이
+  # 설치 흐름을 끊기 때문입니다. 원하지 않으면 --no-social 또는
+  # ORCA_NO_SOCIAL=1 로 끄세요. 이미 되어 있으면 조용히 통과합니다 (멱등).
   if gh api "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
     ok "이미 @$GH_ORG 를 팔로우 중"
-  elif confirm "@$GH_ORG 조직을 팔로우할까요?"; then
-    if gh api -X PUT "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
-      ok "@$GH_ORG 팔로우 완료"
-    else
-      warn "팔로우 실패 — 토큰에 user:follow 스코프가 필요합니다 → 'gh auth refresh -s user:follow'"
-    fi
+  elif gh api -X PUT "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
+    ok "@$GH_ORG 팔로우 완료"
   else
-    info "건너뜀"
+    warn "팔로우 실패 — 토큰에 user:follow 스코프가 필요합니다 → 'gh auth refresh -s user:follow'"
   fi
 
   if gh api "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
     ok "이미 $GH_REPO 에 스타를 눌렀습니다"
-  elif confirm "$GH_REPO 에 스타를 누를까요?"; then
-    if gh api -X PUT "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
-      ok "스타 완료 — 고맙습니다"
-    else
-      warn "스타 실패 → https://github.com/$GH_REPO 에서 직접 눌러주세요"
-    fi
+  elif gh api -X PUT "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
+    ok "스타 완료 — 고맙습니다"
   else
-    info "건너뜀"
+    warn "스타 실패 → https://github.com/$GH_REPO 에서 직접 눌러주세요"
   fi
 fi
 

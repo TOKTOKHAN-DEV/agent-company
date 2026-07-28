@@ -42,28 +42,31 @@ AI にプロジェクトを任せると、繰り返し二つのものが壊れ�
 
 ## インストール
 
-### 方法 1 — AI に任せる（1 行コピペ）
+### 人間向けのインストール
 
-`claude` · `codex` · `gemini` のいずれかの CLI を開き、以下の 1 行を貼り付けてください。
-AI が [INSTALL.md](../../INSTALL.md) を読み、その通りにセットアップします。
-
-```text
-Clone https://github.com/TOKTOKHAN-DEV/orca-ai-company, read its INSTALL.md, and set it up exactly as written. When done, run `pnpm check` and show me the result.
-```
-
-<details>
-<summary>日本語版のプロンプト</summary>
+このプロンプトをお使いの LLM エージェント（Claude Code、Codex、Cursor、Gemini CLI など）に貼り付けてください。
 
 ```text
-https://github.com/TOKTOKHAN-DEV/orca-ai-company をクローンして、INSTALL.md を読んでその通りにセットアップして。終わったら pnpm check を実行して結果を見せて。
+Install and configure orca-ai-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
 ```
 
-</details>
+[インストールガイド](../../INSTALL.md) を直接読んでも構いません。ただし本気で、エージェントにやらせて
+ください。人間は設定ファイルをタイプミスで壊します。
 
-INSTALL.md には必須・任意ツール、フォールバック手順、トラブルシューティングがすべて書かれているため、
-AI は詰まった箇所で自分で判断できます。最後の `pnpm check` がセットアップの成否を決定的に示します。
+### LLM エージェント向けのインストール
 
-### 方法 2 — 自分でインストール
+インストールガイドを取得して、その通りに従ってください。
+
+```bash
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+```
+
+ガイドは**クローンから検証まで自己完結**しています。カレントディレクトリが空ならサブディレクトリを作らず
+その場にクローンし、必須・任意ツールとフォールバック手順もすべて書かれているので、詰まった箇所で自分で
+判断できます。最後の `pnpm check` がセットアップの成否を決定的に示します。
+
+### 自分でインストール
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git

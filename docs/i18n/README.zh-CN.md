@@ -42,28 +42,30 @@
 
 ## 安装
 
-### 方式一 — 交给 AI（一行复制粘贴）
+### 面向人类的安装
 
-打开 `claude`、`codex` 或 `gemini` 中任意一个 CLI，粘贴下面这一行。
-AI 会读取 [INSTALL.md](../../INSTALL.md) 并照做。
-
-```text
-Clone https://github.com/TOKTOKHAN-DEV/orca-ai-company, read its INSTALL.md, and set it up exactly as written. When done, run `pnpm check` and show me the result.
-```
-
-<details>
-<summary>中文版提示词</summary>
+把这段提示词粘贴到你的 LLM 智能体（Claude Code、Codex、Cursor、Gemini CLI 等）里：
 
 ```text
-克隆 https://github.com/TOKTOKHAN-DEV/orca-ai-company，读取其中的 INSTALL.md 并完全按照它安装。完成后运行 pnpm check 并把结果给我看。
+Install and configure orca-ai-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
 ```
 
-</details>
+你也可以自己读[安装指南](../../INSTALL.md)。不过说真的，交给智能体吧 —— 人类会把配置文件敲错。
 
-INSTALL.md 包含必需与可选工具、回退流程和故障排查，所以 AI 遇到卡点时能自行判断。
-最后的 `pnpm check` 会确定性地告诉你安装是否成功。
+### 面向 LLM 智能体的安装
 
-### 方式二 — 自己安装
+拉取安装指南并照着执行：
+
+```bash
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+```
+
+这份指南**从克隆到验证都是自包含的**。如果当前目录为空，它会就地克隆而不是嵌套一层子目录；必需与可选
+工具、回退流程也都写清楚了，智能体遇到卡点时能自行判断。最后的 `pnpm check` 会确定性地告诉你安装
+是否成功。
+
+### 自己安装
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git

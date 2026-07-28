@@ -43,29 +43,32 @@ Ce modèle bloque les deux **par la structure**.
 
 ## Installation
 
-### Option 1 — Confier la tâche à une IA (une ligne à copier-coller)
+### Installation pour les humains
 
-Ouvrez `claude`, `codex` ou `gemini` et collez la ligne ci-dessous.
-L'IA lit [INSTALL.md](../../INSTALL.md) et le suit à la lettre.
-
-```text
-Clone https://github.com/TOKTOKHAN-DEV/orca-ai-company, read its INSTALL.md, and set it up exactly as written. When done, run `pnpm check` and show me the result.
-```
-
-<details>
-<summary>Version française</summary>
+Collez ce prompt dans votre agent LLM (Claude Code, Codex, Cursor, Gemini CLI, …) :
 
 ```text
-Clone https://github.com/TOKTOKHAN-DEV/orca-ai-company, lis son INSTALL.md et installe le projet exactement comme indiqué. Une fois terminé, exécute `pnpm check` et montre-moi le résultat.
+Install and configure orca-ai-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
 ```
 
-</details>
+Ou lisez le [guide d'installation](../../INSTALL.md) vous-même. Sérieusement, laissez faire l'agent :
+les humains cassent les fichiers de configuration avec des fautes de frappe.
 
-INSTALL.md couvre les outils obligatoires et optionnels, les procédures de repli et le dépannage : l'IA
-peut donc décider elle-même partout où elle bloque. Le `pnpm check` final indique de façon déterministe si
-l'installation a réussi.
+### Installation pour les agents LLM
 
-### Option 2 — Installer soi-même
+Récupérez le guide d'installation et suivez-le :
+
+```bash
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+```
+
+Le guide est **autonome, du clonage à la vérification**. Si le répertoire courant est vide, il clone sur
+place plutôt que d'imbriquer un sous-répertoire, et il documente tous les outils obligatoires et
+optionnels ainsi que les procédures de repli — l'agent peut donc décider lui-même partout où il bloque.
+Le `pnpm check` final indique de façon déterministe si l'installation a réussi.
+
+### Installer soi-même
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
