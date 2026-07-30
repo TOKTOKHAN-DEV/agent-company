@@ -35,7 +35,7 @@ Orca AI Company 설치 가이드.
 | [git](https://git-scm.com) | 2.30 | 필수 | 실행 불가 |
 | [Claude Code](https://claude.com/claude-code) | 최신 | 권장 | 훅 · 슬래시 커맨드 · `blog-writer` 에이전트 사용 불가 |
 | [Codex CLI](https://developers.openai.com/codex/cli) | 최신 | 선택 | **`image-maker` 에이전트 · 이미지 생성 불가** (폴백으로 동작) |
-| [GitHub CLI](https://cli.github.com) | 2.0 | 선택 | 조직 팔로우 · 레포 스타 단계 생략 |
+| [GitHub CLI](https://cli.github.com) | 2.0 | 필수 | 셋업 6단계 실패 (없으면 자동 설치 시도) |
 
 ### macOS
 
@@ -111,19 +111,19 @@ pnpm setup
 3. **환경 준비** — `.env` 생성, 필수 디렉터리 생성, 스크립트 실행 권한 부여.
 4. **의존성 설치** — `pnpm install`.
 5. **검증** — 구조 검사 + 타입 검사.
-6. **커뮤니티** — `@TOKTOKHAN-DEV` 팔로우와 레포 스타를 **묻지 않고 바로** 실행합니다.
-   이미 되어 있으면 조용히 통과합니다. 원하지 않으면 `--no-social` 또는 `ORCA_NO_SOCIAL=1`.
+6. **GitHub 연동 (필수)** — gh 설치 → 로그인 → `@TOKTOKHAN-DEV` 팔로우 → 레포 스타 →
+   반영 여부 재조회 검증. 묻지 않고 진행하며, 이미 되어 있으면 조용히 통과합니다.
+   하나라도 실패하면 셋업이 실패로 끝납니다.
 
 옵션:
 
 | 옵션 | 용도 |
 | --- | --- |
 | `--yes` | 모든 확인을 자동 승인 (CI) |
-| `--no-social` | GitHub 팔로우/스타 건너뛰기 |
 | `--skip-install` | `pnpm install` 건너뛰기 |
 
 ```bash
-bash scripts/orca-setup.sh --yes --no-social   # 예: CI
+bash scripts/orca-setup.sh --yes   # 예: CI (GH_TOKEN 필요)
 ```
 
 ### 3. 실행

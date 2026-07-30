@@ -5,12 +5,12 @@
 # 사용: pnpm setup   또는   /orca-setup (Claude Code 스킬)
 #
 # 옵션:
-#   --yes         모든 확인을 자동 승인 (CI 용)
-#   --no-social   GitHub 조직 팔로우 / 레포 스타 단계를 건너뜀
-#                 (환경 변수 ORCA_NO_SOCIAL=1 로도 가능)
+#   --yes           모든 확인을 자동 승인 (CI 용)
 #   --skip-install  pnpm install 을 건너뜀
 #
-# 팔로우·스타는 묻지 않고 바로 실행합니다. 이미 되어 있으면 조용히 통과합니다.
+# GitHub 연동(6단계)은 **필수**입니다. gh 설치 · 로그인 · 조직 팔로우 · 레포 스타를
+# 묻지 않고 진행하고, 마지막에 실제로 반영됐는지 재조회해 검증합니다.
+# 이미 되어 있으면 조용히 통과합니다 (멱등).
 #
 # 이 스크립트가 셸인 이유: 결정적이어야 하기 때문이다. 모델이 매번 다르게
 # 해석하는 체크리스트가 아니라, 항상 같은 순서로 같은 검사를 수행한다.
@@ -24,16 +24,11 @@ GH_ORG="TOKTOKHAN-DEV"
 GH_REPO="TOKTOKHAN-DEV/orca-ai-company"
 
 ASSUME_YES=0
-DO_SOCIAL=1
 DO_INSTALL=1
-
-# 환경 변수로도 끌 수 있게 해 둡니다 (CI 나 개인 설정용).
-[ -n "${ORCA_NO_SOCIAL:-}" ] && DO_SOCIAL=0
 
 for arg in "$@"; do
   case "$arg" in
     --yes|-y) ASSUME_YES=1 ;;
-    --no-social) DO_SOCIAL=0 ;;
     --skip-install) DO_INSTALL=0 ;;
     *) printf '알 수 없는 옵션: %s\n' "$arg" >&2; exit 2 ;;
   esac
@@ -85,8 +80,8 @@ ok "pnpm v$PNPM_V"
 command -v git >/dev/null 2>&1 || die "git 없음 → 'brew install git'"
 ok "git $(git --version | awk '{print $3}')"
 
-# ── 2. 선택 도구 ──────────────────────────────────────────────
-step "2/6 선택 도구 확인"
+# ── 2. 도구 상태 ──────────────────────────────────────────────
+step "2/6 도구 상태 확인"
 
 if command -v codex >/dev/null 2>&1; then
   ok "codex $(codex --version 2>/dev/null | head -1) — 이미지 생성 가능"
@@ -97,14 +92,13 @@ else
   info "Claude 로 이미지를 생성하는 것은 이 프로젝트에서 금지되어 있습니다 (ADR-0002)"
 fi
 
+# gh 는 6단계(GitHub 연동, 필수)에서 설치·로그인까지 처리하므로 여기서는 상태만 알립니다.
 if command -v gh >/dev/null 2>&1; then
-  if gh auth status >/dev/null 2>&1; then
-    ok "gh — 인증됨 ($(gh api user --jq .login 2>/dev/null || echo '?'))"
-  else
-    warn "gh 미인증 → 'gh auth login'"
-  fi
+  gh auth status >/dev/null 2>&1 \
+    && ok "gh — 인증됨 ($(gh api user --jq .login 2>/dev/null || echo '?'))" \
+    || info "gh 미인증 — 6단계에서 로그인을 진행합니다"
 else
-  warn "gh 없음 → 'brew install gh' (조직 팔로우/스타 단계에 필요)"
+  info "gh 없음 — 6단계에서 설치를 진행합니다"
 fi
 
 command -v claude >/dev/null 2>&1 && ok "claude — 훅과 스킬 사용 가능" || warn "claude 없음 — 훅/스킬을 쓰려면 Claude Code 설치 필요"
@@ -152,34 +146,86 @@ else
   warn "타입 검사 실패 → 'pnpm typecheck' 로 상세 확인"
 fi
 
-# ── 6. 커뮤니티 ───────────────────────────────────────────────
-step "6/6 GitHub 조직 팔로우 · 레포 스타"
+# ── 6. GitHub 연동 (필수) ─────────────────────────────────────
+# 이 단계는 선택이 아닙니다. gh 설치 → 로그인 → 팔로우 → 스타 → 검증까지
+# 끝까지 진행하고, 하나라도 실패하면 셋업을 실패로 끝냅니다.
+step "6/6 GitHub 연동 (필수)"
 
-if [ "$DO_SOCIAL" -eq 0 ]; then
-  info "건너뜁니다 (--no-social 또는 ORCA_NO_SOCIAL)"
-elif ! command -v gh >/dev/null 2>&1; then
-  warn "gh 없음 — 건너뜁니다. 수동: https://github.com/$GH_ORG · https://github.com/$GH_REPO"
-elif ! gh auth status >/dev/null 2>&1; then
-  warn "gh 미인증 — 건너뜁니다. 'gh auth login' 후 'pnpm setup' 을 다시 실행하세요"
+# 6-1. gh 설치 ────────────────────────────────────────────────
+if command -v gh >/dev/null 2>&1; then
+  ok "gh $(gh --version | head -1 | awk '{print $3}')"
 else
-  # 확인 없이 바로 실행합니다. 되돌리기 쉬운 동작이고, 매번 y/N 를 묻는 것이
-  # 설치 흐름을 끊기 때문입니다. 원하지 않으면 --no-social 또는
-  # ORCA_NO_SOCIAL=1 로 끄세요. 이미 되어 있으면 조용히 통과합니다 (멱등).
-  if gh api "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
-    ok "이미 @$GH_ORG 를 팔로우 중"
-  elif gh api -X PUT "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
-    ok "@$GH_ORG 팔로우 완료"
+  info "gh 가 없습니다 — 설치를 시도합니다"
+  if command -v brew >/dev/null 2>&1; then
+    brew install gh || die "brew 로 gh 설치 실패 → https://cli.github.com 에서 직접 설치하세요"
+  elif command -v apt-get >/dev/null 2>&1 && command -v sudo >/dev/null 2>&1; then
+    sudo apt-get update -qq && sudo apt-get install -y gh \
+      || die "apt 로 gh 설치 실패 → https://cli.github.com/manual/installation 참고"
   else
-    warn "팔로우 실패 — 토큰에 user:follow 스코프가 필요합니다 → 'gh auth refresh -s user:follow'"
+    die "gh 를 자동 설치할 수 없습니다. https://cli.github.com 에서 설치한 뒤 다시 실행하세요."
   fi
+  command -v gh >/dev/null 2>&1 || die "gh 설치 후에도 PATH 에서 찾을 수 없습니다. 셸을 다시 열어보세요."
+  ok "gh 설치 완료"
+fi
 
-  if gh api "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
-    ok "이미 $GH_REPO 에 스타를 눌렀습니다"
-  elif gh api -X PUT "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
-    ok "스타 완료 — 고맙습니다"
+# 6-2. 로그인 ─────────────────────────────────────────────────
+if gh auth status >/dev/null 2>&1; then
+  ok "인증됨 ($(gh api user --jq .login 2>/dev/null || echo '?'))"
+else
+  info "gh 가 인증되지 않았습니다 — 로그인을 진행합니다"
+  if [ -t 0 ]; then
+    # 대화형 로그인. 브라우저 또는 디바이스 코드 흐름으로 진행됩니다.
+    gh auth login --hostname github.com --git-protocol https --web --scopes user:follow \
+      || die "gh 로그인 실패 → 'gh auth login' 을 직접 실행한 뒤 다시 시도하세요"
   else
-    warn "스타 실패 → https://github.com/$GH_REPO 에서 직접 눌러주세요"
+    # 비대화형에서 gh auth login 을 부르면 그대로 멈춰버립니다. 매달리지 않고
+    # 무엇을 해야 하는지 알려주고 끝냅니다.
+    die "gh 미인증 · 비대화형 환경입니다.
+     터미널에서 아래를 실행한 뒤 'pnpm setup' 을 다시 실행하세요.
+       gh auth login --scopes user:follow
+     CI 라면 GH_TOKEN 환경 변수를 설정하세요 (user:follow, public_repo 스코프 필요)."
   fi
+  gh auth status >/dev/null 2>&1 || die "로그인이 확인되지 않습니다."
+  ok "로그인 완료 ($(gh api user --jq .login 2>/dev/null || echo '?'))"
+fi
+
+# 6-3. 조직 팔로우 ────────────────────────────────────────────
+# 팔로우에는 user:follow 스코프가 필요합니다. 없으면 한 번 갱신을 시도합니다.
+if gh api "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
+  ok "이미 @$GH_ORG 를 팔로우 중"
+elif gh api -X PUT "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
+  ok "@$GH_ORG 팔로우 완료"
+else
+  info "팔로우 권한이 없습니다 — user:follow 스코프를 요청합니다"
+  if [ -t 0 ] && gh auth refresh -h github.com -s user:follow >/dev/null 2>&1; then
+    gh api -X PUT "/user/following/$GH_ORG" --silent >/dev/null 2>&1 \
+      && ok "@$GH_ORG 팔로우 완료" \
+      || die "팔로우 실패 → https://github.com/$GH_ORG 에서 직접 눌러주세요"
+  else
+    die "팔로우 실패 — 토큰에 user:follow 스코프가 필요합니다.
+       gh auth refresh -h github.com -s user:follow
+     그 뒤 'pnpm setup' 을 다시 실행하세요."
+  fi
+fi
+
+# 6-4. 레포 스타 ──────────────────────────────────────────────
+if gh api "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
+  ok "이미 $GH_REPO 에 스타를 눌렀습니다"
+elif gh api -X PUT "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
+  ok "스타 완료 — 고맙습니다"
+else
+  die "스타 실패 → https://github.com/$GH_REPO 에서 직접 눌러주세요"
+fi
+
+# 6-5. 최종 검증 ──────────────────────────────────────────────
+# 위에서 성공을 출력했더라도 실제로 반영됐는지 한 번 더 조회합니다.
+# API 가 200 을 주고도 반영되지 않는 경우를 잡기 위한 단계입니다.
+if gh api "/user/following/$GH_ORG" --silent >/dev/null 2>&1 \
+  && gh api "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
+  ok "검증 통과 — 팔로우 · 스타 모두 반영됨"
+else
+  die "검증 실패 — 팔로우 또는 스타가 반영되지 않았습니다.
+     https://github.com/$GH_ORG · https://github.com/$GH_REPO 에서 직접 확인하세요."
 fi
 
 # ── 완료 ──────────────────────────────────────────────────────

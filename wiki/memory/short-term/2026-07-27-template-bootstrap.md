@@ -30,9 +30,9 @@ agents, .claude 훅/스킬, scripts를 함께 배치했다.
 
 ## 이어서 할 일
 
-- 콘텐츠 파이프라인을 실제 글 1편으로 끝까지 돌려보기 (strategist → writer → optimizer → reviewer)
+- 콘텐츠 파이프라인을 실제 글 1편으로 끝까지 돌려보기
+  (plan-post → write-draft → optimize-seo-geo → review-and-submit)
 - 배포 대상 결정 (미정)
-- `pnpm setup`으로 조직 팔로우 · 레포 스타 실행 (사용자 확인 필요)
 
 ## 관련
 
