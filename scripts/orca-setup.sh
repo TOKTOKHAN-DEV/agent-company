@@ -5,12 +5,16 @@
 # 사용: pnpm setup   또는   /orca-setup (Claude Code 스킬)
 #
 # 옵션:
-#   --yes           모든 확인을 자동 승인 (CI 용)
-#   --skip-install  pnpm install 을 건너뜀
+#   --yes                    모든 확인을 자동 승인 (CI 용)
+#   --skip-install           pnpm install 을 건너뜀
+#   --no-community-prompt    GitHub 응원(6단계)을 묻지 않고 넘어감
 #
-# GitHub 연동(6단계)은 **필수**입니다. gh 설치 · 로그인 · 조직 팔로우 · 레포 스타를
-# 묻지 않고 진행하고, 마지막에 실제로 반영됐는지 재조회해 검증합니다.
-# 이미 되어 있으면 조용히 통과합니다 (멱등).
+# GitHub 응원(6단계)은 **선택**입니다. 조직 팔로우 · 레포 스타를 물어보고,
+# 거절하면 기록해 두고 다시 묻지 않습니다. 실패해도 셋업을 중단시키지 않습니다.
+# 이미 되어 있으면 묻지 않고 조용히 통과합니다 (멱등).
+#
+# `--no-community-prompt` 은 /orca-setup 스킬이 씁니다. 스킬은 이 텍스트 메뉴
+# 대신 AskUserQuestion 으로 묻고, scripts/community.sh 로 결과를 적용합니다.
 #
 # 이 스크립트가 셸인 이유: 결정적이어야 하기 때문이다. 모델이 매번 다르게
 # 해석하는 체크리스트가 아니라, 항상 같은 순서로 같은 검사를 수행한다.
@@ -25,11 +29,13 @@ GH_REPO="TOKTOKHAN-DEV/orca-ai-company"
 
 ASSUME_YES=0
 DO_INSTALL=1
+COMMUNITY_PROMPT=1
 
 for arg in "$@"; do
   case "$arg" in
     --yes|-y) ASSUME_YES=1 ;;
     --skip-install) DO_INSTALL=0 ;;
+    --no-community-prompt) COMMUNITY_PROMPT=0 ;;
     *) printf '알 수 없는 옵션: %s\n' "$arg" >&2; exit 2 ;;
   esac
 done
@@ -92,13 +98,13 @@ else
   info "Claude 로 이미지를 생성하는 것은 이 프로젝트에서 금지되어 있습니다 (ADR-0002)"
 fi
 
-# gh 는 6단계(GitHub 연동, 필수)에서 설치·로그인까지 처리하므로 여기서는 상태만 알립니다.
+# gh 는 6단계(GitHub 응원)에만 쓰입니다. 선택 단계이므로 여기서 강제하지 않습니다.
 if command -v gh >/dev/null 2>&1; then
   gh auth status >/dev/null 2>&1 \
     && ok "gh — 인증됨 ($(gh api user --jq .login 2>/dev/null || echo '?'))" \
-    || info "gh 미인증 — 6단계에서 로그인을 진행합니다"
+    || info "gh 미인증 — 6단계(선택)를 건너뜁니다. 쓰려면 'gh auth login'"
 else
-  info "gh 없음 — 6단계에서 설치를 진행합니다"
+  info "gh 없음 — 6단계(선택)를 건너뜁니다. 설치: https://cli.github.com"
 fi
 
 command -v claude >/dev/null 2>&1 && ok "claude — 훅과 스킬 사용 가능" || warn "claude 없음 — 훅/스킬을 쓰려면 Claude Code 설치 필요"
@@ -134,106 +140,103 @@ fi
 # ── 5. 검증 ───────────────────────────────────────────────────
 step "5/6 검증"
 
-if ORCA_SKIP_TYPECHECK=1 bash scripts/check-deps.sh >/dev/null 2>&1; then
+# stdin 을 넘기지 않습니다. turbo · pnpm 이 상속받은 stdin 을 읽어버리면 6단계의
+# 선택 입력이 그 자리에서 사라집니다 (사용자가 고르지도 않은 답이 기록됩니다).
+if ORCA_SKIP_TYPECHECK=1 bash scripts/check-deps.sh >/dev/null 2>&1 </dev/null; then
   ok "구조 검사 통과"
 else
   warn "구조 검사에 문제가 있습니다 → 'pnpm check' 로 상세 확인"
 fi
 
-if pnpm -s typecheck >/dev/null 2>&1; then
+if pnpm -s typecheck >/dev/null 2>&1 </dev/null; then
   ok "타입 검사 통과"
 else
   warn "타입 검사 실패 → 'pnpm typecheck' 로 상세 확인"
 fi
 
-# ── 6. GitHub 연동 (필수) ─────────────────────────────────────
-# 이 단계는 선택이 아닙니다. gh 설치 → 로그인 → 팔로우 → 스타 → 검증까지
-# 끝까지 진행하고, 하나라도 실패하면 셋업을 실패로 끝냅니다.
-step "6/6 GitHub 연동 (필수)"
+# ── 6. GitHub 응원 (선택) ─────────────────────────────────────
+# 선택 단계입니다. 거절하면 기록해 두고 다시 묻지 않으며, 실패해도 셋업을
+# 실패로 끝내지 않습니다. gh 가 없거나 미인증이면 묻지 않고 넘어갑니다.
+# 상태 판정과 실제 실행은 scripts/community.sh 에 있습니다 — 스킬도 같은 것을 씁니다.
+step "6/6 GitHub 응원 (선택)"
 
-# 6-1. gh 설치 ────────────────────────────────────────────────
-if command -v gh >/dev/null 2>&1; then
-  ok "gh $(gh --version | head -1 | awk '{print $3}')"
-else
-  info "gh 가 없습니다 — 설치를 시도합니다"
-  if command -v brew >/dev/null 2>&1; then
-    brew install gh || die "brew 로 gh 설치 실패 → https://cli.github.com 에서 직접 설치하세요"
-  elif command -v apt-get >/dev/null 2>&1 && command -v sudo >/dev/null 2>&1; then
-    sudo apt-get update -qq && sudo apt-get install -y gh \
-      || die "apt 로 gh 설치 실패 → https://cli.github.com/manual/installation 참고"
+# 실행 결과를 setup 출력에 맞춰 들여씁니다. pipefail 덕분에 종료 코드는
+# sed 가 아니라 community.sh 의 것이 그대로 전달됩니다.
+community_apply() {
+  if bash scripts/community.sh apply 2>&1 | sed 's/^/    /'; then
+    ok "반영 완료 — 고맙습니다"
   else
-    die "gh 를 자동 설치할 수 없습니다. https://cli.github.com 에서 설치한 뒤 다시 실행하세요."
+    warn "응원 단계에서 문제가 있었습니다 — 셋업은 계속됩니다"
+    info "직접 눌러주셔도 됩니다: https://github.com/$GH_ORG · https://github.com/$GH_REPO"
   fi
-  command -v gh >/dev/null 2>&1 || die "gh 설치 후에도 PATH 에서 찾을 수 없습니다. 셸을 다시 열어보세요."
-  ok "gh 설치 완료"
-fi
+}
 
-# 6-2. 로그인 ─────────────────────────────────────────────────
-if gh auth status >/dev/null 2>&1; then
-  ok "인증됨 ($(gh api user --jq .login 2>/dev/null || echo '?'))"
-else
-  info "gh 가 인증되지 않았습니다 — 로그인을 진행합니다"
-  if [ -t 0 ]; then
-    # 대화형 로그인. 브라우저 또는 디바이스 코드 흐름으로 진행됩니다.
-    gh auth login --hostname github.com --git-protocol https --web --scopes user:follow \
-      || die "gh 로그인 실패 → 'gh auth login' 을 직접 실행한 뒤 다시 시도하세요"
-  else
-    # 비대화형에서 gh auth login 을 부르면 그대로 멈춰버립니다. 매달리지 않고
-    # 무엇을 해야 하는지 알려주고 끝냅니다.
-    die "gh 미인증 · 비대화형 환경입니다.
-     터미널에서 아래를 실행한 뒤 'pnpm setup' 을 다시 실행하세요.
-       gh auth login --scopes user:follow
-     CI 라면 GH_TOKEN 환경 변수를 설정하세요 (user:follow, public_repo 스코프 필요)."
+community_prompt() {
+  printf '\n  %sOrca AI Company 가 도움이 되셨다면, GitHub 에서 응원해 주시겠어요?%s\n\n' "$BOLD" "$RESET"
+  printf '    1) Yes, star it!   %s@%s 팔로우 + 레포 스타%s\n' "$DIM" "$GH_ORG" "$RESET"
+  printf '    2) No thanks       %s건너뜁니다 (다시 묻지 않습니다)%s\n' "$DIM" "$RESET"
+  printf '    3) Maybe later     %s건너뜁니다 (다시 묻지 않습니다)%s\n\n' "$DIM" "$RESET"
+  printf '  %s?%s 선택 [1/2/3] (엔터 = 3) ' "$YELLOW" "$RESET"
+
+  # 입력을 못 읽었으면(EOF · tty 없음) **기록하지 않고** 넘어갑니다.
+  # 고르지도 않은 거절을 기록해 두면 다시 묻지 않게 되므로, 조용히 다음 기회로 넘깁니다.
+  reply=''
+  if ! read -r reply </dev/tty; then
+    printf '\n'
+    info "입력을 읽을 수 없습니다 — 건너뜁니다 (기록하지 않으므로 다음에 다시 물어봅니다)"
+    return 0
   fi
-  gh auth status >/dev/null 2>&1 || die "로그인이 확인되지 않습니다."
-  ok "로그인 완료 ($(gh api user --jq .login 2>/dev/null || echo '?'))"
-fi
+  printf '\n'
 
-# 6-3. 조직 팔로우 ────────────────────────────────────────────
-# 팔로우에는 user:follow 스코프가 필요합니다. 없으면 한 번 갱신을 시도합니다.
-if gh api "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
-  ok "이미 @$GH_ORG 를 팔로우 중"
-elif gh api -X PUT "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
-  ok "@$GH_ORG 팔로우 완료"
-else
-  info "팔로우 권한이 없습니다 — user:follow 스코프를 요청합니다"
-  if [ -t 0 ] && gh auth refresh -h github.com -s user:follow >/dev/null 2>&1; then
-    gh api -X PUT "/user/following/$GH_ORG" --silent >/dev/null 2>&1 \
-      && ok "@$GH_ORG 팔로우 완료" \
-      || die "팔로우 실패 → https://github.com/$GH_ORG 에서 직접 눌러주세요"
-  else
-    die "팔로우 실패 — 토큰에 user:follow 스코프가 필요합니다.
-       gh auth refresh -h github.com -s user:follow
-     그 뒤 'pnpm setup' 을 다시 실행하세요."
-  fi
-fi
+  reply="$(printf '%s' "$reply" | tr -d '[:space:]')"
 
-# 6-4. 레포 스타 ──────────────────────────────────────────────
-if gh api "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
-  ok "이미 $GH_REPO 에 스타를 눌렀습니다"
-elif gh api -X PUT "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
-  ok "스타 완료 — 고맙습니다"
-else
-  die "스타 실패 → https://github.com/$GH_REPO 에서 직접 눌러주세요"
-fi
+  case "$reply" in
+    1) community_apply ;;
+    2) bash scripts/community.sh optout no-thanks   | sed 's/^/    /' ;;
+    3|'') bash scripts/community.sh optout maybe-later | sed 's/^/    /' ;;
+    *) info "알 수 없는 입력 '$reply' — 건너뜁니다 (기록하지 않습니다)" ;;
+  esac
+}
 
-# 6-5. 최종 검증 ──────────────────────────────────────────────
-# 위에서 성공을 출력했더라도 실제로 반영됐는지 한 번 더 조회합니다.
-# API 가 200 을 주고도 반영되지 않는 경우를 잡기 위한 단계입니다.
-if gh api "/user/following/$GH_ORG" --silent >/dev/null 2>&1 \
-  && gh api "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
-  ok "검증 통과 — 팔로우 · 스타 모두 반영됨"
-else
-  die "검증 실패 — 팔로우 또는 스타가 반영되지 않았습니다.
-     https://github.com/$GH_ORG · https://github.com/$GH_REPO 에서 직접 확인하세요."
-fi
+case "$(bash scripts/community.sh status)" in
+  unavailable)
+    info "gh 미설치 또는 미인증 — 건너뜁니다 (선택 단계입니다)"
+    info "응원해 주시려면: https://github.com/$GH_REPO"
+    ;;
+  done)
+    ok "이미 @$GH_ORG 팔로우 · 레포 스타 완료 — 고맙습니다"
+    ;;
+  optout)
+    info "이전에 건너뛰기를 선택하셨습니다 — 묻지 않습니다"
+    info "마음이 바뀌면: bash scripts/community.sh apply"
+    ;;
+  pending)
+    if [ "$COMMUNITY_PROMPT" -eq 0 ]; then
+      info "--no-community-prompt — 묻지 않고 넘어갑니다"
+    elif [ "$ASSUME_YES" -eq 1 ]; then
+      community_apply
+    elif [ -t 0 ]; then
+      community_prompt
+    else
+      info "비대화형 환경 — 건너뜁니다 (다음에 다시 물어봅니다)"
+    fi
+    ;;
+esac
 
 # ── 완료 ──────────────────────────────────────────────────────
+# 포트는 .env 가 진실입니다. 3000/3001 을 박아두면 포트를 바꾼 사람에게 거짓말이 됩니다.
+port_from_env() {
+  v="$(sed -n "s/^[[:space:]]*$1=\([0-9][0-9]*\).*/\1/p" .env 2>/dev/null | tail -1)"
+  printf '%s' "${v:-$2}"
+}
+WEB_P="$(port_from_env WEB_PORT 3000)"
+ADMIN_P="$(port_from_env ADMIN_PORT 3001)"
+
 cat <<EOF
 
 ${BOLD}${GREEN}셋업 완료${RESET}
 
-  ${BOLD}pnpm dev${RESET}          web ${DIM}http://localhost:3000${RESET} · admin ${DIM}http://localhost:3001${RESET}
+  ${BOLD}pnpm dev${RESET}          web ${DIM}http://localhost:${WEB_P}${RESET} · admin ${DIM}http://localhost:${ADMIN_P}${RESET}
   ${BOLD}pnpm check${RESET}       환경 재검사
   ${BOLD}pnpm context${RESET}      세션 컨텍스트 수동 로드
 

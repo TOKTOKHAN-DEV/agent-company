@@ -74,7 +74,7 @@ Le `pnpm check` final indique de façon déterministe si l'installation a réuss
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
 cd orca-ai-company
 pnpm install
-pnpm setup     # vérification complète des dépendances · préparation · suivre l'organisation · mettre une étoile
+pnpm setup     # vérification complète des dépendances · préparation (le suivi/l'étoile sont proposés, jamais imposés)
 pnpm dev       # web → :3000 · admin → :3001
 ```
 
@@ -287,7 +287,7 @@ Justification : [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-genera
 
 | Commande | Rôle |
 | --- | --- |
-| `/orca-setup` | Vérification complète des dépendances · installation · suivre l'organisation · étoile (script déterministe) |
+| `/orca-setup` | Vérification complète des dépendances · installation (script déterministe) · suivi/étoile facultatifs |
 | `/save-memory` | Enregistre les acquis en mémoire courte et les promeut vers le long terme/wiki si justifié |
 | `/create-agent` | Crée un nouvel agent dans registry + AGENT.md + skills/ de manière cohérente |
 
@@ -342,7 +342,7 @@ Règles multi-terminal : [wiki/05-agent-operations.md](../../wiki/05-agent-opera
 
 | Commande | Description |
 | --- | --- |
-| `pnpm setup` | Vérification complète de l'environnement + installation + suivi/étoile GitHub |
+| `pnpm setup` | Vérification complète de l'environnement + installation (+ suivi/étoile GitHub facultatifs) |
 | `pnpm check` | Vérifie uniquement l'état de l'environnement (n'installe rien) |
 | `pnpm dev` | Lance web et admin ensemble |
 | `pnpm dev:web` / `pnpm dev:admin` | Lancement individuel |

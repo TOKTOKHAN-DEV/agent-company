@@ -115,7 +115,7 @@ fi
 cat <<'SKILLS'
 ## 슬래시 커맨드 (이 Claude Code 세션용)
 
-- `/orca-setup`   — 의존성 전수 검사 + 조직 팔로우 + 레포 스타 (결정적 스크립트)
+- `/orca-setup`   — 의존성 전수 검사 + 설치 (결정적 스크립트) · 팔로우 · 스타는 선택
 - `/save-memory`  — 세션 내용을 단기 메모리에 저장, 필요 시 장기/wiki로 승격
 - `/create-agent` — 새 에이전트를 registry + AGENT.md + skills/ 에 일괄 생성
 

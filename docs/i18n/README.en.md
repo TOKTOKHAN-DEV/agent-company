@@ -73,7 +73,7 @@ reports deterministically whether the setup succeeded.
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
 cd orca-ai-company
 pnpm install
-pnpm setup     # full dependency check · environment prep · follow the org · star the repo
+pnpm setup     # full dependency check · environment prep (following/starring is asked, never forced)
 pnpm dev       # web → :3000 · admin → :3001
 ```
 
@@ -286,7 +286,7 @@ Rationale: [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.
 
 | Command | What it does |
 | --- | --- |
-| `/orca-setup` | Full dependency check · install · follow the org · star the repo (deterministic script) |
+| `/orca-setup` | Full dependency check · install (deterministic script) · following/starring is optional |
 | `/save-memory` | Save session findings to short-term memory, promoting to long-term/wiki when warranted |
 | `/create-agent` | Create a new agent across registry + AGENT.md + skills/ in one consistent step |
 
@@ -340,7 +340,7 @@ Multi-terminal rules: [wiki/05-agent-operations.md](../../wiki/05-agent-operatio
 
 | Command | Description |
 | --- | --- |
-| `pnpm setup` | Full environment check + install + GitHub follow/star |
+| `pnpm setup` | Full environment check + install (+ optional GitHub follow/star) |
 | `pnpm check` | Check environment status only (installs nothing) |
 | `pnpm dev` | Run web and admin together |
 | `pnpm dev:web` / `pnpm dev:admin` | Run individually |

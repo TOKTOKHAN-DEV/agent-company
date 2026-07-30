@@ -72,7 +72,7 @@ curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/hea
 git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
 cd orca-ai-company
 pnpm install
-pnpm setup     # 의존성 전수 검사 · 환경 준비 · GitHub 조직 팔로우 · 레포 스타
+pnpm setup     # 의존성 전수 검사 · 환경 준비 (GitHub 팔로우 · 스타는 물어보고 넘어갑니다)
 pnpm dev       # web → :3000 · admin → :3001
 ```
 
@@ -282,7 +282,7 @@ Codex를 쓸 수 없으면 이 순서로 폴백합니다:
 
 | 명령 | 하는 일 |
 | --- | --- |
-| `/orca-setup` | 의존성 전수 검사 · 설치 · 조직 팔로우 · 레포 스타 (결정적 스크립트) |
+| `/orca-setup` | 의존성 전수 검사 · 설치 (결정적 스크립트) · 조직 팔로우 · 스타는 선택 |
 | `/save-memory` | 세션 내용을 단기 메모리에 저장하고 필요 시 장기/wiki로 승격 |
 | `/create-agent` | 새 에이전트를 registry + AGENT.md + skills/ 에 일괄 생성 |
 
@@ -334,7 +334,7 @@ agents/blog-writer/
 
 | 명령 | 설명 |
 | --- | --- |
-| `pnpm setup` | 전체 환경 검사 + 설치 + GitHub 팔로우/스타 |
+| `pnpm setup` | 전체 환경 검사 + 설치 (+ 선택: GitHub 팔로우/스타) |
 | `pnpm check` | 환경 상태만 검사 (설치하지 않음) |
 | `pnpm dev` | web + admin 동시 실행 |
 | `pnpm dev:web` / `pnpm dev:admin` | 개별 실행 |

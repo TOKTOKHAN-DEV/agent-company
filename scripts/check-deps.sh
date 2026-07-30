@@ -21,6 +21,8 @@ WARNED=0
 pass() { printf '  %s✔%s %-26s %s%s%s\n' "$GREEN" "$RESET" "$1" "$DIM" "${2:-}" "$RESET"; }
 warn() { printf '  %s!%s %-26s %s\n' "$YELLOW" "$RESET" "$1" "${2:-}"; WARNED=$((WARNED + 1)); }
 fail() { printf '  %s✘%s %-26s %s\n' "$RED" "$RESET" "$1" "${2:-}"; FAILED=$((FAILED + 1)); }
+# 선택 항목의 상태 표시. 경고도 실패도 아니므로 아무것도 세지 않습니다.
+note() { printf '  %s·%s %-26s %s%s%s\n' "$DIM" "$RESET" "$1" "$DIM" "${2:-}" "$RESET"; }
 section() { printf '\n%s%s%s\n' "$BOLD" "$1" "$RESET"; }
 
 # semver 비교: $1 >= $2 이면 0
@@ -242,28 +244,17 @@ else
 fi
 
 # ── 커뮤니티 ──────────────────────────────────────────────────
-# orca-setup 의 6단계는 사람이 스크립트를 돌려야 실행됩니다. 안 돌리면
-# 조용히 넘어가므로, 상태를 여기서 드러냅니다. 실패는 아니라 경고입니다.
-section "커뮤니티 (pnpm setup 6단계)"
+# orca-setup 의 6단계는 **선택**입니다. 그래서 여기서도 경고를 세지 않습니다 —
+# 건너뛰기를 선택한 사람에게 매번 노란 느낌표를 보여주는 건 "다시 묻지 않는다"는
+# 약속을 어기는 것입니다. 상태만 담백하게 보여줍니다.
+section "커뮤니티 (선택)"
 
-GH_ORG="TOKTOKHAN-DEV"
-GH_REPO="TOKTOKHAN-DEV/orca-ai-company"
-
-if ! command -v gh >/dev/null 2>&1 || ! gh auth status >/dev/null 2>&1; then
-  warn "GitHub 상태" "gh 미설치 또는 미인증 — 확인할 수 없습니다"
-else
-  if gh api "/user/following/$GH_ORG" --silent >/dev/null 2>&1; then
-    pass "@$GH_ORG 팔로우" "완료"
-  else
-    warn "@$GH_ORG 팔로우" "아직 → 'pnpm setup' 실행"
-  fi
-
-  if gh api "/user/starred/$GH_REPO" --silent >/dev/null 2>&1; then
-    pass "$GH_REPO 스타" "완료"
-  else
-    warn "$GH_REPO 스타" "아직 → 'pnpm setup' 실행"
-  fi
-fi
+case "$(bash scripts/community.sh status)" in
+  unavailable) note "GitHub 응원" "gh 미설치 또는 미인증 — 확인할 수 없습니다" ;;
+  done)        pass "GitHub 응원" "팔로우 · 스타 완료 — 고맙습니다" ;;
+  optout)      note "GitHub 응원" "건너뛰기를 선택하셨습니다" ;;
+  pending)     note "GitHub 응원" "아직 → 'pnpm setup' 또는 'bash scripts/community.sh apply'" ;;
+esac
 
 # ── 타입 검사 ─────────────────────────────────────────────────
 if [ "${ORCA_SKIP_TYPECHECK:-0}" != "1" ] && [ -d node_modules ]; then
@@ -288,5 +279,11 @@ if [ "$WARNED" -gt 0 ]; then
 else
   printf '%s모두 통과%s\n' "$GREEN" "$RESET"
 fi
-printf '다음: %spnpm dev%s → web http://localhost:3000 · admin http://localhost:3001\n' "$BOLD" "$RESET"
+# 포트는 .env 가 진실입니다 (orca-setup.sh 의 완료 메시지와 같은 규칙).
+port_from_env() {
+  v="$(sed -n "s/^[[:space:]]*$1=\([0-9][0-9]*\).*/\1/p" .env 2>/dev/null | tail -1)"
+  printf '%s' "${v:-$2}"
+}
+printf '다음: %spnpm dev%s → web http://localhost:%s · admin http://localhost:%s\n' \
+  "$BOLD" "$RESET" "$(port_from_env WEB_PORT 3000)" "$(port_from_env ADMIN_PORT 3001)"
 exit 0

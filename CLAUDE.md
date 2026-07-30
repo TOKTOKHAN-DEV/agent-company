@@ -156,7 +156,7 @@ pnpm agent image-maker "<작업>"
 
 | 명령 | 용도 |
 | --- | --- |
-| `/orca-setup` | 의존성 전수 검사 + 설치 + 조직 팔로우 · 레포 스타 |
+| `/orca-setup` | 의존성 전수 검사 + 설치 (+ 선택: 조직 팔로우 · 레포 스타) |
 | `/save-memory` | 세션 내용을 단기 메모리에 저장, 필요 시 장기/wiki 승격 |
 | `/create-agent` | 새 에이전트를 registry + AGENT.md + skills/ 에 일괄 생성 |
 
