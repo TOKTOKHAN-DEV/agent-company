@@ -122,7 +122,7 @@ pnpm audit:content   # 글을 건드렸다면 (발행 게이트 — admin 과 �
 - 프론트매터 필드 추가 시 `schema.ts` → admin 폼 → `audit.ts` 세 곳을 함께 수정.
 - 네이티브 `<select>` 금지. `components/Select.tsx`(Radix)를 씁니다. 본문 편집은 tiptap `Editor.tsx`.
 - 슬러그는 자연어를 씁니다 (한글 허용). 키워드가 URL 에 남습니다. 기존 슬러그를 바꾸지 마세요.
-- 커밋은 Conventional Commits. 에이전트는 `main` 에 직접 푸시하지 않음.
+- 커밋은 Conventional Commits.
 
 ---
 

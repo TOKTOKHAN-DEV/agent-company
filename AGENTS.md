@@ -89,7 +89,6 @@ pnpm memory:new     # 새 메모리 파일 생성
 - 네이티브 `<select>` 금지 — `components/Select.tsx`(Radix). 본문 편집은 tiptap `Editor.tsx`.
 - 슬러그는 자연어(한글 허용). 기존 슬러그를 바꾸지 않습니다 — URL 이 깨집니다.
 - Conventional Commits. 스코프: `web` `admin` `content` `agents` `wiki` `skills` `scripts`.
-- `main` 에 직접 푸시하지 않습니다.
 
 ---
 
