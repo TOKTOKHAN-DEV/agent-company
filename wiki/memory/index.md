@@ -7,7 +7,7 @@
 
 - [project-invariants.md](./long-term/project-invariants.md) — 바꾸려면 ADR이 필요한 5가지 규칙
 - [image-generation-policy.md](./long-term/image-generation-policy.md) — 이미지는 Codex imagegen 전용, Claude 생성 금지
-- [publish-gate.md](./long-term/publish-gate.md) — 발행은 사람만, 에이전트는 in_review까지
+- [publish-gate.md](./long-term/publish-gate.md) — 출고는 사람만, 에이전트는 in_review까지
 - [agent-granularity.md](./long-term/agent-granularity.md) — 에이전트는 역할이 아니라 런타임·병렬성으로 나눈다 (Claude 서브에이전트 아님)
 
 ## 팀 · 선호

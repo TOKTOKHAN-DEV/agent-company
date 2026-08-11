@@ -8,20 +8,30 @@
 | --- | --- | --- |
 | 실행 | 별도 터미널의 별도 프로세스 | 한 Claude 세션 안에서 위임 |
 | 런타임 | `claude` 또는 `codex` | Claude 고정 |
-| 병렬성 | Orca 멀티 터미널로 진짜 병렬 | 부모 세션에 종속 |
+| 병렬성 | ADE 의 멀티 터미널로 진짜 병렬 | 부모 세션에 종속 |
 | 정의 | `agents/<id>/AGENT.md` | `.claude/agents/*.md` |
 
 `codex` 런타임 에이전트가 존재하는 이상 서브에이전트 모델로는 표현할 수 없습니다. 그래서 프로세스 분리를
 택했습니다.
 
-## 팀
+## 로스터
+
+**로스터는 템플릿이 채웁니다.** 템플릿을 아직 펼치지 않았으면 `agents/registry.yaml` 이 없는 것이
+정상입니다.
+
+```bash
+pnpm template current    # 지금 어떤 회사인지
+pnpm agent --list        # 지금 누가 있는지
+```
+
+정의는 `agents/<id>/AGENT.md`, 런타임·모델·쓰기 범위는 `agents/registry.yaml`.
+
+### 예: `blog-autopublish` 의 로스터
 
 | ID | 런타임 | 모델 | 역할 | 쓰기 범위 |
 | --- | --- | --- | --- | --- |
 | `blog-writer` | `claude` | opus | 기획 → 작성 → SEO/GEO → 검수 | `content/posts/**` |
 | `image-maker` | `codex` | default | imagegen으로 이미지 생성 · 출처 기록 | `apps/web/public/images/**` + `cover` |
-
-정의는 `agents/<id>/AGENT.md`, 런타임·모델 매핑은 `agents/registry.yaml`.
 
 ### 왜 둘뿐인가
 
@@ -34,12 +44,15 @@
 반면 이미지는 런타임 자체가 다릅니다(Codex 전용, ADR-0002). 이건 협상 대상이 아니므로 프로세스를
 분리해 규칙을 구조로 만들었습니다.
 
+이 기준은 어느 템플릿에서나 같습니다. 새 회사를 설계할 때도 "역할이 몇 개인가"가 아니라
+"런타임이 다른가, 진짜로 동시에 도는가"를 물으세요.
+
 ## 실행
 
 ```bash
 pnpm agent --list                                    # 등록된 에이전트
-pnpm agent blog-writer "Turborepo 캐시 전략으로 글 하나"
-pnpm agent image-maker "turborepo-cache-strategy 커버"
+pnpm agent <id> "<작업>"
+pnpm agent blog-writer "Turborepo 캐시 전략으로 글 하나"    # blog-autopublish 예시
 ```
 
 | 옵션 | 용도 |
@@ -65,7 +78,7 @@ pnpm agent blog-writer "Next.js 16 캐시 컴포넌트 주제로 글 하나 써�
 pnpm agent image-maker "nextjs-16-cache-components 커버 이미지 만들어줘"
 ```
 
-Orca에 붙일 명령만 필요하면:
+다른 터미널에 붙일 명령만 필요하면:
 
 ```bash
 pnpm agent blog-writer "작업" --dry-run
@@ -73,14 +86,20 @@ pnpm agent blog-writer "작업" --dry-run
 
 ### 병렬 규칙
 
-1. **같은 파일을 동시에 쓰지 않습니다.** `blog-writer`는 본문과 `seo`/`geo`를, `image-maker`는
-   `cover` 블록만 건드리므로 **순서만 지키면** 충돌하지 않습니다. 동시에 돌리지는 마세요 —
-   프론트매터를 통째로 다시 쓰는 구현이라 나중에 저장한 쪽이 이깁니다.
-2. **글이 여러 개면 진짜 병렬이 가능합니다.** 서로 다른 슬러그면 `blog-writer`를 여러 개 띄워도 됩니다.
-3. **에이전트는 `main`에 푸시하지 않습니다.** 통합은 사람이 합니다.
-4. **세션 종료 시 `/save-memory`.** 다음 세션이 이어받을 맥락을 남깁니다.
+1. **쓰기 범위(`writes`)가 겹치면 동시에 돌리지 않습니다.** 겹치지 않으면 마음껏 병렬로 돌리세요.
+2. **범위가 달라 보여도 같은 파일을 통째로 다시 쓰면 충돌합니다.** 예를 들어 `blog-writer` 는
+   본문과 `seo`/`geo` 를, `image-maker` 는 `cover` 블록만 건드리지만 둘 다 프론트매터를 통째로
+   다시 쓰므로 나중에 저장한 쪽이 이깁니다. 순서를 지키세요.
+3. **작업 단위가 여러 개면 진짜 병렬이 가능합니다.** 서로 다른 대상(다른 슬러그, 다른 화면)이면
+   같은 에이전트를 여러 개 띄워도 됩니다.
+4. **통합은 사람이 합니다.** 에이전트의 결과를 합치는 것은 검수 뒤의 일입니다.
+5. **세션 종료 시 `/save-memory`.** 다음 세션이 이어받을 맥락을 남깁니다.
 
 ## 파이프라인
+
+파이프라인의 모양은 템플릿이 정합니다. 공통점은 **끝이 사람이라는 것**입니다.
+
+`blog-autopublish` 라면:
 
 ```
 blog-writer                                    image-maker         사람
@@ -91,10 +110,11 @@ plan-post → write-draft → optimize-seo-geo  →  generate-cover  →  admin 
                          status: in_review
 ```
 
-**에이전트는 `in_review`까지만 올립니다.** `published` 전환은 사람이 admin에서 하는 행위입니다.
+**에이전트는 `in_review`까지만 올립니다.** `published` 전환은 사람이 검수 화면에서 하는
+행위입니다.
 
-커버가 필요 없으면 `image-maker` 단계를 건너뜁니다. Codex가 없어도 마찬가지 —
-이미지 없이 발행하는 것이 정상 폴백입니다.
+커버가 필요 없으면 이미지 단계를 건너뜁니다. Codex가 없어도 마찬가지 — 이미지 없이 진행하는
+것이 정상 폴백입니다.
 
 ## 스킬
 
@@ -123,8 +143,8 @@ codex 에이전트도 읽어야 하므로 스킬 문서는 특정 CLI 기능에 
 
 ## 공통 규칙
 
-1. 자기 `writes` 범위 밖 파일을 고치지 않는다.
-2. `status: published`로 쓰지 않는다.
-3. 이미지는 `image-maker`만 만든다.
-4. 완료 보고 전 `pnpm audit:content <slug>` 또는 `pnpm typecheck`를 통과시킨다.
+1. 자기 `writes` 범위 밖 파일을 고치지 않는다. 범위 밖 문제는 보고만 한다.
+2. `status: published`로 쓰지 않는다. 출고는 사람만.
+3. 이미지는 이미지 담당 에이전트만 만든다 (ADR-0002).
+4. 완료 보고 전 `pnpm typecheck` + 템플릿의 게이트를 통과시킨다.
 5. 판단 근거를 출력해 사람이 `/save-memory`로 남길 수 있게 한다.

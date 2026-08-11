@@ -1,4 +1,4 @@
-# Orca AI Company
+# Agent Company
 
 [한국어](../../README.md) ·
 **English** ·
@@ -10,371 +10,326 @@
 [Português](./README.pt-BR.md) ·
 [Русский](./README.ru.md)
 
-> A monorepo template for running IT projects with a team of AI agents.
-> Context survives across sessions, and quality is protected by a review gate.
+> A monorepo run by an AI team.
+> An org chart, a handbook, memory that outlives the session, and a ship button only a person can press.
 
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.11-339933)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A510-F69220)](https://pnpm.io)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000)](https://nextjs.org)
 [![License](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 ---
 
 ## What it solves
 
-When you hand a project to an AI, two things break over and over.
+Agent IDEs give you the office: parallel worktrees, a terminal per agent, a diff view.
+Then you hand over a real project and it stalls in the same two places.
 
-**Context disappears.** Once a session ends or the person in charge changes, the AI no longer knows what
-was decided. It relitigates settled questions and reverts to approaches you already abandoned.
+**Past decisions don't survive.** The session ends, or another agent picks it up, and three
+months of decisions are gone. It reopens settled arguments and brings back the approach you
+threw out.
 
-**There is no quality gate.** Without a review step, whatever the AI produces goes straight to production.
+**Nothing stops the output.** Without a gate, whatever the agent produced is what ships.
+Handing the review to a model doesn't help — it grades its own output generously.
 
-This template blocks both **structurally**.
+Neither is fixed by a better prompt. Every failure point gets a mechanism instead.
 
-| Problem | Solution |
-| --- | --- |
-| Context loss | `CLAUDE.md` + `AGENTS.md` + `wiki/` + short/long-term memory, auto-loaded by a SessionStart hook |
-| Quality control | A deterministic audit function + an admin review screen + a publish button only a human can press |
-| Blurred roles | Independent agents split by runtime + explicit model mapping + multi-terminal parallelism |
-| Image provenance | A single Codex `imagegen` path + recorded provenance + triple enforcement |
+| What breaks | Mechanism | Enforced by |
+| --- | --- | --- |
+| Context loss | Handbook, wiki index, and long/short-term memory load at every session start | SessionStart hook |
+| Quality drift | The ship gate is a deterministic function. People and agents see the same verdict | No LLM call in the gate |
+| Role bleed | Runtime, model, and write scope are declared per agent | `agents/registry.yaml` |
+| Untraceable assets | One path for image generation, provenance recorded on every asset | Tool guard + audit |
+| Accidental shipping | Agents raise work to `in_review` and stop. A person presses ship | No such route in the types |
 
 ---
 
 ## Install
 
-### Installation for humans
+### Let an agent do it (recommended)
 
-Paste this prompt into your LLM agent (Claude Code, Codex, Cursor, Gemini CLI, …):
+Paste this into whichever coding agent you use — Claude Code, Codex, Cursor, Gemini CLI.
 
 ```text
-Install and configure orca-ai-company by following the instructions here:
-https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+Install Agent Company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
-Or read the [installation guide](../../INSTALL.md) yourself. Seriously though, let the agent do it —
-humans break config files with typos.
+The guide is self-contained from clone through verification. If the current folder is empty it
+clones in place, and every required/optional tool and fallback is written down so the agent can
+decide on its own where it gets stuck.
 
-### Installation for LLM agents
-
-Fetch the installation guide and follow it:
-
-```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
-```
-
-The guide is **self-contained, from clone to verification**. If the current directory is empty it clones
-in place rather than nesting a subdirectory, and it documents every required and optional tool plus the
-fallback procedures, so the agent can decide for itself wherever it gets stuck. The closing `pnpm check`
-reports deterministically whether the setup succeeded.
-
-### Install it yourself
+### By hand
 
 ```bash
-git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
-cd orca-ai-company
+git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
+cd agent-company
+
 pnpm install
-pnpm setup     # full dependency check · environment prep (following/starring is asked, never forced)
-pnpm dev       # web → :3000 · admin → :3001
+pnpm company-setup    # check deps → pick which company to start → prepare env → verify
+pnpm dev
 ```
 
-See **[INSTALL.md](../../INSTALL.md)** for the detailed procedure and troubleshooting.
+Full procedure and troubleshooting: **[INSTALL.md](../../INSTALL.md)**.
 
-> INSTALL.md is currently written in Korean. AI agents read it without trouble; if you need an English
-> version for human readers, open an issue.
+> It's `pnpm company-setup`, not `pnpm setup`. `setup` is a pnpm builtin and would shadow the
+> script.
 
 ---
 
-## Layout
+## Core and templates
+
+The repo has two layers. **The core is the same in every company; a template decides what gets
+built.**
 
 ```
-orca-ai-company/
-├── apps/
-│   ├── web/              public blog (Next.js 16 App Router, :3000)
-│   └── admin/            content · SEO/GEO · review dashboard (:3001)
-├── packages/
-│   ├── content/          schema · repository drivers · audit · JSON-LD (single source of truth)
-│   └── supabase/         client · storage · migrations (inactive without keys)
-├── content/posts/        markdown posts — the default driver
-├── docs/i18n/            README translations, 8 languages
-├── agents/
-│   ├── registry.yaml     runtime · model · permissions (single source of truth)
-│   ├── blog-writer/      AGENT.md + skills/ (claude · opus)
-│   └── image-maker/      AGENT.md + skills/ (codex)
-├── wiki/
-│   ├── 00~06-*.md        overview · architecture · conventions · guides · history
-│   ├── decisions/        ADRs
-│   └── memory/           short-term · long-term memory
-├── .claude/
-│   ├── settings.json     hook registration
-│   ├── hooks/            SessionStart context loading · image policy guard
-│   └── skills/           3 slash commands
-├── scripts/              deterministic shell scripts
-├── CLAUDE.md             instructions for Claude Code
-└── AGENTS.md             instructions for every AI coding agent
+agent-company/
+│
+├── ── core (always present) ────────────────────────
+│   ├── .claude/          hooks (SessionStart · PreToolUse) · slash commands
+│   ├── wiki/             project knowledge + long/short-term memory + ADRs
+│   ├── agents/           where the roster goes (registry.yaml + <id>/)
+│   ├── scripts/          deterministic shell scripts
+│   ├── CLAUDE.md         instructions for Claude Code
+│   └── AGENTS.md         instructions for every AI coding agent
+│
+├── ── templates (pick one, lay it down) ────────────
+│   └── templates/<id>/
+│       ├── template.yaml   manifest — scripts · checks · hard rules · next steps
+│       └── files/          repo-root-relative paths (apps/ · packages/ · agents/ …)
+│
+└── ── product (this repo only) ─────────────────────
+    └── site/               landing page. one static HTML file, no build → Vercel
 ```
 
----
+`pnpm company-setup` asks which template to use, copies `templates/<id>/files/` into the repo
+root, and merges the manifest's `script:` entries into the root `package.json`. Switch templates
+and exactly the keys the previous template added are reclaimed.
 
-## Reference implementation: a blog run by AI
+### Templates today
 
-### web (`:3000`)
-
-The public blog. Renders only posts with `status: published` from `content/posts/`.
-Generates JSON-LD (BlogPosting · FAQPage), `sitemap.xml`, `robots.txt`, and `rss.xml` automatically.
-Answer-engine crawlers (GPTBot, ClaudeBot, PerplexityBot, …) are explicitly allowed.
-
-### admin (`:3001`)
-
-- **Editor** — tiptap rich text with image upload. Always stored as markdown
-- **Technical SEO panel** — canonical · robots directives · OG/Twitter · sitemap priority · hreflang
-- **GEO panel** — extractive summary · FAQ · entities · citations · locale/target markets
-- **Review screen** — audit results, JSON-LD preview, human checklist, publish button
-- **SEO/GEO dashboard** — outstanding items across all posts, aggregated by lane
-
-The UI uses a Radix-based select rather than the native `<select>` — the OS-drawn popup ignores styling
-and differs across browsers.
-
-### agents
-
-```
-blog-writer (claude · opus)                       image-maker (codex)   human
-plan-post → write-draft → optimize-seo-geo    →   generate-cover    →   admin review → publish
-                 ↓
-         review-and-submit → status: in_review
-```
-
-Agents only go as far as `in_review`. **Publishing is a human act.**
-
----
-
-## Why SEO and GEO are handled separately
-
-| | SEO | GEO (Generative Engine Optimization) |
-| --- | --- | --- |
-| Target | Search engines | Answer engines (ChatGPT · Claude · Perplexity · AI Overviews) |
-| Goal | **Ranking** | **Citation** |
-| Key signals | Title · meta · links · speed | Extractable structure · explicit Q&A · sources · entities |
-
-To be cited, a page has to be easy to lift from. That is why frontmatter carries a separate GEO block:
-`geo.faq` renders as `FAQPage` JSON-LD, and `geo.answerSummary` renders as a summary block at the top of
-the page.
-
-The working rules live in [wiki/04-seo-geo-playbook.md](../../wiki/04-seo-geo-playbook.md).
-
----
-
-## Technical SEO
-
-### Generated automatically — nothing to maintain
-
-| Path | Contents |
-| --- | --- |
-| `/sitemap.xml` | Published posts with per-post priority · changefreq · hreflang |
-| `/robots.txt` | Search bots and answer-engine bots allowed, `/api/` blocked |
-| `/rss.xml` | Feed of published posts |
-| `/llms.txt` | **Site summary for LLMs** — models understand the site without parsing HTML |
-
-`llms.txt` is the GEO counterpart to a sitemap. A sitemap says *where* the URLs are; llms.txt says *what
-this site is and which posts exist*. Each entry reuses the post's `geo.answerSummary`, so filling in that
-summary pays twice.
-
-### Per-post, from the admin
-
-canonical · noindex/nofollow · robots directives (`max-snippet`, …) · OG/Twitter cards ·
-sitemap priority/changefreq · hreflang · whether to include the post in llms.txt.
-
-### Search console and analytics
-
-Set a value in `.env` to switch each one on. **Leave it empty and the tag or script is never emitted.**
-
-| Variable | Target |
-| --- | --- |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console |
-| `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` | Naver Search Advisor |
-| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster Tools |
-| `NEXT_PUBLIC_GA4_MEASUREMENT_ID` | GA4 (loaded `afterInteractive`) |
-
-### Natural-language slugs
-
-```
-/blog/next-js-16-캐시-컴포넌트-완전-정복
-```
-
-Non-ASCII is preserved. Keeping the target keyword in the URL is a real ranking and click-through signal,
-and a transliterated slug is unreadable to the audience it targets.
-
-Details: [wiki/08-technical-seo.md](../../wiki/08-technical-seo.md)
-
----
-
-## Backend — files now, Supabase later
-
-App code never touches storage directly. It only sees an interface.
-
-```
-web · admin · audit CLI
-        │
-        ▼
-  getRepository()          ← chosen automatically by whether keys exist
-   ├── file       content/posts/*.md   (default · the current state)
-   └── supabase   Postgres + Storage   (once keys are set)
-```
-
-**Having no keys is the normal state.** `pnpm install && pnpm dev` just works. To switch:
-
-1. Put three Supabase keys in `.env`
-2. Apply `packages/supabase/migrations/0001_init.sql`
-3. `pnpm --filter @orca/supabase migrate` — move existing posts (idempotent; files are kept)
-
-Not a line of app code changes. `CONTENT_DRIVER=file` reverts at any time.
-
-An RLS policy restricts the anon key to `published` posts that are not `noindex` — the last line of
-defence so a bug in the app still cannot leak a draft.
-
-Details: [wiki/07-supabase.md](../../wiki/07-supabase.md)
-
----
-
-## How context is preserved
-
-When a session starts, a hook injects the following automatically:
-
-```
-hard rules  →  wiki index  →  long-term memory  →  recent short-term memory  →  agents  →  git status
-```
-
-It loads **the index, not the full wiki.** You hand the model a map and let it open what it needs.
-
-### Two-tier memory
-
-```
-short-term ──(referenced 3+ times / confirmed still true)──▶ long-term
-long-term  ──(becomes a project rule)───────────────────────▶ wiki doc or ADR
-```
-
-Promotion is managed by the `/save-memory` skill.
-
----
-
-## Image policy (hard rule)
-
-**Images are generated by Codex `imagegen` only. Claude generating images is forbidden.**
+| id | status | ships | roster | gate |
+| --- | --- | --- | --- | --- |
+| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | public site + review desk | blog-writer · image-maker | `audit` → `in_review` |
+| `bare` | stable | core only, empty roster | you decide | bring your own |
+| [`apps-in-toss`](../../templates/apps-in-toss/README.md) | preview | Toss WebView mini app | spec-writer · ui-builder · release-manager | `preflight` → console review |
 
 ```bash
-pnpm imagegen --slug <post-slug> --prompt "<scene description>"
+pnpm template list                    # list · what's applied
+pnpm template apply <id>              # lay it down
+pnpm template apply <id> --force      # overwrite on top of another template
+pnpm template prune                   # drop the unused catalog and the landing page
 ```
 
-If Codex is unavailable, fall back in this order:
+`planned` means the manifest states intent but there are no files yet. `apply` refuses it —
+laying down an empty shell only produces a "why doesn't this work" later.
 
-1. **Proceed without an image** — the default. A cover is not required to publish.
-2. **The user attaches one** — `source: user-upload`
-3. **Web search** — license verification required. `source: web-search` plus a recorded `license`
+### One project is one company
 
-A rule that lives only in documentation does not hold, so this one is **enforced in three layers**:
+**One repo, two faces.** Once you've picked, the rest of the catalog and the product landing page
+mean nothing to that project, so `pnpm company-setup` offers to clean them up.
+
+| | Product repo (this one) | Your project via Use this template |
+| --- | --- | --- |
+| `site/` (landing) | present → deployed to Vercel | deleted |
+| Templates you didn't pick | all present | deleted |
+| Picked template's `files/` | present | deleted (already at the root) |
+| Picked template's `template.yaml` | present | **kept** |
+| Core | present | present |
+
+Keeping the manifest is the point — `check-deps.sh` reads `verify-*` from it and
+`load-context.sh` reads `rule:`. Delete it and your checks and hard rules vanish silently.
+
+The product repo carries a `.company/PRODUCT` marker, so prune refuses there. A contributor who
+clones and runs setup won't lose the catalog.
+
+Need another template later:
+
+```bash
+git remote add upstream https://github.com/TOKTOKHAN-DEV/agent-company.git
+git fetch upstream && git checkout upstream/main -- templates/
+```
+
+### Why templates aren't separate repos
+
+Manifest keys move in lockstep with the core scripts. They're read with `sed`, so **an unknown key
+is silently ignored** — a stale remote template would drop entire checks without an error. Keeping
+one repo forecloses that. And a network fetch in the middle of setup breaks the "run it twice, get
+the same state" promise.
+
+Weight isn't an argument: `templates/` is 388K as far as git is concerned.
+
+Split it when third parties start contributing templates, when a template gains large assets, or
+when release cadences diverge. The seam is one spot — the file copy in `template.sh`.
+
+---
+
+## What the core gives you
+
+### 1. The context layer
+
+At session start a hook injects:
+
+```
+core hard rules → current company (template) + its hard rules → wiki index
+                → long-term memory → recent short-term memory → roster → git status
+```
+
+**An index, not the full wiki.** Give the model a map and let it open what it needs
+([ADR-0003](../../wiki/decisions/ADR-0003-session-context-loading.md)).
+
+Two-tier memory keeps only what lasts:
+
+```
+short-term ──(referenced 3+ times / still true)──▶ long-term
+long-term  ──(becomes a project rule)───────────▶ wiki doc or ADR
+```
+
+`/save-memory` manages the promotion.
+
+### 2. The roster
+
+**These are not Claude subagents.** Each is an independent process in its own terminal, on its
+own runtime. That's what lets an ADE like Orca run them genuinely in parallel.
+
+```bash
+pnpm agent --list
+pnpm agent <id> "<task>"
+pnpm agent <id> "<task>" --dry-run   # print the assembled command for another terminal
+```
+
+The launcher reads runtime and model from `agents/registry.yaml`, assembles `AGENT.md` plus a
+skill index (generated by scanning the folder) into the system prompt, and starts that CLI.
+Add a skill and it shows up without registering anything.
+
+You add an agent for **runtime and parallelism, not for roles**. If an existing agent could do
+it, add a skill instead → [wiki/05-agent-operations.md](../../wiki/05-agent-operations.md)
+
+### 3. The ship gate
+
+The gate is a deterministic function. The admin screen and the CLI call the same function, so
+people and agents see the same verdict. No model call goes inside it — a model asked to grade
+its own output leans toward passing.
+
+What the gate checks is up to the template. For `blog-autopublish` it's `pnpm audit:content`.
+
+### 4. The image policy
+
+There is exactly one path for image generation: Codex `imagegen`. The policy is core; the
+command comes from the template, because where an image lands and which metadata records its
+provenance differ per domain. For `blog-autopublish`:
+
+```bash
+pnpm imagegen --slug <slug> --prompt "<scene>"
+```
+
+If Codex isn't available, fall back in this order:
+
+1. **Ship without an image** — the default
+2. **Ask the user to attach one** — `source: user-upload`
+3. **Web search** — license must be verified. `source: web-search` + `license`
+
+A rule that only lives in a doc isn't followed, so it's enforced in three layers:
 
 | Layer | Mechanism |
 | --- | --- |
-| Types | `ImageSource` has no `claude` value at all |
+| Types | `ImageSource` has no `claude` value |
 | Hook | `PreToolUse` blocks non-Codex image generation commands |
-| Audit | Missing provenance or an unlicensed web image is an error → publishing is blocked |
+| Audit | Missing provenance or an unlicensed web image is an error → cannot ship |
 
 Rationale: [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
 ---
 
-## Skills (slash commands)
+## Core hard rules
 
-| Command | What it does |
-| --- | --- |
-| `/orca-setup` | Full dependency check · install (deterministic script) · following/starring is optional |
-| `/save-memory` | Save session findings to short-term memory, promoting to long-term/wiki when warranted |
-| `/create-agent` | Create a new agent across registry + AGENT.md + skills/ in one consistent step |
+True regardless of template. Changing one requires an ADR in `wiki/decisions/` first.
 
-The skills an agent reads (`agents/<id>/skills/`) are a different thing. Those are runtime-neutral
-playbooks that the launcher injects into the system prompt, so the codex agent reads them too.
+1. **One path for image generation.** No other image model, no SVG stand-in.
+2. **A person presses ship.** Agents raise work to `in_review` and stop.
+3. **Files are the source of truth.** Output and decisions are versioned in the same repo as the code.
+4. **The gate is deterministic.** No model inference inside the review.
+5. **Context loads itself.** Nobody has to remember to bring it.
 
----
-
-## Agents
-
-**These are not Claude subagents.** Each one is an independent process in its own terminal, and the
-runtimes differ. That is what lets Orca run them genuinely in parallel across terminals.
-
-| ID | Runtime | Model | Role |
-| --- | --- | --- | --- |
-| `blog-writer` | `claude` | opus | plan → write → SEO/GEO → review |
-| `image-maker` | `codex` | default | generate images with imagegen · record provenance |
-
-```bash
-pnpm agent --list
-pnpm agent blog-writer "Write a post about Turborepo caching strategy"
-pnpm agent image-maker "Cover image for turborepo-cache-strategy"
-```
-
-```
-agents/blog-writer/
-├── AGENT.md                       injected as the system prompt
-└── skills/
-    ├── plan-post/SKILL.md         planning · duplicate check · outline
-    ├── write-draft/SKILL.md       writing the body
-    ├── optimize-seo-geo/SKILL.md  metadata
-    └── review-and-submit/SKILL.md audit · in_review
-```
-
-The launcher assembles `AGENT.md` plus a skill index (generated by scanning the folder) into the system
-prompt and starts the right CLI with the right model. Adding a skill takes effect immediately, with no
-separate registration.
-
-### Why only two
-
-**The dividing line is runtime and parallelism, not role.** All four stages of the content pipeline touch
-the same file in sequence, so there is nothing to gain by splitting them into processes — they are split
-into skills instead. Images, on the other hand, require a different runtime (Codex only), and that
-boundary is non-negotiable, so it became a process boundary and the rule became structural.
-
-Multi-terminal rules: [wiki/05-agent-operations.md](../../wiki/05-agent-operations.md).
+Domain rules go in `templates/<id>/template.yaml` under `rule:` and are injected on top of these
+five at session start.
 
 ---
 
 ## Commands
 
+### Core (always)
+
 | Command | Description |
 | --- | --- |
-| `pnpm setup` | Full environment check + install (+ optional GitHub follow/star) |
-| `pnpm check` | Check environment status only (installs nothing) |
-| `pnpm dev` | Run web and admin together |
-| `pnpm dev:web` / `pnpm dev:admin` | Run individually |
-| `pnpm build` | Build both apps |
-| `pnpm typecheck` | Type check |
-| `pnpm audit:content` | Run the publish gate from the CLI (same function as the admin review screen) |
+| `pnpm company-setup` | Check deps → pick a template → prepare env → verify (+ optional GitHub follow/star) |
+| `pnpm check` | Inspect state only (installs nothing), including the current template's checks |
+| `pnpm template list \| apply <id> \| prune` | List · apply · clean up templates |
+| `pnpm agent --list \| <id> "<task>"` | List · run agents |
 | `pnpm context` | Print the session context manually |
-| `pnpm imagegen` | Generate an image with Codex |
-| `pnpm memory:new <topic>` | Create a new memory file (`--long` for long-term) |
-| `pnpm --filter @orca/supabase migrate` | Move posts from files to Supabase (`--dry-run` supported) |
+| `pnpm memory:new <topic>` | Create a memory file (`--long` for long-term) |
+| `pnpm dev \| build \| typecheck \| lint \| test` | Whole workspace (turbo) |
+
+### What a template adds
+
+Applying `blog-autopublish` adds `dev:web`, `dev:admin`, `audit:content`, `cover`, and
+`imagegen`. The manifest's `script:` lines say exactly which keys arrive.
 
 ---
 
-## Adapting it to another domain
+## Slash commands
 
-The blog is a reference to make the template concrete. To turn it into commerce, a dashboard, or a docs
-site:
+| Command | What it does |
+| --- | --- |
+| `/company-setup` | Full dependency check + install + template selection (follow/star optional) |
+| `/save-memory` | Save the session to short-term memory, promote to long-term/wiki when warranted |
+| `/create-agent` | Create an agent across registry + AGENT.md + skills/ in one pass |
 
-1. Replace the schema in `packages/content/src/schema.ts`
-2. Replace the audit rules in `packages/content/src/audit.ts`
-3. Rebuild the agents in `agents/` via `/create-agent`
-4. Replace `wiki/03` and `wiki/04` with your domain guides
+Agent skills (`agents/<id>/skills/`) are a different thing: runtime-neutral playbooks the
+launcher injects into the system prompt, so codex agents read them too.
 
-**What stays**: the hooks, the memory structure, the review-gate pattern, the image policy, and the
-monorepo skeleton. That part is the actual value of the template.
+---
+
+## Writing a new template
+
+```
+templates/<id>/
+├── template.yaml    manifest
+└── files/           repo-root-relative paths
+```
+
+The manifest uses a repeated-key format. No YAML parser is pulled in — `sed`/`awk` read it,
+because setup has to stay deterministic.
+
+| Key | Meaning |
+| --- | --- |
+| `id` · `name` · `status` · `summary` | What shows in the list. `status` is `stable` · `preview` · `planned` |
+| `ships` · `hires` · `gate` | One-line summaries (used in docs and the landing page) |
+| `script: key=value` | Merged into the root `package.json`. Only these keys are reclaimed on switch |
+| `verify-workspace:` | Dependencies must be linked (failure if not) |
+| `verify-dir:` | Directory exists + file count (failure if not) |
+| `verify-optional:` | Nice-to-have file/dir (warning if missing) |
+| `verify-env: VAR=why` | Check `.env`. If unset, report what's turned off |
+| `note-env: VAR=why` | Values that are normally empty. State only, never a warning |
+| `runtime:` | CLIs this template uses (warning if missing) |
+| `mcp: name=why` | MCP servers this template uses. Registration is checked |
+| `mcp-claude:` · `mcp-codex:` | The add command to print when one is missing |
+| `rule:` | This company's hard rules, injected on top of the core rules |
+| `next:` | Post-setup guidance. `${VAR}` is substituted from `.env` |
+
+Four scripts read the manifest: `scripts/template.sh`, `scripts/check-deps.sh`,
+`scripts/load-context.sh`, and `scripts/company-setup.sh`. Add a key and one of them has to
+learn it — a key nobody reads is documentation, not configuration.
+
+MCP registration is checked by reading config files (`~/.claude.json`, `.mcp.json`,
+`~/.codex/config.toml`) rather than running `claude mcp list`, which would health-check over the
+network and make `pnpm check` non-deterministic.
 
 ---
 
 ## Stack
 
-pnpm workspaces · Turborepo · Next.js 16 (App Router) · React 19 · TypeScript 5.9 (strict) ·
-Tailwind CSS 4 · zod 4 · Supabase · tiptap · Radix UI · gray-matter · marked · turndown
-
----
+pnpm workspaces · Turborepo · TypeScript 5.9 (strict) · deterministic bash scripts.
+The app stack (Next.js, React, Tailwind, zod, …) comes from the template.
 
 ## License
 

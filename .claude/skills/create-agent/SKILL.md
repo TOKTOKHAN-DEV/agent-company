@@ -86,7 +86,8 @@ grep -A1 'writes:' agents/registry.yaml
 
 `agents/<id>/AGENT.md`. 이 파일이 **통째로 시스템 프롬프트에 들어갑니다.**
 
-기존 파일(`agents/blog-writer/AGENT.md`)의 구조를 따르세요.
+이미 있는 에이전트가 있으면 그 `AGENT.md` 의 구조를 따르세요. 로스터가 비어 있으면
+(`bare` 템플릿) 아래 뼈대에서 시작합니다.
 
 ```markdown
 # <이름>
@@ -163,5 +164,8 @@ pnpm agent <id> "테스트" --dry-run   # 조립된 명령 확인
 
 - registry만 추가하고 파일을 안 만들지 마세요. `pnpm check`가 잡습니다.
 - `writes`를 `**`로 주지 마세요. 최소 권한 원칙입니다.
-- `image-maker` 외의 에이전트에 이미지 생성 권한을 주지 마세요 (ADR-0002).
-- 새 에이전트에 `status: published` 쓰기를 허용하지 마세요. 발행은 사람만입니다.
+- 이미지 담당 에이전트가 이미 있으면 다른 에이전트에 이미지 생성 권한을 주지 마세요. 없다면
+  새로 만들 때 런타임을 `codex` 로 두세요 — 이미지 경로는 하나입니다 (ADR-0002).
+- 새 에이전트에 `status: published` 쓰기를 허용하지 마세요. 출고는 사람만입니다.
+- 도메인 규칙은 `templates/<id>/template.yaml` 의 `rule:` 에 함께 적으세요. AGENT.md 에만
+  적으면 세션 컨텍스트에 올라오지 않습니다.

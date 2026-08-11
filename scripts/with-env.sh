@@ -9,7 +9,7 @@
 # .env 를 미리 로드해 두지 않으면 항상 기본값이 쓰입니다.
 #
 # .env 에 공백이 들어간 값은 반드시 따옴표로 감싸세요 (셸 문법으로 읽습니다).
-#   NEXT_PUBLIC_SITE_NAME="Orca Blog"
+#   NEXT_PUBLIC_SITE_NAME="Agent Blog"
 # ─────────────────────────────────────────────────────────────
 set -euo pipefail
 

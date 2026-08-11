@@ -1,4 +1,4 @@
-# Orca AI Company
+# Agent Company
 
 [한국어](../../README.md) ·
 [English](./README.en.md) ·
@@ -9,6 +9,9 @@
 [Deutsch](./README.de.md) ·
 [Português](./README.pt-BR.md) ·
 **Русский**
+
+> **⚠️ Этот перевод описывает прежнюю структуру.** Репозиторий перешёл на структуру «ядро + шаблоны».
+> Актуальное содержание: [한국어](../../README.md) или [English](./README.en.md).
 
 > Monorepo-шаблон для ведения ИТ-проектов командой ИИ-агентов.
 > Контекст переживает границы сессий, а качество защищает проверочный шлюз.
@@ -47,8 +50,8 @@
 Вставьте этот промпт в свой LLM-агент (Claude Code, Codex, Cursor, Gemini CLI, …):
 
 ```text
-Install and configure orca-ai-company by following the instructions here:
-https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+Install and configure agent-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
 Или прочитайте [руководство по установке](../../INSTALL.md) сами. Но серьёзно — поручите это агенту:
@@ -59,7 +62,7 @@ https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/
 Скачайте руководство по установке и следуйте ему:
 
 ```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
 Руководство **самодостаточно — от клонирования до проверки**. Если текущий каталог пуст, оно клонирует
@@ -70,8 +73,8 @@ curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/hea
 ### Установить самому
 
 ```bash
-git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
-cd orca-ai-company
+git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
+cd agent-company
 pnpm install
 pnpm setup     # полная проверка зависимостей · подготовка окружения · подписка на организацию · звезда репозиторию
 pnpm dev       # web → :3000 · admin → :3001
@@ -86,7 +89,7 @@ pnpm dev       # web → :3000 · admin → :3001
 ## Структура
 
 ```
-orca-ai-company/
+agent-company/
 ├── apps/
 │   ├── web/              публичный блог (Next.js 16 App Router, :3000)
 │   └── admin/            контент · SEO/GEO · панель проверки (:3001)
@@ -225,7 +228,7 @@ web · admin · audit CLI
 
 1. Впишите три ключа Supabase в `.env`
 2. Примените `packages/supabase/migrations/0001_init.sql`
-3. `pnpm --filter @orca/supabase migrate` — перенос статей (идемпотентно, файлы остаются)
+3. `pnpm --filter @repo/supabase migrate` — перенос статей (идемпотентно, файлы остаются)
 
 Ни одна строка кода приложения не меняется. `CONTENT_DRIVER=file` возвращает всё назад в любой момент.
 
@@ -287,7 +290,7 @@ pnpm imagegen --slug <post-slug> --prompt "<описание сцены>"
 
 | Команда | Что делает |
 | --- | --- |
-| `/orca-setup` | Полная проверка зависимостей · установка · подписка на организацию · звезда (детерминированный скрипт) |
+| `/company-setup` | Полная проверка зависимостей · установка · подписка на организацию · звезда (детерминированный скрипт) |
 | `/save-memory` | Сохраняет выводы сессии в короткую память и при необходимости повышает до долгой/wiki |
 | `/create-agent` | Согласованно создаёт нового агента в registry + AGENT.md + skills/ |
 
@@ -351,7 +354,7 @@ agents/blog-writer/
 | `pnpm context` | Ручной вывод контекста сессии |
 | `pnpm imagegen` | Генерация изображения через Codex |
 | `pnpm memory:new <topic>` | Создать файл памяти (`--long` — долгая) |
-| `pnpm --filter @orca/supabase migrate` | Перенос статей из файлов в Supabase (поддерживается `--dry-run`) |
+| `pnpm --filter @repo/supabase migrate` | Перенос статей из файлов в Supabase (поддерживается `--dry-run`) |
 
 ---
 

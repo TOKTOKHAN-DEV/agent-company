@@ -13,25 +13,60 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT" || exit 0
 
-RECENT_MEMORY_COUNT="${ORCA_RECENT_MEMORY:-5}"
+RECENT_MEMORY_COUNT="${COMPANY_RECENT_MEMORY:-5}"
 
 echo "=============================================="
-echo " ORCA AI COMPANY — 세션 컨텍스트"
+echo " AGENT COMPANY — 세션 컨텍스트"
 echo "=============================================="
 echo
 
-# ── 1. 하드 룰 ────────────────────────────────────────────────
+# ── 1. 코어 하드 룰 ───────────────────────────────────────────
+# 템플릿과 무관하게 항상 참인 다섯 가지. 도메인 규칙은 아래 "현재 회사"에서
+# 템플릿 매니페스트의 `rule:` 로 얹힙니다.
 cat <<'RULES'
-## 하드 룰 (위반 금지)
+## 코어 하드 룰 (위반 금지)
 
-1. 이미지 생성은 Codex `imagegen` 전용. Claude의 이미지 생성/합성은 금지.
-   Codex 부재 시: 이미지 생략 → 사용자에게 요청 → 웹 검색(라이선스 확인) 순.
-2. 글 발행(`status: published`)은 사람만. 에이전트는 `in_review`까지.
-3. 콘텐츠의 진실은 `content/posts/*.md` 파일. DB/외부 CMS 도입 금지.
-4. 검수 게이트(`auditPost`)에 LLM 호출을 넣지 않는다. 결정성 유지.
-5. 파일 IO는 `@orca/content` 경유. 앱 코드에서 `fs` 직접 사용 금지.
+1. 이미지 생성 경로는 Codex `imagegen` 하나뿐. 다른 이미지 모델 호출도, SVG 로
+   대신 그리는 것도 금지. Codex 부재 시: 이미지 생략 → 사용자에게 요청 →
+   웹 검색(라이선스 확인) 순.
+2. 출고 버튼은 사람이 누른다. 에이전트는 검수 대기(`in_review`)까지만 올린다.
+3. 진실은 저장소 파일. 결과물도 결정도 코드와 같은 저장소에서 버전 관리한다.
+   DB 를 붙여도 원본은 파일 쪽이다.
+4. 검수 게이트에 LLM 호출을 넣지 않는다. 사람과 에이전트가 같은 판정을 봐야 한다.
+5. 이 다섯 가지를 바꾸려면 `wiki/decisions/` 에 ADR 을 먼저 쓴다.
 
 RULES
+
+# ── 1-b. 현재 회사 (템플릿) ───────────────────────────────────
+echo "## 현재 회사 (템플릿)"
+echo
+if [ -x scripts/template.sh ] || [ -f scripts/template.sh ]; then
+  CUR="$(bash scripts/template.sh current 2>/dev/null || printf 'none')"
+  if [ "$CUR" = "none" ]; then
+    echo "아직 템플릿을 펼치지 않았습니다. 코어(훅 · 메모리 · 레지스트리 · 런처)만 있는 상태입니다."
+    echo
+    echo "- 목록: \`bash scripts/template.sh list\`"
+    echo "- 적용: \`pnpm company-setup\` 또는 \`pnpm template apply <id>\`"
+  else
+    tmeta() { bash scripts/template.sh meta "$CUR" "$1" 2>/dev/null; }
+    printf -- "- \`%s\` — %s (%s)\n" "$CUR" "$(tmeta name | head -n1)" "$(tmeta status | head -n1)"
+    printf -- "- %s\n" "$(tmeta summary | head -n1)"
+    printf -- "- 매니페스트: \`templates/%s/template.yaml\`\n" "$CUR"
+
+    rules="$(tmeta rule)"
+    if [ -n "$rules" ]; then
+      echo
+      echo "### 이 회사의 하드 룰"
+      echo
+      printf '%s\n' "$rules" | while IFS= read -r r; do
+        [ -n "$r" ] && printf -- "- %s\n" "$r"
+      done
+    fi
+  fi
+else
+  echo "(scripts/template.sh 없음)"
+fi
+echo
 
 # ── 2. wiki 인덱스 ────────────────────────────────────────────
 echo "## wiki 문서 (필요할 때 직접 열어 읽을 것)"
@@ -95,7 +130,7 @@ if [ -f agents/registry.yaml ]; then
   echo "실행: \`pnpm agent <id> \"<작업>\"\` · 목록: \`pnpm agent --list\` · 추가: \`/create-agent\`"
   echo "정의: \`agents/<id>/AGENT.md\` · 스킬: \`agents/<id>/skills/\`"
 else
-  echo "(agents/registry.yaml 없음)"
+  echo "(로스터 없음 — 템플릿을 펼치면 생깁니다. \`pnpm company-setup\`)"
 fi
 echo
 
@@ -115,7 +150,7 @@ fi
 cat <<'SKILLS'
 ## 슬래시 커맨드 (이 Claude Code 세션용)
 
-- `/orca-setup`   — 의존성 전수 검사 + 설치 (결정적 스크립트) · 팔로우 · 스타는 선택
+- `/company-setup`   — 의존성 전수 검사 + 설치 (결정적 스크립트) · 팔로우 · 스타는 선택
 - `/save-memory`  — 세션 내용을 단기 메모리에 저장, 필요 시 장기/wiki로 승격
 - `/create-agent` — 새 에이전트를 registry + AGENT.md + skills/ 에 일괄 생성
 

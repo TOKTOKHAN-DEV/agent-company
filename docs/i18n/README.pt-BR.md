@@ -1,4 +1,4 @@
-# Orca AI Company
+# Agent Company
 
 [한국어](../../README.md) ·
 [English](./README.en.md) ·
@@ -9,6 +9,9 @@
 [Deutsch](./README.de.md) ·
 **Português** ·
 [Русский](./README.ru.md)
+
+> **⚠️ Esta tradução descreve a estrutura anterior.** O repositório passou para uma estrutura de núcleo + templates.
+> Veja [한국어](../../README.md) ou [English](./README.en.md) para o conteúdo atual.
 
 > Template monorepo para tocar projetos de TI com um time de agentes de IA.
 > O contexto sobrevive entre sessões e a qualidade é protegida por um portão de revisão.
@@ -47,8 +50,8 @@ Este template bloqueia os dois **por estrutura**.
 Cole este prompt no seu agente de LLM (Claude Code, Codex, Cursor, Gemini CLI, …):
 
 ```text
-Install and configure orca-ai-company by following the instructions here:
-https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+Install and configure agent-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
 Ou leia o [guia de instalação](../../INSTALL.md) por conta própria. Mas, falando sério, deixe o agente
@@ -59,7 +62,7 @@ fazer — humanos quebram arquivos de configuração com erros de digitação.
 Baixe o guia de instalação e siga-o:
 
 ```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
 O guia é **autocontido, do clone à verificação**. Se o diretório atual estiver vazio, ele clona ali mesmo
@@ -70,8 +73,8 @@ informa de forma determinística se a instalação deu certo.
 ### Instalar você mesmo
 
 ```bash
-git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
-cd orca-ai-company
+git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
+cd agent-company
 pnpm install
 pnpm setup     # checagem completa de dependências · preparo do ambiente · seguir a organização · dar star
 pnpm dev       # web → :3000 · admin → :3001
@@ -86,7 +89,7 @@ Veja **[INSTALL.md](../../INSTALL.md)** para o procedimento detalhado e soluçã
 ## Estrutura
 
 ```
-orca-ai-company/
+agent-company/
 ├── apps/
 │   ├── web/              blog público (Next.js 16 App Router, :3000)
 │   └── admin/            conteúdo · SEO/GEO · painel de revisão (:3001)
@@ -222,7 +225,7 @@ web · admin · audit CLI
 
 1. Coloque as três chaves do Supabase no `.env`
 2. Aplique `packages/supabase/migrations/0001_init.sql`
-3. `pnpm --filter @orca/supabase migrate` — move os posts existentes (idempotente; os arquivos ficam)
+3. `pnpm --filter @repo/supabase migrate` — move os posts existentes (idempotente; os arquivos ficam)
 
 Nenhuma linha do código da aplicação muda. `CONTENT_DRIVER=file` reverte a qualquer momento.
 
@@ -285,7 +288,7 @@ Justificativa: [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generat
 
 | Comando | O que faz |
 | --- | --- |
-| `/orca-setup` | Checagem completa de dependências · instalação · seguir a organização · dar star (script determinístico) |
+| `/company-setup` | Checagem completa de dependências · instalação · seguir a organização · dar star (script determinístico) |
 | `/save-memory` | Salva o aprendizado da sessão na memória curta e promove para longa/wiki quando faz sentido |
 | `/create-agent` | Cria um agente novo em registry + AGENT.md + skills/ de forma consistente |
 
@@ -348,7 +351,7 @@ Regras multiterminal: [wiki/05-agent-operations.md](../../wiki/05-agent-operatio
 | `pnpm context` | Imprime o contexto da sessão manualmente |
 | `pnpm imagegen` | Gera imagem com o Codex |
 | `pnpm memory:new <topic>` | Cria um arquivo de memória (`--long` para longo prazo) |
-| `pnpm --filter @orca/supabase migrate` | Move posts dos arquivos para o Supabase (suporta `--dry-run`) |
+| `pnpm --filter @repo/supabase migrate` | Move posts dos arquivos para o Supabase (suporta `--dry-run`) |
 
 ---
 

@@ -7,19 +7,32 @@
 
 ## 문서 지도
 
+### 코어 — 항상 있음
+
 | 문서 | 내용 | 언제 읽나 |
 | --- | --- | --- |
 | [00-overview.md](./00-overview.md) | 프로젝트가 무엇이고 왜 존재하는가 | 항상 (세션 시작) |
-| [01-architecture.md](./01-architecture.md) | 모노레포 구조, 데이터 흐름, 경계 | 코드를 건드리기 전 |
+| [01-architecture.md](./01-architecture.md) | 코어와 템플릿의 경계, 주입·실행 흐름 | 코드를 건드리기 전 |
 | [02-conventions.md](./02-conventions.md) | 코드 · 커밋 · 파일 네이밍 규칙 | 코드를 쓰기 전 |
-| [03-content-guidelines.md](./03-content-guidelines.md) | 블로그 톤앤매너, 글 구조 | 글을 쓰기 전 |
-| [04-seo-geo-playbook.md](./04-seo-geo-playbook.md) | SEO / GEO 최적화 실행 규칙 | 메타데이터를 채우기 전 |
 | [05-agent-operations.md](./05-agent-operations.md) | 에이전트 팀 운영, 멀티 터미널 분업 | 에이전트를 띄우기 전 |
 | [06-history.md](./06-history.md) | 결정 타임라인 | 왜 이렇게 됐는지 궁금할 때 |
-| [07-supabase.md](./07-supabase.md) | 백엔드 드라이버 · 전환 절차 | DB 로 옮길 때 |
-| [08-technical-seo.md](./08-technical-seo.md) | 메타 · 사이트맵 · llms.txt · 소유 확인 · GA4 | 배포·색인 설정 시 |
 | [decisions/](./decisions/) | ADR — 되돌리기 어려운 결정 기록 | 아키텍처를 바꾸려 할 때 |
 | [memory/](./memory/) | 단기 · 장기 메모리 | 세션 시작 / 종료 |
+
+### 템플릿이 가져오는 문서
+
+번호가 비어 있으면 그 템플릿을 아직 펼치지 않은 것입니다. 정상입니다.
+
+| 문서 | 내용 | 어느 템플릿 |
+| --- | --- | --- |
+| `03-content-guidelines.md` | 톤앤매너, 글 구조 | `blog-autopublish` |
+| `04-seo-geo-playbook.md` | SEO / GEO 최적화 실행 규칙 | `blog-autopublish` |
+| `07-supabase.md` | 백엔드 드라이버 · 전환 절차 | `blog-autopublish` |
+| `08-technical-seo.md` | 메타 · 사이트맵 · llms.txt · 소유 확인 · GA4 | `blog-autopublish` |
+
+도메인 문서는 `templates/<id>/files/wiki/` 에 들어 있습니다. 새 도메인 문서를 쓸 때는
+코어 wiki 가 아니라 그쪽에 두세요 — 여기 두면 템플릿을 갈아탄 사람에게 남의 회사 문서가
+됩니다.
 
 ## wiki vs memory
 

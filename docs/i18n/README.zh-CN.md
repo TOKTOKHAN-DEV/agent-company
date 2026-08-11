@@ -1,4 +1,4 @@
-# Orca AI Company
+# Agent Company
 
 [한국어](../../README.md) ·
 [English](./README.en.md) ·
@@ -9,6 +9,9 @@
 [Deutsch](./README.de.md) ·
 [Português](./README.pt-BR.md) ·
 [Русский](./README.ru.md)
+
+> **⚠️ 此翻译仍是旧结构。** 仓库已改为「核心 + 模板」结构。
+> 最新内容请参阅 [한국어](../../README.md) 或 [English](./README.en.md)。
 
 > 用 AI 智能体团队运行 IT 项目的 monorepo 模板。
 > 上下文跨会话保留，质量由审核关卡把守。
@@ -47,8 +50,8 @@
 把这段提示词粘贴到你的 LLM 智能体（Claude Code、Codex、Cursor、Gemini CLI 等）里：
 
 ```text
-Install and configure orca-ai-company by following the instructions here:
-https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+Install and configure agent-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
 你也可以自己读[安装指南](../../INSTALL.md)。不过说真的，交给智能体吧 —— 人类会把配置文件敲错。
@@ -58,7 +61,7 @@ https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/
 拉取安装指南并照着执行：
 
 ```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
 这份指南**从克隆到验证都是自包含的**。如果当前目录为空，它会就地克隆而不是嵌套一层子目录；必需与可选
@@ -68,8 +71,8 @@ curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/hea
 ### 自己安装
 
 ```bash
-git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
-cd orca-ai-company
+git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
+cd agent-company
 pnpm install
 pnpm setup     # 依赖全量检查 · 环境准备 · 关注组织 · 给仓库点 star
 pnpm dev       # web → :3000 · admin → :3001
@@ -84,7 +87,7 @@ pnpm dev       # web → :3000 · admin → :3001
 ## 结构
 
 ```
-orca-ai-company/
+agent-company/
 ├── apps/
 │   ├── web/              公开博客 (Next.js 16 App Router, :3000)
 │   └── admin/            内容 · SEO/GEO · 审核面板 (:3001)
@@ -219,7 +222,7 @@ web · admin · audit CLI
 
 1. 在 `.env` 填入三个 Supabase 密钥
 2. 执行 `packages/supabase/migrations/0001_init.sql`
-3. `pnpm --filter @orca/supabase migrate` — 迁移已有文章（幂等，文件保留）
+3. `pnpm --filter @repo/supabase migrate` — 迁移已有文章（幂等，文件保留）
 
 应用代码一行都不用改。随时可用 `CONTENT_DRIVER=file` 回退。
 
@@ -281,7 +284,7 @@ Codex 不可用时，按此顺序回退：
 
 | 命令 | 作用 |
 | --- | --- |
-| `/orca-setup` | 依赖全量检查 · 安装 · 关注组织 · 点 star（确定性脚本） |
+| `/company-setup` | 依赖全量检查 · 安装 · 关注组织 · 点 star（确定性脚本） |
 | `/save-memory` | 把会话内容存入短期记忆，必要时晋级到长期/wiki |
 | `/create-agent` | 一次性在 registry + AGENT.md + skills/ 中生成新智能体 |
 
@@ -343,7 +346,7 @@ agents/blog-writer/
 | `pnpm context` | 手动输出会话上下文 |
 | `pnpm imagegen` | 用 Codex 生成图片 |
 | `pnpm memory:new <topic>` | 创建新记忆文件（`--long` 为长期） |
-| `pnpm --filter @orca/supabase migrate` | 把文章从文件迁移到 Supabase（支持 `--dry-run`） |
+| `pnpm --filter @repo/supabase migrate` | 把文章从文件迁移到 Supabase（支持 `--dry-run`） |
 
 ---
 

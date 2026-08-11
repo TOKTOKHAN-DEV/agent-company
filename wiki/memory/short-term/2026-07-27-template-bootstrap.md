@@ -11,7 +11,7 @@ promoted: false
 
 ## 무엇
 
-Orca AI Company 템플릿의 뼈대를 세웠다. pnpm workspaces + Turborepo 모노레포에 `apps/web`(블로그),
+Agent Company 템플릿의 뼈대를 세웠다. pnpm workspaces + Turborepo 모노레포에 `apps/web`(블로그),
 `apps/admin`(콘텐츠·SEO/GEO·검수), `packages/content`(스키마·IO·감사·JSON-LD)를 구성했다. wiki, memory,
 agents, .claude 훅/스킬, scripts를 함께 배치했다.
 
@@ -20,7 +20,7 @@ agents, .claude 훅/스킬, scripts를 함께 배치했다.
 - **콘텐츠를 파일로** — 에이전트에게 파일 IO가 가장 자연스럽고, git diff가 편집 히스토리가 된다 (ADR-0001).
 - **감사를 규칙 함수로** — 모델이 자기 결과물을 평가하면 통과 쪽으로 기운다. `auditPost()`는 순수 함수다.
 - **admin에 클라이언트 상태 없음** — 서버 액션 + 폼으로 충분하다고 판단. 운영 도구에 SPA 복잡도가 불필요.
-- **파일 IO를 `@orca/content` 한 곳에 가둠** — 에이전트가 검증을 우회할 경로를 없애기 위해.
+- **파일 IO를 `@repo/content` 한 곳에 가둠** — 에이전트가 검증을 우회할 경로를 없애기 위해.
 
 ## 영향
 

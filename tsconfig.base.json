@@ -6,7 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    // `@orca/content` imports siblings with explicit `.ts` specifiers so the
+    // `@repo/content` imports siblings with explicit `.ts` specifiers so the
     // package works both under a bundler and under plain `node --experimental-strip-types`.
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,

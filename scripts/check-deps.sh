@@ -30,7 +30,7 @@ version_gte() {
   [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -n1)" = "$2" ]
 }
 
-printf '%s\n' "${BOLD}Orca AI Company — 환경 검사${RESET}"
+printf '%s\n' "${BOLD}Agent Company — 환경 검사${RESET}"
 printf '%s%s%s\n' "$DIM" "$ROOT" "$RESET"
 
 # ── 필수 런타임 ───────────────────────────────────────────────
@@ -96,62 +96,97 @@ section "프로젝트 설치 상태"
 
 [ -d node_modules ] && pass "node_modules" "설치됨" || fail "node_modules" "없음 → 'pnpm install'"
 
-for app in web admin; do
-  if [ -d "apps/$app/node_modules" ] || [ -L "apps/$app/node_modules" ]; then
-    pass "apps/$app 의존성" "연결됨"
-  else
-    fail "apps/$app 의존성" "없음 → 'pnpm install'"
-  fi
-done
-
 if [ -f .env ]; then
   pass ".env" "존재"
 else
   warn ".env" "없음 → 'cp .env.example .env' (기본값으로도 동작합니다)"
 fi
 
-# ── 콘텐츠 ────────────────────────────────────────────────────
-section "콘텐츠"
+# ── 현재 회사 (템플릿) ────────────────────────────────────────
+# 무엇을 검사할지는 템플릿이 정합니다. 여기에 apps/web 을 박아두면
+# 다른 템플릿을 고른 사람에게 없는 것을 없다고 혼내게 됩니다.
+section "현재 회사 (템플릿)"
 
-if [ -d content/posts ]; then
-  POST_COUNT="$(find content/posts -name '*.md' 2>/dev/null | wc -l | tr -d ' ')"
-  pass "content/posts" "${POST_COUNT}개 글"
+TEMPLATE_SH="scripts/template.sh"
+tmeta() { bash "$TEMPLATE_SH" meta "$CURRENT_TEMPLATE" "$1" 2>/dev/null; }
+
+CURRENT_TEMPLATE="$(bash "$TEMPLATE_SH" current 2>/dev/null || printf 'none')"
+
+if [ "$CURRENT_TEMPLATE" = "none" ]; then
+  warn "적용된 템플릿" "없음 → 'pnpm company-setup' 또는 'pnpm template apply <id>'"
 else
-  fail "content/posts" "없음 → 'mkdir -p content/posts'"
-fi
+  pass "$CURRENT_TEMPLATE" "$(tmeta name | head -n1) · $(tmeta status | head -n1)"
 
-# ── 백엔드 ────────────────────────────────────────────────────
-# 키가 없는 것은 실패가 아닙니다 — 파일 기반이 정상 동작하는 데모 상태입니다.
-section "백엔드"
+  while IFS= read -r w; do
+    [ -n "$w" ] || continue
+    if [ -d "$w/node_modules" ] || [ -L "$w/node_modules" ]; then
+      pass "$w 의존성" "연결됨"
+    elif [ -d "$w" ]; then
+      fail "$w 의존성" "없음 → 'pnpm install'"
+    else
+      fail "$w" "워크스페이스가 없습니다 → 'pnpm template apply $CURRENT_TEMPLATE --force'"
+    fi
+  done < <(tmeta verify-workspace)
 
-if [ -n "${NEXT_PUBLIC_SUPABASE_URL:-}" ] || grep -qE '^\s*NEXT_PUBLIC_SUPABASE_URL=\S' .env 2>/dev/null; then
-  if grep -qE '^\s*SUPABASE_SERVICE_ROLE_KEY=\S' .env 2>/dev/null || [ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
-    pass "Supabase" "설정됨 (읽기/쓰기) — 마이그레이션 적용 여부를 확인하세요"
-  else
-    warn "Supabase" "URL 만 있음 — SUPABASE_SERVICE_ROLE_KEY 가 없어 쓰기 불가"
+  while IFS= read -r d; do
+    [ -n "$d" ] || continue
+    if [ -d "$d" ]; then
+      pass "$d" "$(find "$d" -type f 2>/dev/null | wc -l | tr -d ' ')개 파일"
+    else
+      fail "$d" "없음 → 'mkdir -p $d'"
+    fi
+  done < <(tmeta verify-dir)
+
+  while IFS= read -r p; do
+    [ -n "$p" ] || continue
+    [ -e "$p" ] && pass "$p" "있음" || warn "$p" "없음 (선택 항목)"
+  done < <(tmeta verify-optional)
+
+  # verify-env: VAR=없을 때 무엇이 꺼지는지
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    v="${line%%=*}"; why="${line#*=}"
+    if grep -qE "^[[:space:]]*$v=\S" .env 2>/dev/null; then
+      pass "$v" "설정됨"
+    else
+      warn "$v" "미설정 — $why"
+    fi
+  done < <(tmeta verify-env)
+
+  # note-env: 비어 있는 게 정상인 값. 경고로 세지 않습니다.
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    v="${line%%=*}"; why="${line#*=}"
+    if grep -qE "^[[:space:]]*$v=\S" .env 2>/dev/null; then
+      note "$v" "설정됨"
+    else
+      note "$v" "$why"
+    fi
+  done < <(tmeta note-env)
+
+  # ── mcp: 이 템플릿이 쓰는 MCP 서버 ─────────────────────────
+  # 등록 여부만 봅니다. 인증(OAuth)까지는 확인할 수 없습니다 — 확인하려면
+  # 네트워크를 타야 하고, 그러면 이 검사가 결정적이지 않게 됩니다.
+  MCP_LINES="$(tmeta mcp)"
+  if [ -n "$MCP_LINES" ]; then
+    MCP_NAMES="$(printf '%s\n' "$MCP_LINES" | cut -d= -f1 | tr '\n' ' ')"
+    # shellcheck disable=SC2086
+    MCP_STATUS="$(node scripts/mcp-status.mjs $MCP_NAMES 2>/dev/null)"
+    while IFS= read -r line; do
+      [ -n "$line" ] || continue
+      name="${line%%=*}"; why="${line#*=}"
+      state="$(printf '%s\n' "$MCP_STATUS" | awk -F'\t' -v n="$name" '$1==n {print $2; exit}')"
+      scope="$(printf '%s\n' "$MCP_STATUS" | awk -F'\t' -v n="$name" '$1==n {print $3; exit}')"
+      if [ "$state" = "registered" ]; then
+        pass "MCP: $name" "등록됨 ($scope)"
+      else
+        warn "MCP: $name" "미등록 — $why"
+        add_cmd="$(tmeta mcp-claude | awk -F= -v n="$name" '$1==n {sub(/^[^=]*=/,""); print; exit}')"
+        [ -n "$add_cmd" ] && printf '      %s%s%s\n' "$DIM" "$add_cmd" "$RESET"
+      fi
+    done < <(printf '%s\n' "$MCP_LINES")
   fi
-else
-  pass "파일 기반 드라이버" "content/posts/*.md — Supabase 미설정 (정상 데모 상태)"
 fi
-
-[ -f packages/supabase/migrations/0001_init.sql ] \
-  && pass "마이그레이션" "0001_init.sql 준비됨" \
-  || warn "마이그레이션" "packages/supabase/migrations/0001_init.sql 없음"
-
-# ── 검색엔진 · 애널리틱스 ─────────────────────────────────────
-section "검색엔진 · 애널리틱스 (선택)"
-
-check_env() {
-  # $1 = 변수명, $2 = 설명
-  if grep -qE "^\s*$1=\S" .env 2>/dev/null; then
-    pass "$1" "설정됨"
-  else
-    warn "$1" "미설정 — $2"
-  fi
-}
-check_env NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION "구글 서치콘솔 소유 확인 태그가 출력되지 않습니다"
-check_env NEXT_PUBLIC_NAVER_SITE_VERIFICATION "네이버 서치어드바이저 소유 확인 태그가 출력되지 않습니다"
-check_env NEXT_PUBLIC_GA4_MEASUREMENT_ID "GA4 트래커가 로드되지 않습니다"
 
 # ── AI 컨텍스트 레이어 ────────────────────────────────────────
 section "AI 컨텍스트 레이어"
@@ -181,7 +216,7 @@ for hook in .claude/hooks/session-start.sh .claude/hooks/guard-image-generation.
   fi
 done
 
-for s in orca-setup save-memory create-agent; do
+for s in company-setup save-memory create-agent; do
   [ -f ".claude/skills/$s/SKILL.md" ] && pass "/$s" "" || warn "/$s" "SKILL.md 없음"
 done
 
@@ -239,12 +274,15 @@ if [ -f agents/registry.yaml ]; then
       warn "런타임: $rt" "없음 — 해당 에이전트를 띄울 수 없습니다"
     fi
   done
+elif [ "$CURRENT_TEMPLATE" = "none" ]; then
+  # 템플릿을 아직 안 펼쳤으면 레지스트리가 없는 게 정상입니다.
+  note "agents/registry.yaml" "아직 없음 — 템플릿을 적용하면 생깁니다"
 else
-  fail "agents/registry.yaml" "없음 — 런타임·모델 매핑을 알 수 없습니다"
+  fail "agents/registry.yaml" "없음 — 런타임·모델 매핑을 알 수 없습니다 → 'pnpm template apply $CURRENT_TEMPLATE --force'"
 fi
 
 # ── 커뮤니티 ──────────────────────────────────────────────────
-# orca-setup 의 6단계는 **선택**입니다. 그래서 여기서도 경고를 세지 않습니다 —
+# company-setup 의 6단계는 **선택**입니다. 그래서 여기서도 경고를 세지 않습니다 —
 # 건너뛰기를 선택한 사람에게 매번 노란 느낌표를 보여주는 건 "다시 묻지 않는다"는
 # 약속을 어기는 것입니다. 상태만 담백하게 보여줍니다.
 section "커뮤니티 (선택)"
@@ -253,11 +291,11 @@ case "$(bash scripts/community.sh status)" in
   unavailable) note "GitHub 응원" "gh 미설치 또는 미인증 — 확인할 수 없습니다" ;;
   done)        pass "GitHub 응원" "팔로우 · 스타 완료 — 고맙습니다" ;;
   optout)      note "GitHub 응원" "건너뛰기를 선택하셨습니다" ;;
-  pending)     note "GitHub 응원" "아직 → 'pnpm setup' 또는 'bash scripts/community.sh apply'" ;;
+  pending)     note "GitHub 응원" "아직 → 'pnpm company-setup' 또는 'bash scripts/community.sh apply'" ;;
 esac
 
 # ── 타입 검사 ─────────────────────────────────────────────────
-if [ "${ORCA_SKIP_TYPECHECK:-0}" != "1" ] && [ -d node_modules ]; then
+if [ "${COMPANY_SKIP_TYPECHECK:-0}" != "1" ] && [ -d node_modules ]; then
   section "타입 검사"
   if pnpm -s typecheck >/dev/null 2>&1; then
     pass "pnpm typecheck" "통과"
@@ -279,11 +317,32 @@ if [ "$WARNED" -gt 0 ]; then
 else
   printf '%s모두 통과%s\n' "$GREEN" "$RESET"
 fi
-# 포트는 .env 가 진실입니다 (orca-setup.sh 의 완료 메시지와 같은 규칙).
-port_from_env() {
-  v="$(sed -n "s/^[[:space:]]*$1=\([0-9][0-9]*\).*/\1/p" .env 2>/dev/null | tail -1)"
-  printf '%s' "${v:-$2}"
+
+# 다음에 뭘 할지는 템플릿이 정합니다 (company-setup.sh 의 완료 메시지와 같은 규칙).
+# 값은 .env 가 진실이고, 없으면 .env.example 을 봅니다.
+env_value() {
+  local v
+  v="$(sed -n "s/^[[:space:]]*$1=//p" .env 2>/dev/null | tail -1)"
+  [ -n "$v" ] || v="$(sed -n "s/^[[:space:]]*$1=//p" .env.example 2>/dev/null | tail -1)"
+  v="${v%\"}"; v="${v#\"}"
+  printf '%s' "$v"
 }
-printf '다음: %spnpm dev%s → web http://localhost:%s · admin http://localhost:%s\n' \
-  "$BOLD" "$RESET" "$(port_from_env WEB_PORT 3000)" "$(port_from_env ADMIN_PORT 3001)"
+subst_env() {
+  local line="$1" name val
+  while [[ "$line" =~ \$\{([A-Za-z_][A-Za-z0-9_]*)\} ]]; do
+    name="${BASH_REMATCH[1]}"
+    val="$(env_value "$name")"
+    line="${line//\$\{$name\}/$val}"
+  done
+  printf '%s' "$line"
+}
+
+if [ "$CURRENT_TEMPLATE" = "none" ]; then
+  printf '다음: %spnpm company-setup%s — 어떤 회사를 차릴지 고릅니다\n' "$BOLD" "$RESET"
+else
+  printf '다음:\n'
+  while IFS= read -r line; do
+    [ -n "$line" ] && printf '  %s\n' "$(subst_env "$line")"
+  done < <(bash "$TEMPLATE_SH" meta "$CURRENT_TEMPLATE" next 2>/dev/null)
+fi
 exit 0

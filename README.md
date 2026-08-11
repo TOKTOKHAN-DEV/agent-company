@@ -1,4 +1,4 @@
-# Orca AI Company
+# Agent Company
 
 **한국어** ·
 [English](./docs/i18n/README.en.md) ·
@@ -10,364 +10,317 @@
 [Português](./docs/i18n/README.pt-BR.md) ·
 [Русский](./docs/i18n/README.ru.md)
 
-> AI 에이전트 팀으로 IT 프로젝트를 운영하기 위한 모노레포 템플릿.
-> 컨텍스트는 세션을 넘어 유지되고, 품질은 검수 게이트로 지킵니다.
+> AI 팀이 굴리는 모노레포 템플릿.
+> 조직도, 사규, 세션이 끝나도 남는 기억, 그리고 사람만 누를 수 있는 출고 버튼.
 
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.11-339933)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A510-F69220)](https://pnpm.io)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000)](https://nextjs.org)
 [![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
 ---
 
 ## 무엇을 해결하나
 
-AI에게 프로젝트를 맡기면 반복해서 두 가지가 무너집니다.
+에이전트 IDE 는 사무실을 줍니다. 병렬 워크트리, 에이전트마다 하나씩인 터미널, diff 뷰.
+그런데 실제 프로젝트를 맡기면 매번 같은 데서 막힙니다.
 
-**컨텍스트가 사라집니다.** 세션이 끝나거나 담당자가 바뀌면 AI는 지난 결정을 모릅니다. 같은 논의를 반복하고,
-이미 폐기한 방식으로 되돌아갑니다.
+**지난 결정이 남지 않습니다.** 세션이 끝나거나 다른 에이전트가 이어받으면 지난 석 달의 결정이
+사라집니다. 끝난 논쟁을 다시 하고, 이미 버린 방식으로 되돌아갑니다.
 
-**품질 관리가 없습니다.** 검수 게이트가 없으면 AI 결과물이 그대로 프로덕션에 나갑니다.
+**아무도 결과물을 막지 않습니다.** 게이트가 없으면 에이전트가 만든 것이 그대로 나갑니다.
+검수를 모델에게 맡겨도 마찬가지입니다 — 자기 결과물을 채점하면 후하게 줍니다.
 
-이 템플릿은 두 문제를 **구조로** 막습니다.
+둘 다 프롬프트를 다듬어서 해결되는 문제가 아닙니다. 무너지는 지점마다 장치를 하나씩 붙였습니다.
 
-| 문제 | 해결책 |
-| --- | --- |
-| 컨텍스트 소실 | `CLAUDE.md` + `AGENTS.md` + `wiki/` + 장/단기 메모리를 SessionStart 훅으로 자동 로드 |
-| 품질 관리 | 결정적 감사 함수 + 어드민 검수 화면 + 사람만 누를 수 있는 발행 버튼 |
-| 역할 혼재 | 런타임별 독립 에이전트 + 모델 매핑 + 멀티 터미널 병렬 실행 |
-| 이미지 신뢰성 | Codex `imagegen` 단일 경로 + 출처 기록 + 3중 강제 |
+| 무너지는 것 | 장치 | 강제 수단 |
+| --- | --- | --- |
+| 컨텍스트 소실 | 핸드북 · wiki 인덱스 · 장단기 메모리가 세션 시작마다 자동으로 올라옴 | SessionStart 훅 |
+| 품질 드리프트 | 출고 게이트가 결정적 함수. 사람과 에이전트가 같은 판정을 봄 | 게이트에 LLM 호출 없음 |
+| 역할 혼재 | 에이전트마다 런타임 · 모델 · 쓰기 범위를 선언 | `agents/registry.yaml` |
+| 출처 없는 자산 | 이미지 생성 경로가 하나뿐, 모든 자산에 출처 기록 | 도구 가드 + 감사 |
+| 사고 출고 | 에이전트는 `in_review` 까지만. 출고 버튼은 사람이 누름 | 타입에 경로 없음 |
 
 ---
 
 ## 설치
 
-### 사람을 위한 설치
+### 에이전트에게 시키기 (권장)
 
-이 프롬프트를 당신의 LLM 에이전트(Claude Code, Codex, Cursor, Gemini CLI 등)에 붙여넣으세요.
+이 문장을 쓰는 코딩 에이전트(Claude Code, Codex, Cursor, Gemini CLI 등)에 그대로 붙여넣으세요.
 
 ```text
-Install and configure orca-ai-company by following the instructions here:
-https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+Install Agent Company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
-아니면 [설치 가이드](./INSTALL.md)를 직접 읽으셔도 됩니다. 다만 에이전트한테 시키는 쪽을 권합니다 —
-사람은 설정 파일을 오타로 망칩니다.
+가이드는 **클론부터 검증까지 자기완결적**입니다. 빈 폴더면 그 자리에 받고, 필수/선택 도구와 폴백
+절차가 모두 적혀 있어 막히는 지점에서 스스로 판단합니다.
 
-### LLM 에이전트를 위한 설치
-
-설치 가이드를 받아와서 그대로 따르세요.
+### 직접 하기
 
 ```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
-```
+git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
+cd agent-company
 
-가이드는 **클론부터 검증까지 자기완결적**입니다. 현재 폴더가 비어 있으면 하위 폴더를 만들지 않고 그
-자리에 받고, 필수/선택 도구와 폴백 절차가 모두 적혀 있어 막히는 지점에서 스스로 판단할 수 있습니다.
-마지막 `pnpm check` 가 설치 성공 여부를 결정적으로 알려줍니다.
-
-### 직접 설치
-
-```bash
-git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
-cd orca-ai-company
 pnpm install
-pnpm setup     # 의존성 전수 검사 · 환경 준비 (GitHub 팔로우 · 스타는 물어보고 넘어갑니다)
-pnpm dev       # web → :3000 · admin → :3001
+pnpm company-setup    # 의존성 검사 → 어떤 회사를 차릴지 선택 → 환경 준비 → 검증
+pnpm dev
 ```
 
-자세한 설치 절차와 문제 해결은 **[INSTALL.md](./INSTALL.md)** 를 보세요.
+자세한 절차와 문제 해결은 **[INSTALL.md](./INSTALL.md)**.
+
+> `pnpm setup` 이 아니라 `pnpm company-setup` 입니다. `setup` 은 pnpm 내장 명령이라 같은 이름이면
+> 스크립트가 가려집니다.
 
 ---
 
-## 구조
+## 코어와 템플릿
+
+저장소는 두 층입니다. **코어는 어느 회사에서나 같고, 템플릿이 무엇을 만들지 정합니다.**
 
 ```
-orca-ai-company/
-├── apps/
-│   ├── web/              공개 블로그 (Next.js 16 App Router, :3000)
-│   └── admin/            콘텐츠 · SEO/GEO · 검수 대시보드 (:3001)
-├── packages/
-│   ├── content/          스키마 · 저장소 드라이버 · 감사 · JSON-LD (단일 진실 공급원)
-│   └── supabase/         클라이언트 · 스토리지 · 마이그레이션 (키 없으면 비활성)
-├── content/posts/        마크다운 글 — 기본 드라이버
-├── docs/i18n/            README 번역 8개 언어
-├── agents/
-│   ├── registry.yaml     런타임 · 모델 · 권한 (단일 진실 공급원)
-│   ├── blog-writer/      AGENT.md + skills/ (claude · opus)
-│   └── image-maker/      AGENT.md + skills/ (codex)
-├── wiki/
-│   ├── 00~06-*.md        개요 · 아키텍처 · 규칙 · 가이드 · 히스토리
-│   ├── decisions/        ADR
-│   └── memory/           단기 · 장기 메모리
-├── .claude/
-│   ├── settings.json     훅 등록
-│   ├── hooks/            SessionStart 컨텍스트 로드 · 이미지 정책 가드
-│   └── skills/           슬래시 커맨드 3종
-├── scripts/              결정적 셸 스크립트
-├── CLAUDE.md             Claude Code 지침
-└── AGENTS.md             모든 AI 코딩 에이전트 지침
+agent-company/
+│
+├── ── 코어 (항상 있음) ─────────────────────────────
+│   ├── .claude/          훅(SessionStart · PreToolUse) · 슬래시 커맨드
+│   ├── wiki/             프로젝트 지식 + 장/단기 메모리 + ADR
+│   ├── agents/           로스터가 들어올 자리 (registry.yaml + <id>/)
+│   ├── scripts/          결정적 셸 스크립트
+│   ├── CLAUDE.md         Claude Code 지침
+│   └── AGENTS.md         모든 AI 코딩 에이전트 공통 지침
+│
+├── ── 템플릿 (골라서 펼침) ─────────────────────────
+│   └── templates/<id>/
+│       ├── template.yaml   매니페스트 — 스크립트 · 검사 항목 · 하드 룰 · 다음 단계
+│       └── files/          레포 루트 기준 경로 그대로 (apps/ · packages/ · agents/ …)
+│
+└── ── 제품 (이 레포에만) ───────────────────────────
+    └── site/               랜딩 페이지. 정적 HTML 하나, 빌드 없음 → Vercel
 ```
 
----
+`pnpm company-setup` 이 템플릿을 고르게 하고, `templates/<id>/files/` 를 루트에 펼친 뒤
+매니페스트의 `script:` 를 루트 `package.json` 에 병합합니다. 템플릿을 갈아타면 이전 템플릿이
+넣은 스크립트 키만 정확히 회수됩니다.
 
-## 레퍼런스 구현: AI가 운영하는 블로그
+### 지금 있는 템플릿
 
-### web (`:3000`)
+| id | 상태 | 만드는 것 | 로스터 | 게이트 |
+| --- | --- | --- | --- | --- |
+| [`blog-autopublish`](./templates/blog-autopublish/README.md) | stable | 공개 사이트 + 검수 데스크 | blog-writer · image-maker | `audit` → `in_review` |
+| `bare` | stable | 코어만. 빈 로스터 | 직접 정하세요 | 직접 만드세요 |
+| [`apps-in-toss`](./templates/apps-in-toss/README.md) | preview | 토스 WebView 미니앱 | spec-writer · ui-builder · release-manager | `preflight` → 콘솔 검수 |
 
-공개 블로그. `content/posts/` 에서 `status: published` 인 글만 렌더링합니다.
-JSON-LD(BlogPosting · FAQPage), `sitemap.xml`, `robots.txt`, `rss.xml` 자동 생성.
-답변 엔진 크롤러(GPTBot, ClaudeBot, PerplexityBot 등)를 명시적으로 허용합니다.
-
-### admin (`:3001`)
-
-- **에디터** — tiptap 리치 텍스트 + 이미지 업로드. 저장 형식은 항상 마크다운
-- **테크니컬 SEO 패널** — canonical · robots 지시어 · OG/Twitter · 사이트맵 priority · hreflang
-- **GEO 패널** — 추출용 요약 · FAQ · 엔티티 · 인용 출처 · 로케일/타깃 마켓
-- **검수 화면** — 자동 감사 결과, JSON-LD 미리보기, 사람 체크리스트, 발행 버튼
-- **SEO/GEO 대시보드** — 전체 글의 미해결 항목을 lane별 집계
-
-UI는 네이티브 `<select>` 대신 Radix 기반 커스텀 컴포넌트를 씁니다 — OS가 그리는 기본 셀렉트는
-스타일이 먹지 않고 브라우저마다 다릅니다.
-
-### agents
-
-```
-blog-writer (claude · opus)                      image-maker (codex)   사람
-plan-post → write-draft → optimize-seo-geo   →   generate-cover    →   admin 검수 → 발행
-                 ↓
-         review-and-submit → status: in_review
+```bash
+pnpm template list                    # 목록 · 현재 적용된 것
+pnpm template apply <id>              # 펼치기
+pnpm template apply <id> --force      # 다른 템플릿 위에 덮어쓰기
+pnpm template prune                   # 안 쓰는 카탈로그 · 랜딩 정리
 ```
 
-에이전트는 `in_review` 까지만 올립니다. **발행은 사람의 행위입니다.**
+`planned` 는 매니페스트에 의도만 적혀 있고 내용물이 없습니다. `apply` 가 거부합니다 —
+빈 껍데기를 깔아 놓고 나중에 "왜 안 되지" 하게 만들지 않기 위해서입니다.
 
----
+### 프로젝트 하나는 회사 하나
 
-## SEO와 GEO를 나눠서 다루는 이유
+**한 레포가 두 얼굴을 가집니다.** 고르고 나면 나머지 카탈로그와 제품 랜딩은 그 프로젝트에
+아무 의미가 없으므로, `pnpm company-setup` 이 정리를 제안합니다.
 
-| | SEO | GEO (Generative Engine Optimization) |
+| | 제품 레포 (여기) | Use this template 한 내 프로젝트 |
 | --- | --- | --- |
-| 대상 | 검색 엔진 | 답변 엔진 (ChatGPT · Claude · Perplexity · AI Overviews) |
-| 목표 | **순위** | **인용** |
-| 핵심 신호 | 타이틀 · 메타 · 링크 · 속도 | 추출 가능한 구조 · 명시적 Q&A · 출처 · 엔티티 |
+| `site/` (랜딩) | 있음 → Vercel 배포 | 정리로 삭제 |
+| 안 고른 템플릿 | 전부 | 정리로 삭제 |
+| 고른 템플릿의 `files/` | 있음 | 삭제 (이미 루트에 펼쳐짐) |
+| 고른 템플릿의 `template.yaml` | 있음 | **남김** |
+| 코어 | 있음 | 있음 |
 
-인용되려면 뽑아 쓰기 좋은 형태여야 합니다. 그래서 프론트매터에 GEO 블록이 따로 있고,
-`geo.faq` 는 `FAQPage` JSON-LD로, `geo.answerSummary` 는 페이지 상단 요약 블록으로 렌더링됩니다.
+매니페스트를 남기는 게 핵심입니다 — `check-deps.sh` 와 `load-context.sh` 가 `verify-*` 와
+`rule:` 을 계속 읽습니다. 지우면 검사와 하드 룰 주입이 조용히 사라집니다.
 
-실행 규칙은 [wiki/04-seo-geo-playbook.md](./wiki/04-seo-geo-playbook.md).
+제품 레포는 `.company/PRODUCT` 마커가 있어 정리를 거부합니다. 기여자가 클론해서 셋업을 돌려도
+카탈로그가 안 지워집니다.
+
+정리 뒤 다른 템플릿이 다시 필요하면:
+
+```bash
+git remote add upstream https://github.com/TOKTOKHAN-DEV/agent-company.git
+git fetch upstream && git checkout upstream/main -- templates/
+```
+
+### 왜 템플릿을 별도 레포로 두지 않았나
+
+매니페스트 키는 코어 스크립트와 lockstep 으로 움직입니다. `sed` 로 읽으므로 **모르는 키는
+조용히 무시**되고, 원격 템플릿이 구버전이면 에러 없이 검사가 통째로 빠집니다. 한 레포에 두면
+이 문제가 원천 봉쇄됩니다. 그리고 셋업 중간에 네트워크가 끼면 "두 번 돌려도 같은 상태"라는
+약속이 깨집니다.
+
+무게는 근거가 못 됩니다 — `templates/` 는 git 기준 388K 입니다.
+
+쪼갤 시점은 **서드파티가 템플릿을 기여하기 시작할 때**, 템플릿에 대용량 에셋이 들어갈 때,
+템플릿별 릴리스 주기가 갈릴 때입니다. 그때 손댈 곳은 `template.sh` 의 파일 펼치기 한 곳입니다.
 
 ---
 
-## 테크니컬 SEO
+## 코어가 주는 것
 
-### 자동 생성 — 손댈 필요 없음
-
-| 경로 | 내용 |
-| --- | --- |
-| `/sitemap.xml` | 발행 글 + 글별 priority · changefreq · hreflang |
-| `/robots.txt` | 검색 봇 + 답변 엔진 봇 허용, `/api/` 차단 |
-| `/rss.xml` | 발행 글 피드 |
-| `/llms.txt` | **LLM용 사이트 요약** — 모델이 HTML 파싱 없이 사이트를 이해합니다 |
-
-`llms.txt`는 sitemap의 GEO 짝입니다. sitemap이 "URL이 어디 있는지"를 알려준다면, llms.txt는
-"이 사이트가 무엇이고 어떤 글이 있는지"를 알려줍니다. 각 글의 `geo.answerSummary`가 한 줄 설명으로
-쓰이므로, 요약을 채우면 두 배로 이득입니다.
-
-### 글마다 어드민에서 설정
-
-canonical · noindex/nofollow · robots 지시어(`max-snippet` 등) · OG/Twitter 카드 ·
-사이트맵 priority/changefreq · hreflang · llms.txt 포함 여부.
-
-### 검색엔진 · 애널리틱스 연동
-
-`.env`에 값을 넣으면 켜집니다. **비우면 해당 태그·스크립트가 아예 출력되지 않습니다.**
-
-| 변수 | 대상 |
-| --- | --- |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | 구글 서치콘솔 |
-| `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` | 네이버 서치어드바이저 |
-| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing 웹마스터 |
-| `NEXT_PUBLIC_GA4_MEASUREMENT_ID` | GA4 (`afterInteractive` 로드) |
-
-### 자연어 슬러그
-
-```
-/blog/next-js-16-캐시-컴포넌트-완전-정복
-```
-
-한글·일본어를 그대로 허용합니다. URL에 키워드가 남는 것은 실제 랭킹·클릭률 신호이고, 한국어 독자에게
-음차 슬러그는 읽히지 않습니다.
-
-자세한 내용: [wiki/08-technical-seo.md](./wiki/08-technical-seo.md)
-
----
-
-## 백엔드 — 지금은 파일, 나중에 Supabase
-
-앱 코드는 저장소를 직접 알지 못합니다. 인터페이스만 봅니다.
-
-```
-web · admin · audit CLI
-        │
-        ▼
-  getRepository()          ← 키 유무로 자동 선택
-   ├── file       content/posts/*.md   (기본 · 지금 이 상태)
-   └── supabase   Postgres + Storage   (키를 넣으면)
-```
-
-**키가 없는 상태가 정상입니다.** `pnpm install && pnpm dev`로 바로 돌아갑니다.
-전환하려면:
-
-1. `.env`에 Supabase 키 3개
-2. `packages/supabase/migrations/0001_init.sql` 적용
-3. `pnpm --filter @orca/supabase migrate` — 기존 글 이관 (멱등, 파일은 남겨둠)
-
-앱 코드는 한 줄도 바뀌지 않습니다. `CONTENT_DRIVER=file`로 언제든 되돌릴 수 있습니다.
-
-RLS 정책이 anon 키에 대해 `published` + `noindex` 아님만 허용합니다 — 앱에 버그가 생겨도 초안이
-공개되지 않도록 하는 마지막 방어선입니다.
-
-자세한 내용: [wiki/07-supabase.md](./wiki/07-supabase.md)
-
----
-
-## 컨텍스트 유지 방식
+### 1. 컨텍스트 레이어
 
 세션이 시작되면 훅이 자동으로 주입합니다.
 
 ```
-하드 룰  →  wiki 인덱스  →  장기 메모리  →  최근 단기 메모리  →  에이전트 팀  →  git 상태
+코어 하드 룰 → 현재 회사(템플릿) + 그 회사의 하드 룰 → wiki 인덱스
+             → 장기 메모리 → 최근 단기 메모리 → 로스터 → git 상태
 ```
 
-**wiki 전문이 아니라 인덱스만** 로드합니다. 지도를 주고, 필요한 문서는 모델이 직접 엽니다.
+**wiki 전문이 아니라 인덱스만** 올립니다. 지도를 주고, 필요한 문서는 모델이 직접 엽니다
+([ADR-0003](./wiki/decisions/ADR-0003-session-context-loading.md)).
 
-### 2단 메모리
+2단 메모리로 오래가는 것만 남습니다.
 
 ```
 단기 메모리 ──(3회 이상 참조 / 계속 참으로 확인)──▶ 장기 메모리
 장기 메모리 ──(프로젝트 규칙이 됨)──────────────▶ wiki 문서 또는 ADR
 ```
 
-승격은 `/save-memory` 스킬이 관리합니다.
+승격은 `/save-memory` 가 관리합니다.
 
----
+### 2. 로스터
 
-## 이미지 정책 (하드 룰)
-
-**이미지 생성은 Codex `imagegen` 으로만 합니다. Claude의 이미지 생성은 금지입니다.**
+**Claude 서브에이전트가 아닙니다.** 각자 별도 터미널에서 도는 독립 프로세스이고 런타임이 다릅니다.
+그래서 Orca 같은 ADE 가 멀티 터미널로 진짜 병렬 실행할 수 있습니다.
 
 ```bash
-pnpm imagegen --slug <post-slug> --prompt "<장면 설명>"
+pnpm agent --list
+pnpm agent <id> "<작업>"
+pnpm agent <id> "<작업>" --dry-run   # 조립된 명령만 출력 (다른 터미널에 붙여넣기)
 ```
 
-Codex를 쓸 수 없으면 이 순서로 폴백합니다:
+런처가 `agents/registry.yaml` 에서 런타임과 모델을 읽고, `AGENT.md` + 스킬 인덱스(폴더 스캔으로
+자동 생성)를 시스템 프롬프트로 조립해 해당 CLI 를 띄웁니다. 스킬을 추가하면 등록 없이 바로
+반영됩니다.
 
-1. **이미지 없이 진행** — 기본값. 커버는 발행 필수 요소가 아닙니다.
+에이전트를 늘리는 기준은 **역할이 아니라 런타임과 병렬성**입니다. 기존 에이전트가 할 수 있는
+일이면 에이전트 대신 스킬을 추가하세요 → [wiki/05-agent-operations.md](./wiki/05-agent-operations.md)
+
+### 3. 출고 게이트
+
+게이트는 결정적 함수입니다. 어드민 화면과 CLI 가 같은 함수를 부르므로 사람과 에이전트가 같은
+판정을 봅니다. 게이트 안에 모델 호출을 넣지 않습니다 — 모델이 자기 결과물을 평가하면 통과 쪽으로
+기웁니다.
+
+게이트의 구체적인 규칙은 템플릿이 정합니다. `blog-autopublish` 라면 `pnpm audit:content` 입니다.
+
+### 4. 이미지 정책
+
+이미지 생성 경로는 **Codex `imagegen` 하나**입니다. 정책은 코어이고, 실행 명령은 템플릿이
+제공합니다 — 생성한 이미지를 어디에 두고 어떤 메타데이터에 출처를 적을지는 도메인마다 다르기
+때문입니다. `blog-autopublish` 라면:
+
+```bash
+pnpm imagegen --slug <slug> --prompt "<장면 설명>"
+```
+
+Codex 를 쓸 수 없으면 이 순서로 폴백합니다.
+
+1. **이미지 없이 진행** — 기본값
 2. **사용자가 직접 첨부** — `source: user-upload`
 3. **웹 검색** — 라이선스 확인 필수. `source: web-search` + `license` 기록
 
-문서로만 둔 규칙은 지켜지지 않으므로 **세 겹으로 강제**합니다:
+문서로만 둔 규칙은 지켜지지 않으므로 세 겹으로 강제합니다.
 
 | 층 | 수단 |
 | --- | --- |
 | 타입 | `ImageSource` 에 `claude` 값이 존재하지 않음 |
 | 훅 | `PreToolUse` 가 비-Codex 이미지 생성 명령을 차단 |
-| 감사 | 출처 미기록 · 라이선스 없는 웹 이미지를 error 처리 → 발행 불가 |
+| 감사 | 출처 미기록 · 라이선스 없는 웹 이미지를 error 처리 → 출고 불가 |
 
 근거: [ADR-0002](./wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
 ---
 
-## 스킬 (슬래시 커맨드)
+## 코어 하드 룰
 
-| 명령 | 하는 일 |
-| --- | --- |
-| `/orca-setup` | 의존성 전수 검사 · 설치 (결정적 스크립트) · 조직 팔로우 · 스타는 선택 |
-| `/save-memory` | 세션 내용을 단기 메모리에 저장하고 필요 시 장기/wiki로 승격 |
-| `/create-agent` | 새 에이전트를 registry + AGENT.md + skills/ 에 일괄 생성 |
+템플릿과 무관하게 항상 참입니다. 바꾸려면 `wiki/decisions/` 에 ADR 을 먼저 써야 합니다.
 
-에이전트가 읽는 스킬(`agents/<id>/skills/`)은 이것과 별개입니다. 그쪽은 런처가 시스템 프롬프트에
-주입하는 런타임 중립 플레이북이라 codex 에이전트도 읽습니다.
+1. **이미지 생성 경로는 하나다.** 다른 이미지 모델 호출도, SVG 로 대신 그리는 것도 금지.
+2. **출고 버튼은 사람이 누른다.** 에이전트는 검수 대기(`in_review`)까지만 올린다.
+3. **진실은 저장소 파일이다.** 결과물도 결정도 코드와 같은 저장소에서 버전 관리한다.
+4. **게이트는 결정적이다.** 검수에 모델 추론을 넣지 않는다.
+5. **컨텍스트는 스스로 올라온다.** 누구도 챙겨올 필요가 없다.
 
----
-
-## 에이전트
-
-**Claude 서브에이전트가 아닙니다.** 각자 별도 터미널에서 도는 독립 프로세스이고, 런타임이 다릅니다.
-그래서 Orca가 멀티 터미널로 진짜 병렬 실행할 수 있습니다.
-
-| ID | 런타임 | 모델 | 역할 |
-| --- | --- | --- | --- |
-| `blog-writer` | `claude` | opus | 기획 → 작성 → SEO/GEO → 검수 |
-| `image-maker` | `codex` | default | imagegen으로 이미지 생성 · 출처 기록 |
-
-```bash
-pnpm agent --list
-pnpm agent blog-writer "Turborepo 캐시 전략으로 글 하나 써줘"
-pnpm agent image-maker "turborepo-cache-strategy 커버 이미지"
-```
-
-```
-agents/blog-writer/
-├── AGENT.md                       시스템 프롬프트로 주입
-└── skills/
-    ├── plan-post/SKILL.md         기획 · 중복 확인 · 아웃라인
-    ├── write-draft/SKILL.md       본문 작성
-    ├── optimize-seo-geo/SKILL.md  메타데이터
-    └── review-and-submit/SKILL.md 감사 · in_review
-```
-
-런처가 `AGENT.md` + 스킬 인덱스(폴더 스캔으로 자동 생성)를 시스템 프롬프트로 조립해 해당 CLI를
-올바른 모델로 띄웁니다. 스킬을 추가하면 별도 등록 없이 바로 반영됩니다.
-
-### 왜 둘뿐인가
-
-**나누는 기준은 역할이 아니라 런타임과 병렬성입니다.** 콘텐츠 파이프라인 네 단계는 모두 같은 파일을
-순차로 건드리므로 프로세스를 나눌 이유가 없습니다 — 대신 스킬로 나눴습니다. 반면 이미지는 런타임 자체가
-다르고(Codex 전용) 그 경계는 협상 대상이 아니므로 프로세스를 분리해 규칙을 구조로 만들었습니다.
-
-멀티 터미널 병렬 규칙은 [wiki/05-agent-operations.md](./wiki/05-agent-operations.md).
+도메인 규칙은 `templates/<id>/template.yaml` 의 `rule:` 에 적고, 세션 시작 시 코어 룰 위에
+얹혀서 주입됩니다.
 
 ---
 
 ## 명령
 
+### 코어 (항상)
+
 | 명령 | 설명 |
 | --- | --- |
-| `pnpm setup` | 전체 환경 검사 + 설치 (+ 선택: GitHub 팔로우/스타) |
-| `pnpm check` | 환경 상태만 검사 (설치하지 않음) |
-| `pnpm dev` | web + admin 동시 실행 |
-| `pnpm dev:web` / `pnpm dev:admin` | 개별 실행 |
-| `pnpm build` | 두 앱 빌드 |
-| `pnpm typecheck` | 타입 검사 |
-| `pnpm audit:content` | 발행 게이트를 CLI 로 실행 (admin 검수 화면과 동일한 함수) |
+| `pnpm company-setup` | 의존성 검사 → 템플릿 선택 → 환경 준비 → 검증 (+ 선택: GitHub 응원) |
+| `pnpm check` | 환경 상태만 검사 (설치하지 않음). 현재 템플릿의 검사 항목까지 확인 |
+| `pnpm template list \| apply <id> \| prune` | 템플릿 조회 · 적용 · 정리 |
+| `pnpm agent --list \| <id> "<작업>"` | 에이전트 목록 · 실행 |
 | `pnpm context` | 세션 컨텍스트 수동 출력 |
-| `pnpm imagegen` | Codex 이미지 생성 |
 | `pnpm memory:new <topic>` | 새 메모리 파일 생성 (`--long` 으로 장기) |
-| `pnpm --filter @orca/supabase migrate` | 파일 → Supabase 글 이관 (`--dry-run` 지원) |
+| `pnpm dev \| build \| typecheck \| lint \| test` | 워크스페이스 전체 (turbo) |
+
+### 템플릿이 얹는 것
+
+`blog-autopublish` 를 적용하면 `dev:web` · `dev:admin` · `audit:content` · `cover` · `imagegen`
+이 추가됩니다. 어떤 키가 오는지는 매니페스트의 `script:` 줄에 적혀 있습니다.
 
 ---
 
-## 다른 도메인으로 바꾸기
+## 슬래시 커맨드
 
-블로그는 이해를 돕기 위한 레퍼런스입니다. 커머스 · 대시보드 · 문서 사이트로 바꾸려면:
+| 명령 | 하는 일 |
+| --- | --- |
+| `/company-setup` | 의존성 전수 검사 + 설치 · 템플릿 선택 (조직 팔로우 · 스타는 선택) |
+| `/save-memory` | 세션 내용을 단기 메모리에 저장하고 필요 시 장기/wiki 로 승격 |
+| `/create-agent` | 새 에이전트를 registry + AGENT.md + skills/ 에 일괄 생성 |
 
-1. `packages/content/src/schema.ts` 의 스키마를 교체
-2. `packages/content/src/audit.ts` 의 감사 규칙을 교체
-3. `agents/` 를 `/create-agent` 로 재구성
-4. `wiki/03`, `wiki/04` 를 도메인 가이드로 교체
+에이전트가 읽는 스킬(`agents/<id>/skills/`)은 이것과 별개입니다. 그쪽은 런처가 시스템 프롬프트에
+주입하는 **런타임 중립 플레이북**이라 codex 에이전트도 읽습니다.
 
-**그대로 두는 것**: 훅 · 메모리 구조 · 검수 게이트 패턴 · 이미지 정책 · 저장소 드라이버 · 테크니컬 SEO ·
-모노레포 뼈대. 이 부분이 템플릿의 실제 가치입니다.
+---
+
+## 새 템플릿 만들기
+
+```
+templates/<id>/
+├── template.yaml    매니페스트
+└── files/           레포 루트 기준 경로 그대로
+```
+
+매니페스트는 반복 키 형식입니다. YAML 파서를 들이지 않고 `sed`/`awk` 로 읽습니다 — 셋업이
+결정적이어야 하기 때문입니다.
+
+| 키 | 뜻 |
+| --- | --- |
+| `id` · `name` · `status` · `summary` | 목록에 보이는 것. `status` 는 `stable` · `preview` · `planned` |
+| `ships` · `hires` · `gate` | 한 줄 요약 (문서 · 랜딩에서 씀) |
+| `script: key=value` | 루트 `package.json` 에 병합. 갈아탈 때 이 키만 회수 |
+| `verify-workspace:` | 의존성 연결까지 확인 (없으면 실패) |
+| `verify-dir:` | 디렉터리 존재 + 파일 개수 (없으면 실패) |
+| `verify-optional:` | 있으면 좋은 파일/디렉터리 (없으면 경고) |
+| `verify-env: VAR=설명` | `.env` 값 확인. 없으면 무엇이 꺼지는지 알림 |
+| `note-env: VAR=설명` | 비어 있는 게 정상인 값. 상태만 보여줌 |
+| `runtime:` | 이 템플릿이 쓰는 CLI (없으면 경고) |
+| `mcp: 서버명=설명` | 이 템플릿이 쓰는 MCP 서버. 등록 여부를 검사 |
+| `mcp-claude:` · `mcp-codex:` | 미등록일 때 출력할 등록 명령 |
+| `rule:` | 이 회사의 하드 룰. 세션 시작마다 코어 룰 위에 주입 |
+| `next:` | 셋업 완료 후 안내. `${VAR}` 는 `.env` 에서 치환 |
+
+읽는 쪽은 `scripts/template.sh` · `scripts/check-deps.sh` · `scripts/load-context.sh` 셋뿐입니다.
 
 ---
 
 ## 기술 스택
 
-pnpm workspaces · Turborepo · Next.js 16 (App Router) · React 19 · TypeScript 5.9 (strict) ·
-Tailwind CSS 4 · zod 4 · Supabase · tiptap · Radix UI · gray-matter · marked · turndown
-
----
+pnpm workspaces · Turborepo · TypeScript 5.9 (strict) · 결정적 bash 스크립트.
+앱 스택(Next.js · React · Tailwind · zod 등)은 템플릿이 가져옵니다.
 
 ## 라이선스
 

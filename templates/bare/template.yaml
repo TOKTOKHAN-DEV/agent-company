@@ -1,0 +1,36 @@
+# ─────────────────────────────────────────────────────────────
+# Template Manifest — bare
+#
+# 사업 없는 조직. 코어(훅 · 메모리 · 레지스트리 · 런처 · 게이트 패턴)는
+# 이미 레포 루트에 있으므로, 이 템플릿이 놓는 것은 빈 로스터뿐입니다.
+#
+# 반복 키 형식입니다 (agents/registry.yaml 과 같은 규칙). YAML 파서를 들이지
+# 않고 sed/awk 로 읽습니다 — 셋업이 결정적이어야 하기 때문입니다.
+#
+# 읽는 쪽:  scripts/template.sh · scripts/check-deps.sh · scripts/load-context.sh
+# ─────────────────────────────────────────────────────────────
+
+id: bare
+name: Bare
+status: stable
+summary: 사업 없는 조직. 훅 · 메모리 · 레지스트리 · 런처에 빈 로스터만.
+ships: 코어만
+hires: 직접 정하세요
+gate: 직접 만드세요
+
+# ── 루트 package.json 에 병합할 스크립트 ─────────────────────
+# 없습니다. 코어 스크립트만으로 충분합니다.
+
+# ── check-deps.sh 가 검사할 항목 ─────────────────────────────
+verify-dir: agents
+
+# ── 이 템플릿이 쓰는 런타임 (없으면 경고) ────────────────────
+runtime: claude
+
+# ── 이 템플릿의 하드 룰 (세션 시작마다 주입) ─────────────────
+rule: 도메인 규칙이 아직 없습니다. 첫 에이전트를 만들 때 이 매니페스트의 `rule:` 에 함께 적으세요.
+
+# ── 셋업 완료 후 안내 (${VAR} 는 .env 에서 치환) ─────────────
+next: /create-agent — registry.yaml + AGENT.md + skills/ 를 한 번에 만듭니다
+next: pnpm agent --list — 등록된 에이전트 확인
+next: bash scripts/template.sh list — 다른 템플릿으로 갈아탈 수 있습니다

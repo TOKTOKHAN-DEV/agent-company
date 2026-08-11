@@ -1,4 +1,4 @@
-# Orca AI Company
+# Agent Company
 
 [한국어](../../README.md) ·
 [English](./README.en.md) ·
@@ -9,6 +9,9 @@
 [Deutsch](./README.de.md) ·
 [Português](./README.pt-BR.md) ·
 [Русский](./README.ru.md)
+
+> **⚠️ この翻訳は古い構成のままです。** リポジトリは「コア + テンプレート」構成に変わりました。
+> 最新の内容は [한국어](../../README.md) または [English](./README.en.md) を参照してください。
 
 > AI エージェントのチームで IT プロジェクトを運用するためのモノレポテンプレート。
 > コンテキストはセッションをまたいで維持され、品質はレビューゲートが守ります。
@@ -47,8 +50,8 @@ AI にプロジェクトを任せると、繰り返し二つのものが壊れ�
 このプロンプトをお使いの LLM エージェント（Claude Code、Codex、Cursor、Gemini CLI など）に貼り付けてください。
 
 ```text
-Install and configure orca-ai-company by following the instructions here:
-https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+Install and configure agent-company by following the instructions here:
+https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
 [インストールガイド](../../INSTALL.md) を直接読んでも構いません。ただし本気で、エージェントにやらせて
@@ -59,7 +62,7 @@ https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/
 インストールガイドを取得して、その通りに従ってください。
 
 ```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/heads/main/INSTALL.md
+curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
 ガイドは**クローンから検証まで自己完結**しています。カレントディレクトリが空ならサブディレクトリを作らず
@@ -69,8 +72,8 @@ curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/orca-ai-company/refs/hea
 ### 自分でインストール
 
 ```bash
-git clone https://github.com/TOKTOKHAN-DEV/orca-ai-company.git
-cd orca-ai-company
+git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
+cd agent-company
 pnpm install
 pnpm setup     # 依存関係の全数検査 · 環境準備 · Organization のフォロー · リポジトリに star
 pnpm dev       # web → :3000 · admin → :3001
@@ -85,7 +88,7 @@ pnpm dev       # web → :3000 · admin → :3001
 ## 構成
 
 ```
-orca-ai-company/
+agent-company/
 ├── apps/
 │   ├── web/              公開ブログ (Next.js 16 App Router, :3000)
 │   └── admin/            コンテンツ · SEO/GEO · レビューのダッシュボード (:3001)
@@ -221,7 +224,7 @@ web · admin · audit CLI
 
 1. `.env` に Supabase のキー 3 つ
 2. `packages/supabase/migrations/0001_init.sql` を適用
-3. `pnpm --filter @orca/supabase migrate` — 既存記事の移行（冪等・ファイルは残します）
+3. `pnpm --filter @repo/supabase migrate` — 既存記事の移行（冪等・ファイルは残します）
 
 アプリのコードは 1 行も変わりません。`CONTENT_DRIVER=file` でいつでも戻せます。
 
@@ -283,7 +286,7 @@ Codex が使えない場合は、この順にフォールバックします。
 
 | コマンド | 内容 |
 | --- | --- |
-| `/orca-setup` | 依存関係の全数検査 · インストール · Organization のフォロー · star（決定的スクリプト） |
+| `/company-setup` | 依存関係の全数検査 · インストール · Organization のフォロー · star（決定的スクリプト） |
 | `/save-memory` | セッションの内容を短期メモリに保存し、必要に応じて長期/wiki へ昇格 |
 | `/create-agent` | 新しいエージェントを registry + AGENT.md + skills/ に一括生成 |
 
@@ -346,7 +349,7 @@ agents/blog-writer/
 | `pnpm context` | セッションコンテキストを手動で出力 |
 | `pnpm imagegen` | Codex で画像生成 |
 | `pnpm memory:new <topic>` | 新しいメモリファイルを作成（`--long` で長期） |
-| `pnpm --filter @orca/supabase migrate` | ファイルから Supabase へ記事を移行（`--dry-run` 対応） |
+| `pnpm --filter @repo/supabase migrate` | ファイルから Supabase へ記事を移行（`--dry-run` 対応） |
 
 ---
 

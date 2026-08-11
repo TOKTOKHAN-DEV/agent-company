@@ -15,7 +15,7 @@
 #   pending      아직 안 됨 — 물어볼 시점
 #
 # 왜 별도 스크립트인가: 같은 판단을 두 경로가 함께 씁니다. 터미널에서는
-# orca-setup.sh 가 텍스트 메뉴로 묻고, Claude Code 에서는 /orca-setup 스킬이
+# company-setup.sh 가 텍스트 메뉴로 묻고, Claude Code 에서는 /company-setup 스킬이
 # AskUserQuestion 으로 묻습니다. 실행과 상태 판정을 여기 한 곳에 모아두면
 # 어느 경로로 들어와도 결과가 같습니다.
 #
@@ -27,8 +27,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT" || exit 1
 
 GH_ORG="TOKTOKHAN-DEV"
-GH_REPO="TOKTOKHAN-DEV/orca-ai-company"
-STATE_FILE=".orca/state/community"
+GH_REPO="TOKTOKHAN-DEV/agent-company"
+STATE_FILE=".company/state/community"
 
 gh_ready() { command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; }
 followed()  { gh api "/user/following/$GH_ORG" --silent >/dev/null 2>&1; }

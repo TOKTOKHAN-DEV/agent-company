@@ -1,0 +1,58 @@
+# ─────────────────────────────────────────────────────────────
+# Template Manifest — blog-autopublish
+#
+# 반복 키 형식입니다 (agents/registry.yaml 과 같은 규칙). YAML 파서를 들이지
+# 않고 grep/awk 로 읽습니다 — 셋업이 결정적이어야 하기 때문입니다.
+#
+# 읽는 쪽:  scripts/template.sh · scripts/check-deps.sh · scripts/load-context.sh
+# ─────────────────────────────────────────────────────────────
+
+id: blog-autopublish
+name: Blog Autopublish
+status: stable
+summary: 조사하고, 초안을 쓰고, SEO/GEO 를 채운 뒤 검수 앞에서 멈추는 편집국.
+ships: 공개 사이트 · 검수 데스크
+hires: blog-writer · image-maker
+gate: audit → in_review
+
+# ── 루트 package.json 에 병합할 스크립트 ─────────────────────
+# 템플릿을 바꾸면 여기 적힌 키만 정확히 회수됩니다.
+script: dev:web=turbo run dev --filter=@repo/web
+script: dev:admin=turbo run dev --filter=@repo/admin
+script: audit:content=node --experimental-strip-types --no-warnings scripts/audit.ts
+script: cover=node scripts/set-cover.mjs
+# 이미지 정책은 코어지만, 명령은 템플릿이 줍니다.
+# codex-imagegen.sh 는 content/posts/<slug>.md 를 찾아 프론트매터의 cover 를 갱신하므로
+# 이 도메인 밖에서는 의미가 없습니다. 정책(다른 모델 금지)은 PreToolUse 훅이 계속 강제합니다.
+script: imagegen=bash scripts/codex-imagegen.sh
+
+# ── check-deps.sh 가 검사할 항목 ─────────────────────────────
+# verify-workspace  의존성 연결까지 확인 (없으면 실패)
+# verify-dir        디렉터리 존재 + 파일 개수 (없으면 실패)
+# verify-optional   파일/디렉터리 존재 (없으면 경고)
+# verify-env        .env 에 값이 있는지 (없으면 경고 + 무엇이 꺼지는지)
+# note-env          .env 상태를 보여주기만 함 (비어 있는 게 정상인 값)
+verify-workspace: apps/web
+verify-workspace: apps/admin
+verify-dir: content/posts
+verify-optional: packages/supabase/migrations/0001_init.sql
+verify-env: NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=구글 서치콘솔 소유 확인 태그가 출력되지 않습니다
+verify-env: NEXT_PUBLIC_NAVER_SITE_VERIFICATION=네이버 서치어드바이저 소유 확인 태그가 출력되지 않습니다
+verify-env: NEXT_PUBLIC_GA4_MEASUREMENT_ID=GA4 트래커가 로드되지 않습니다
+note-env: NEXT_PUBLIC_SUPABASE_URL=비어 있으면 content/posts/*.md 파일 드라이버로 동작합니다 (정상)
+
+# ── 이 템플릿이 쓰는 런타임 (없으면 경고) ────────────────────
+runtime: claude
+runtime: codex
+
+# ── 이 템플릿의 하드 룰 (세션 시작마다 주입) ─────────────────
+# 코어 하드 룰(load-context.sh 에 박혀 있는 5개)에 얹히는 도메인 규칙입니다.
+rule: 콘텐츠 접근은 `getRepository()` 로만. `getAllPosts()` 같은 파일 전용 함수를 앱 코드에서 직접 부르지 않는다.
+rule: 파일 IO 는 `@repo/content` 경유. 앱 코드에서 `fs` 를 직접 import 하지 않는다.
+rule: 프론트매터 필드를 추가하면 `schema.ts` → admin 폼 → `audit.ts` 세 곳을 함께 고친다.
+rule: 슬러그는 자연어를 쓴다 (한글 허용). 기존 슬러그를 바꾸지 않는다.
+
+# ── 셋업 완료 후 안내 (${VAR} 는 .env 에서 치환) ─────────────
+next: pnpm dev — web http://localhost:${WEB_PORT} · admin http://localhost:${ADMIN_PORT}
+next: pnpm agent blog-writer "<작업>" — 편집국을 띄웁니다
+next: pnpm audit:content — 발행 게이트를 직접 돌려봅니다

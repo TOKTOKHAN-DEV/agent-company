@@ -19,11 +19,11 @@ pnpm-debug.log*
 coverage/
 *.tsbuildinfo
 
-# Orca local runtime state (memory is versioned, scratch is not)
-.orca/tmp/
-.orca/cache/
+# 로컬 런타임 상태 (메모리는 버전 관리, 스크래치는 아님)
+.company/tmp/
+.company/cache/
 # 사람마다 다른 선택입니다 (GitHub 응원 건너뛰기 기록) — 공유하지 않습니다
-.orca/state/
+.company/state/
 wiki/memory/short-term/*.local.md
 
 # Local tooling state — session ids and absolute paths, never shared

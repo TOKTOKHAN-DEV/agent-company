@@ -15,7 +15,7 @@
 #   3. 해당 CLI 를 올바른 모델로 실행한다
 #
 # 에이전트는 Claude 서브에이전트가 아니라 독립 프로세스다. 그래서 런타임이
-# 서로 달라도 되고, Orca 가 멀티 터미널로 병렬 실행할 수 있다.
+# 서로 달라도 되고, Orca 같은 ADE 가 멀티 터미널로 병렬 실행할 수 있다.
 # ─────────────────────────────────────────────────────────────
 set -uo pipefail
 
@@ -29,7 +29,13 @@ RED=$'\033[31m'; GREEN=$'\033[32m'; YELLOW=$'\033[33m'; DIM=$'\033[2m'; BOLD=$'\
 
 die() { printf '%s✘%s %s\n' "$RED" "$RESET" "$1" >&2; exit 1; }
 
-[ -f "$REGISTRY" ] || die "$REGISTRY 를 찾을 수 없습니다."
+if [ ! -f "$REGISTRY" ]; then
+  printf '%s✘%s %s 가 없습니다 — 아직 로스터가 없습니다.\n\n' "$RED" "$RESET" "$REGISTRY" >&2
+  printf '템플릿을 펼치면 그 템플릿의 에이전트가 등록됩니다.\n\n' >&2
+  printf '  %spnpm company-setup%s          어떤 회사를 차릴지 고릅니다\n' "$BOLD" "$RESET" >&2
+  printf '  %spnpm template list%s          템플릿 목록\n' "$BOLD" "$RESET" >&2
+  exit 1
+fi
 
 # ── 에이전트 목록 ─────────────────────────────────────────────
 list_agents() {
@@ -140,7 +146,7 @@ build_prompt() {
   printf -- '- `wiki/memory/index.md` — 장기 메모리\n'
 }
 
-PROMPT_FILE="$(mktemp -t orca-agent-XXXXXX)"
+PROMPT_FILE="$(mktemp -t agent-XXXXXX)"
 trap 'rm -f "$PROMPT_FILE"' EXIT
 build_prompt > "$PROMPT_FILE"
 

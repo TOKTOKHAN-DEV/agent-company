@@ -17,10 +17,10 @@ importers:
 
   apps/admin:
     dependencies:
-      '@orca/content':
+      '@repo/content':
         specifier: workspace:*
         version: link:../../packages/content
-      '@orca/supabase':
+      '@repo/supabase':
         specifier: workspace:*
         version: link:../../packages/supabase
       '@radix-ui/react-select':
@@ -78,10 +78,10 @@ importers:
 
   apps/web:
     dependencies:
-      '@orca/content':
+      '@repo/content':
         specifier: workspace:*
         version: link:../../packages/content
-      '@orca/supabase':
+      '@repo/supabase':
         specifier: workspace:*
         version: link:../../packages/supabase
       marked:
@@ -118,7 +118,7 @@ importers:
 
   packages/content:
     dependencies:
-      '@orca/supabase':
+      '@repo/supabase':
         specifier: workspace:*
         version: link:../supabase
       gray-matter:
