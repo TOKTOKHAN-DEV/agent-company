@@ -10,369 +10,332 @@
 [Português](./README.pt-BR.md) ·
 [Русский](./README.ru.md)
 
-> **⚠️ この翻訳は古い構成のままです。** リポジトリは「コア + テンプレート」構成に変わりました。
-> 最新の内容は [한국어](../../README.md) または [English](./README.en.md) を参照してください。
-
-> AI エージェントのチームで IT プロジェクトを運用するためのモノレポテンプレート。
-> コンテキストはセッションをまたいで維持され、品質はレビューゲートが守ります。
+> AI チームが回すモノレポテンプレート。
+> 組織図、社則、セッションをまたいで残る記憶、そして人間だけが押せる出荷ボタン。
 
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.11-339933)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A510-F69220)](https://pnpm.io)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000)](https://nextjs.org)
 [![License](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 ---
 
-## 何を解決するか
+## プロジェクト概要
 
-AI にプロジェクトを任せると、繰り返し二つのものが壊れます。
+Orca や Paseo のようなエージェント IDE は作業環境を提供してくれます。並列ワークツリー、
+エージェントごとのターミナル、diff ビュー。ところが実際のプロジェクトを進めていくと、同じ問題が
+出てくるものです。
 
-**コンテキストが消えます。** セッションが終わったり担当者が変わったりすると、AI は過去の決定を知りません。
-同じ議論を繰り返し、すでに廃止した方法に逆戻りします。
+過去に進めた履歴が残りません。セッションが終わったり別のエージェントが引き継いだりすると、
+過去の意思決定が消えてしまいます。すでに話した内容をもう一度伝えることになり、すでに捨てたはずの
+やり方に戻ってしまう場合もあります。
 
-**品質管理がありません。** レビューゲートがなければ、AI の成果物はそのまま本番に出ていきます。
+そして成果物のレビューも簡単ではありません。ですから人が確認して送り出す窓口が必要になります。
+ブログなら管理画面、Toss ミニアプリなら審査の事前チェックとコンソールがその役割を担います。
 
-このテンプレートは、この二つを**構造で**塞ぎます。
+どちらもプロンプトを磨いて解決する問題ではありません。崩れる箇所ごとにシステムを一つずつ
+付けました。
 
-| 問題 | 解決策 |
-| --- | --- |
-| コンテキストの喪失 | `CLAUDE.md` + `AGENTS.md` + `wiki/` + 短期/長期メモリを SessionStart フックで自動ロード |
-| 品質管理 | 決定的な監査関数 + 管理画面のレビュー + 人間だけが押せる公開ボタン |
-| 役割の混在 | ランタイム別の独立エージェント + モデルの明示的な対応付け + マルチターミナル並列実行 |
-| 画像の信頼性 | Codex `imagegen` の単一経路 + 出所の記録 + 三重の強制 |
+| 崩れるもの | システム | 強制手段 |
+| --- | --- | --- |
+| コンテキストの消失 | ハンドブック · wiki インデックス · 長短期メモリがセッション開始ごとに自動で載る | SessionStart フック |
+| 品質のドリフト | 出荷ゲートが決定的な関数。人間もエージェントも同じ判定を見る | ゲートに LLM 呼び出しなし |
+| 役割の混在 | エージェントごとにランタイム · モデル · 書き込み範囲を宣言 | `agents/registry.yaml` |
+| 出所不明の資産 | 画像生成の経路は一つだけ、全資産に出所を記録 | ツールガード + 監査 |
+| 事故による出荷 | エージェントは `in_review` まで。出荷ボタンは人間が押す | 型にその経路がない |
 
 ---
 
 ## インストール
 
-### 人間向けのインストール
+### エージェントに任せる (推奨)
 
-このプロンプトをお使いの LLM エージェント（Claude Code、Codex、Cursor、Gemini CLI など）に貼り付けてください。
+この文を、お使いのコーディングエージェント (Claude Code, Codex, Cursor, Gemini CLI など) に
+そのまま貼り付けてください。
 
 ```text
-Install and configure agent-company by following the instructions here:
+Install Agent Company by following the instructions here:
 https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
-[インストールガイド](../../INSTALL.md) を直接読んでも構いません。ただし本気で、エージェントにやらせて
-ください。人間は設定ファイルをタイプミスで壊します。
+ガイドはクローンから検証まで自己完結する形で書かれています。現在のフォルダが空ならその場に
+クローンし、必須ツールと任意ツール、そのフォールバック手順まで書かれているので、詰まった箇所で
+エージェントが自分で判断できます。
 
-### LLM エージェント向けのインストール
-
-インストールガイドを取得して、その通りに従ってください。
-
-```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
-```
-
-ガイドは**クローンから検証まで自己完結**しています。カレントディレクトリが空ならサブディレクトリを作らず
-その場にクローンし、必須・任意ツールとフォールバック手順もすべて書かれているので、詰まった箇所で自分で
-判断できます。最後の `pnpm check` がセットアップの成否を決定的に示します。
-
-### 自分でインストール
+### 手動で行う
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
 cd agent-company
+
 pnpm install
-pnpm setup     # 依存関係の全数検査 · 環境準備 · Organization のフォロー · リポジトリに star
-pnpm dev       # web → :3000 · admin → :3001
+pnpm company-setup    # 依存チェック → どの会社を始めるか選択 → 環境準備 → 検証
+pnpm dev
 ```
 
-詳しい手順とトラブルシューティングは **[INSTALL.md](../../INSTALL.md)** を参照してください。
+詳しい手順とトラブルシューティングは [INSTALL.md](../../INSTALL.md) を参照してください。
 
-> INSTALL.md は現在韓国語で書かれています。AI エージェントは問題なく読めます。
+> `pnpm setup` ではなく `pnpm company-setup` です。`setup` は pnpm の組み込みコマンドなので、
+> 同じ名前だとスクリプトが隠れてしまいます。
 
 ---
 
-## 構成
+## コアとテンプレート
+
+リポジトリは二つの層で構成されています。コアはどの会社でも同じで、何を作るかはテンプレートが
+決めます。
 
 ```
 agent-company/
-├── apps/
-│   ├── web/              公開ブログ (Next.js 16 App Router, :3000)
-│   └── admin/            コンテンツ · SEO/GEO · レビューのダッシュボード (:3001)
-├── packages/
-│   ├── content/          スキーマ · ストレージドライバ · 監査 · JSON-LD（唯一の情報源）
-│   └── supabase/         クライアント · ストレージ · マイグレーション（キーがなければ無効）
-├── content/posts/        Markdown の記事 — 既定のドライバ
-├── docs/i18n/            README の翻訳 8 言語
-├── agents/
-│   ├── registry.yaml     ランタイム · モデル · 権限（唯一の情報源）
-│   ├── blog-writer/      AGENT.md + skills/ (claude · opus)
-│   └── image-maker/      AGENT.md + skills/ (codex)
-├── wiki/
-│   ├── 00~06-*.md        概要 · アーキテクチャ · 規約 · ガイド · 履歴
-│   ├── decisions/        ADR
-│   └── memory/           短期 · 長期メモリ
-├── .claude/
-│   ├── settings.json     フックの登録
-│   ├── hooks/            SessionStart のコンテキスト読み込み · 画像ポリシーのガード
-│   └── skills/           スラッシュコマンド 3 種
-├── scripts/              決定的なシェルスクリプト
-├── CLAUDE.md             Claude Code 向けの指示
-└── AGENTS.md             すべての AI コーディングエージェント向けの指示
+│
+├── ── コア (常にある) ──────────────────────────────
+│   ├── .claude/          フック(SessionStart · PreToolUse) · スラッシュコマンド
+│   ├── wiki/             プロジェクト知識 + 長/短期メモリ + ADR
+│   ├── agents/           ロスターが入る場所 (registry.yaml + <id>/)
+│   ├── scripts/          決定的なシェルスクリプト
+│   ├── CLAUDE.md         Claude Code 向けの指針
+│   └── AGENTS.md         すべての AI コーディングエージェント共通の指針
+│
+├── ── テンプレート (選んで展開) ────────────────────
+│   └── templates/<id>/
+│       ├── template.yaml   マニフェスト — スクリプト · 検査項目 · ハードルール · 次の一手
+│       └── files/          リポジトリルート基準のパスそのまま (apps/ · packages/ · agents/ …)
+│
+└── ── プロダクト (このリポジトリのみ) ──────────────
+    └── site/               ランディングページ。静的 HTML 一枚、ビルドなし → Vercel
 ```
 
----
+`pnpm company-setup` がテンプレートを選ばせ、`templates/<id>/files/` をルートに展開したあと、
+マニフェストの `script:` をルートの `package.json` にマージします。テンプレートを乗り換えると、
+前のテンプレートが入れたスクリプトキーだけが正確に回収されます。
 
-## リファレンス実装：AI が運用するブログ
+### 現在あるテンプレート
 
-### web (`:3000`)
+| id | 状態 | 作るもの | ロスター | ゲート |
+| --- | --- | --- | --- | --- |
+| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | 公開サイト + レビューデスク | blog-writer · image-maker | `audit` → `in_review` |
+| `bare` | stable | コアのみ。空のロスター | ご自身で決める | ご自身で作る |
+| [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | Toss の WebView ミニアプリ | spec-writer · ui-builder · release-manager | `preflight` → コンソール審査 |
 
-公開ブログ。`content/posts/` から `status: published` の記事だけをレンダリングします。
-JSON-LD（BlogPosting · FAQPage）、`sitemap.xml`、`robots.txt`、`rss.xml` を自動生成します。
-回答エンジンのクローラー（GPTBot、ClaudeBot、PerplexityBot など）を明示的に許可しています。
-
-### admin (`:3001`)
-
-- **エディタ** — tiptap リッチテキスト + 画像アップロード。保存形式は常に Markdown
-- **テクニカル SEO パネル** — canonical · robots 指示子 · OG/Twitter · サイトマップ priority · hreflang
-- **GEO パネル** — 抽出用の要約 · FAQ · エンティティ · 引用元 · ロケール/ターゲット市場
-- **レビュー画面** — 自動監査の結果、JSON-LD プレビュー、人間用チェックリスト、公開ボタン
-- **SEO/GEO ダッシュボード** — 全記事の未解決項目をレーン別に集計
-
-UI はネイティブの `<select>` ではなく Radix ベースのコンポーネントを使います。OS が描く既定の
-セレクトはスタイルが効かず、ブラウザごとに異なるためです。
-
-### agents
-
-```
-blog-writer (claude · opus)                       image-maker (codex)   人間
-plan-post → write-draft → optimize-seo-geo    →   generate-cover    →   admin レビュー → 公開
-                 ↓
-         review-and-submit → status: in_review
+```bash
+pnpm template list                    # 一覧 · 現在適用中のもの
+pnpm template apply <id>              # 展開する
+pnpm template apply <id> --force      # 他のテンプレートの上に上書き
+pnpm template prune                   # 使わないカタログとランディングを片付ける
 ```
 
-エージェントは `in_review` までしか進めません。**公開は人間の行為です。**
+`planned` はマニフェストに意図だけ書かれていて中身がない状態です。`apply` は拒否します。空の器を
+敷いてしまうと、後から動かない理由を探すことになるからです。
 
----
+### プロジェクト一つは会社一つ
 
-## SEO と GEO を分けて扱う理由
+一つのリポジトリが二つの顔を持ちます。選んだあとは、残りのカタログとプロダクトのランディングは
+そのプロジェクトに必要ないので、`pnpm company-setup` が片付けを提案します。
 
-| | SEO | GEO (Generative Engine Optimization) |
+| | プロダクトリポジトリ (ここ) | Use this template で作った自分のプロジェクト |
 | --- | --- | --- |
-| 対象 | 検索エンジン | 回答エンジン（ChatGPT · Claude · Perplexity · AI Overviews） |
-| 目標 | **順位** | **引用** |
-| 主要シグナル | タイトル · メタ · リンク · 速度 | 抽出しやすい構造 · 明示的な Q&A · 出典 · エンティティ |
+| `site/` (ランディング) | あり → Vercel にデプロイ | 片付けで削除 |
+| 選ばなかったテンプレート | 全部 | 片付けで削除 |
+| 選んだテンプレートの `files/` | あり | 削除 (すでにルートに展開済み) |
+| 選んだテンプレートの `template.yaml` | あり | 残す |
+| コア | あり | あり |
 
-引用されるには、抜き出しやすい形である必要があります。だからフロントマターに GEO ブロックが別にあり、
-`geo.faq` は `FAQPage` JSON-LD として、`geo.answerSummary` はページ上部の要約ブロックとして描画されます。
+マニフェストを残すことが重要です。`check-deps.sh` と `load-context.sh` が `verify-*` と `rule:` を
+読み続けるからです。消すと検査とハードルールの注入がエラーも出さずに静かに消えます。
 
-実務ルールは [wiki/04-seo-geo-playbook.md](../../wiki/04-seo-geo-playbook.md) にあります。
+プロダクトリポジトリには `.company/PRODUCT` マーカーがあるので片付けを拒否します。
+コントリビューターがクローンしてセットアップを走らせてもカタログは消えません。
+
+片付けたあとで別のテンプレートが必要になったら、upstream から取得できます。
+
+```bash
+git remote add upstream https://github.com/TOKTOKHAN-DEV/agent-company.git
+git fetch upstream && git checkout upstream/main -- templates/
+```
+
+### テンプレートを別リポジトリにしなかった理由
+
+マニフェストのキーはコアスクリプトと一緒に動きます。`sed` で読むため知らないキーは静かに無視され、
+リモートテンプレートが古いバージョンだとエラーなしに検査がまるごと抜け落ちます。一つのリポジトリに
+置けばこの問題は起きません。またセットアップの途中にネットワークが挟まると、二回走らせても同じ
+状態という約束が崩れます。
+
+重さは根拠になりにくいところです。`templates/` は git 基準で 388K です。
+
+分ける時期は、サードパーティがテンプレートを提供し始めたとき、テンプレートに大容量アセットが
+入るとき、テンプレートごとにリリース周期が分かれるときです。そのとき手を入れるのは
+`template.sh` のファイル展開部分の一か所です。
 
 ---
 
-## テクニカル SEO
+## コアの構成要素
 
-### 自動生成 — 手を入れる必要はありません
+### 1. コンテキストレイヤー
 
-| パス | 内容 |
-| --- | --- |
-| `/sitemap.xml` | 公開記事 + 記事ごとの priority · changefreq · hreflang |
-| `/robots.txt` | 検索ボットと回答エンジンのボットを許可、`/api/` を遮断 |
-| `/rss.xml` | 公開記事のフィード |
-| `/llms.txt` | **LLM 向けサイト要約** — HTML を解析せずにサイトを理解できます |
-
-`llms.txt` はサイトマップの GEO 版です。サイトマップが「URL がどこにあるか」を伝えるのに対し、
-llms.txt は「このサイトが何で、どんな記事があるか」を伝えます。各項目は記事の `geo.answerSummary` を
-使うため、要約を書くと二重に効きます。
-
-### 記事ごとに管理画面で設定
-
-canonical · noindex/nofollow · robots 指示子（`max-snippet` など）· OG/Twitter カード ·
-サイトマップの priority/changefreq · hreflang · llms.txt に含めるかどうか。
-
-### サーチコンソールとアナリティクス
-
-`.env` に値を入れると有効になります。**空のままならタグもスクリプトも一切出力されません。**
-
-| 変数 | 対象 |
-| --- | --- |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console |
-| `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` | ネイバー サーチアドバイザー |
-| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster Tools |
-| `NEXT_PUBLIC_GA4_MEASUREMENT_ID` | GA4（`afterInteractive` で読み込み） |
-
-### 自然言語スラッグ
+セッションが始まるとフックが自動で注入します。
 
 ```
-/blog/next-js-16-キャッシュ-コンポーネント
+コアのハードルール → 現在の会社(テンプレート) + その会社のハードルール → wiki インデックス
+                   → 長期メモリ → 直近の短期メモリ → ロスター → git の状態
 ```
 
-非 ASCII をそのまま保持します。URL にキーワードが残ることは実際のランキングとクリック率の signal で、
-音訳したスラッグは対象読者にとって読めません。
+wiki の全文ではなくインデックスだけを載せます。地図を渡し、必要な文書はモデルが自分で開きます
+([ADR-0003](../../wiki/decisions/ADR-0003-session-context-loading.md))。
 
-詳細: [wiki/08-technical-seo.md](../../wiki/08-technical-seo.md)
-
----
-
-## バックエンド — 今はファイル、あとで Supabase
-
-アプリのコードはストレージを直接触りません。インターフェースだけを見ます。
+二段メモリで長持ちするものだけが残ります。
 
 ```
-web · admin · audit CLI
-        │
-        ▼
-  getRepository()          ← キーの有無で自動選択
-   ├── file       content/posts/*.md   （既定 · 現在の状態）
-   └── supabase   Postgres + Storage   （キーを入れると）
-```
-
-**キーがない状態が正常です。** `pnpm install && pnpm dev` でそのまま動きます。切り替えるには:
-
-1. `.env` に Supabase のキー 3 つ
-2. `packages/supabase/migrations/0001_init.sql` を適用
-3. `pnpm --filter @repo/supabase migrate` — 既存記事の移行（冪等・ファイルは残します）
-
-アプリのコードは 1 行も変わりません。`CONTENT_DRIVER=file` でいつでも戻せます。
-
-RLS ポリシーにより anon キーでは `published` かつ `noindex` でない記事しか読めません。アプリに
-バグが出ても下書きが漏れないための最後の防衛線です。
-
-詳細: [wiki/07-supabase.md](../../wiki/07-supabase.md)
-
----
-
-## コンテキストの維持方法
-
-セッション開始時にフックが自動的に注入します。
-
-```
-ハードルール → wiki インデックス → 長期メモリ → 直近の短期メモリ → エージェント → git の状態
-```
-
-**wiki 全文ではなくインデックスだけ**を読み込みます。地図を渡し、必要な文書はモデル自身に開かせます。
-
-### 二段メモリ
-
-```
-短期メモリ ──(3 回以上参照 / 今も真だと確認)──▶ 長期メモリ
+短期メモリ ──(3回以上参照 / 引き続き真と確認)──▶ 長期メモリ
 長期メモリ ──(プロジェクトのルールになる)─────▶ wiki 文書または ADR
 ```
 
-昇格は `/save-memory` スキルが管理します。
+昇格は `/save-memory` が管理します。
 
----
+### 2. ロスター
 
-## 画像ポリシー（ハードルール）
-
-**画像生成は Codex `imagegen` のみ。Claude による画像生成は禁止です。**
+ここで言うエージェントは Claude のサブエージェントではありません。それぞれが自分のターミナルで
+動く独立プロセスで、ランタイムも異なります。だから Orca のような ADE がマルチターミナルで本当に
+並列実行できます。
 
 ```bash
-pnpm imagegen --slug <post-slug> --prompt "<シーンの説明>"
+pnpm agent --list
+pnpm agent <id> "<タスク>"
+pnpm agent <id> "<タスク>" --dry-run   # 組み立てたコマンドだけ出力 (別ターミナルに貼り付け)
+```
+
+ランチャーが `agents/registry.yaml` からランタイムとモデルを読み、`AGENT.md` とスキルインデックス
+(フォルダをスキャンして自動生成) をシステムプロンプトに組み立てて該当 CLI を起動します。スキルを
+追加すれば登録なしですぐ反映されます。
+
+エージェントを増やす基準は役割ではなくランタイムと並列性です。既存のエージェントでできる仕事なら、
+エージェントではなくスキルを追加するほうが良いです →
+[wiki/05-agent-operations.md](../../wiki/05-agent-operations.md)
+
+### 3. 出荷ゲート
+
+ゲートは決定的な関数です。管理画面と CLI が同じ関数を呼ぶので、人間もエージェントも同じ判定を
+見ます。ゲートの中にモデル呼び出しを入れません。モデルが自分の成果物を評価すると合格側に傾く
+からです。
+
+ゲートが何を見るかはテンプレートが決めます。`blog-autopublish` なら `pnpm audit:content` です。
+
+### 4. 画像ポリシー
+
+画像生成の経路は Codex `imagegen` の一つだけです。ポリシーはコアにあり、実行コマンドは
+テンプレートが提供します。生成した画像をどこに置き、どのメタデータに出所を書くかはドメインごとに
+異なるからです。`blog-autopublish` なら次のようになります。
+
+```bash
+pnpm imagegen --slug <slug> --prompt "<シーンの説明>"
 ```
 
 Codex が使えない場合は、この順にフォールバックします。
 
-1. **画像なしで進める** — 既定値。カバー画像は公開の必須要素ではありません。
-2. **ユーザーが直接添付** — `source: user-upload`
-3. **ウェブ検索** — ライセンス確認が必須。`source: web-search` と `license` の記録
+1. 画像なしで進める (デフォルト)
+2. ユーザーに添付を依頼する (`source: user-upload`)
+3. ウェブ検索。ライセンス確認が必須で、`source: web-search` と `license` を記録します
 
-文書に書いただけのルールは守られないため、**三層で強制**します。
+文書に書いただけのルールは守られないので、三重に強制します。
 
 | 層 | 手段 |
 | --- | --- |
-| 型 | `ImageSource` に `claude` という値がそもそも存在しない |
-| フック | `PreToolUse` が Codex 以外の画像生成コマンドをブロック |
-| 監査 | 出所の未記録・ライセンスのないウェブ画像を error 扱い → 公開不可 |
+| 型 | `ImageSource` に `claude` という値が存在しない |
+| フック | `PreToolUse` が Codex 以外の画像生成コマンドを遮断 |
+| 監査 | 出所未記録 · ライセンス不明のウェブ画像を error 扱い → 出荷不可 |
 
-根拠：[ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
-
----
-
-## スキル（スラッシュコマンド）
-
-| コマンド | 内容 |
-| --- | --- |
-| `/company-setup` | 依存関係の全数検査 · インストール · Organization のフォロー · star（決定的スクリプト） |
-| `/save-memory` | セッションの内容を短期メモリに保存し、必要に応じて長期/wiki へ昇格 |
-| `/create-agent` | 新しいエージェントを registry + AGENT.md + skills/ に一括生成 |
-
-エージェントが読むスキル（`agents/<id>/skills/`）はこれとは別物です。そちらはランチャーがシステム
-プロンプトに注入するランタイム非依存のプレイブックで、codex エージェントも読みます。
+根拠: [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
 ---
 
-## エージェント
+## コアのハードルール
 
-**Claude のサブエージェントではありません。** それぞれ別のターミナルで動く独立プロセスで、ランタイムも
-異なります。だから Orca はマルチターミナルで本当に並列実行できます。
+テンプレートに関係なく常に真です。変えるには `wiki/decisions/` に ADR を先に書く必要があります。
 
-| ID | ランタイム | モデル | 役割 |
-| --- | --- | --- | --- |
-| `blog-writer` | `claude` | opus | 企画 → 執筆 → SEO/GEO → レビュー |
-| `image-maker` | `codex` | default | imagegen で画像生成 · 出所の記録 |
+1. **画像生成の経路は一つ。** 他の画像モデルの呼び出しも、SVG で代用することも禁止。
+2. **出荷ボタンは人間が押す。** エージェントはレビュー待ち(`in_review`)まで。
+3. **真実はリポジトリのファイル。** 成果物も決定もコードと同じリポジトリでバージョン管理する。
+4. **ゲートは決定的。** レビューにモデル推論を入れない。
+5. **コンテキストは自分で載る。** 誰も持ってくる必要がない。
 
-```bash
-pnpm agent --list
-pnpm agent blog-writer "Turborepo のキャッシュ戦略で記事を1本書いて"
-pnpm agent image-maker "turborepo-cache-strategy のカバー画像"
-```
-
-```
-agents/blog-writer/
-├── AGENT.md                       システムプロンプトとして注入
-└── skills/
-    ├── plan-post/SKILL.md         企画 · 重複確認 · アウトライン
-    ├── write-draft/SKILL.md       本文の執筆
-    ├── optimize-seo-geo/SKILL.md  メタデータ
-    └── review-and-submit/SKILL.md 監査 · in_review
-```
-
-ランチャーが `AGENT.md` とスキルインデックス（フォルダのスキャンで自動生成）を組み立ててシステム
-プロンプトにし、正しいモデルで該当の CLI を起動します。スキルを追加すれば登録なしで即反映されます。
-
-### なぜ 2 つだけなのか
-
-**分ける基準は役割ではなく、ランタイムと並列性です。** コンテンツパイプラインの 4 段階はすべて同じ
-ファイルを順番に触るため、プロセスを分ける利点がありません — 代わりにスキルで分けました。一方、画像は
-ランタイム自体が異なり（Codex 専用）、その境界は交渉の余地がないので、プロセスの境界にしてルールを構造に
-しました。
-
-マルチターミナルのルールは [wiki/05-agent-operations.md](../../wiki/05-agent-operations.md)。
+ドメイン固有のルールは `templates/<id>/template.yaml` の `rule:` に書き、セッション開始時に
+この五つの上に載せて注入されます。
 
 ---
 
 ## コマンド
 
+### コア (常に)
+
 | コマンド | 説明 |
 | --- | --- |
-| `pnpm setup` | 環境の全体検査 + インストール + GitHub のフォロー/star |
-| `pnpm check` | 環境の状態のみ検査（インストールはしない） |
-| `pnpm dev` | web と admin を同時に起動 |
-| `pnpm dev:web` / `pnpm dev:admin` | 個別に起動 |
-| `pnpm build` | 両アプリをビルド |
-| `pnpm typecheck` | 型検査 |
-| `pnpm audit:content` | 公開ゲートを CLI で実行（admin のレビュー画面と同じ関数） |
+| `pnpm company-setup` | 依存チェック → テンプレート選択 → 環境準備 → 検証 (+ 任意: GitHub フォロー/スター) |
+| `pnpm check` | 状態の検査のみ (インストールしない)。現在のテンプレートの検査項目も含む |
+| `pnpm template list \| apply <id> \| prune` | テンプレートの一覧 · 適用 · 片付け |
+| `pnpm agent --list \| <id> "<タスク>"` | エージェントの一覧 · 実行 |
 | `pnpm context` | セッションコンテキストを手動で出力 |
-| `pnpm imagegen` | Codex で画像生成 |
-| `pnpm memory:new <topic>` | 新しいメモリファイルを作成（`--long` で長期） |
-| `pnpm --filter @repo/supabase migrate` | ファイルから Supabase へ記事を移行（`--dry-run` 対応） |
+| `pnpm memory:new <topic>` | 新しいメモリファイルを作成 (`--long` で長期) |
+| `pnpm dev \| build \| typecheck \| lint \| test` | ワークスペース全体 (turbo) |
+
+### テンプレートが載せるもの
+
+`blog-autopublish` を適用すると `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+`imagegen` が追加されます。どのキーが来るかはマニフェストの `script:` 行に書かれています。
 
 ---
 
-## 別のドメインに変える
+## スラッシュコマンド
 
-ブログは理解を助けるためのリファレンスです。EC・ダッシュボード・ドキュメントサイトに変えるには：
+| コマンド | 何をするか |
+| --- | --- |
+| `/company-setup` | 依存の総点検 + インストール · テンプレート選択 (フォロー · スターは任意) |
+| `/save-memory` | セッション内容を短期メモリに保存し、必要なら長期/wiki へ昇格 |
+| `/create-agent` | 新しいエージェントを registry + AGENT.md + skills/ にまとめて生成 |
 
-1. `packages/content/src/schema.ts` のスキーマを差し替える
-2. `packages/content/src/audit.ts` の監査ルールを差し替える
-3. `agents/` を `/create-agent` で再構成する
-4. `wiki/03` と `wiki/04` をドメインのガイドに差し替える
+エージェントが読むスキル (`agents/<id>/skills/`) はこれとは別のものです。あちらはランチャーが
+システムプロンプトに注入するランタイム中立のプレイブックなので、codex エージェントも読みます。
 
-**そのまま残すもの**：フック、メモリ構造、レビューゲートのパターン、画像ポリシー、モノレポの骨組み。
-ここがテンプレートの実際の価値です。
+---
+
+## 新しいテンプレートを作る
+
+```
+templates/<id>/
+├── template.yaml    マニフェスト
+└── files/           リポジトリルート基準のパスそのまま
+```
+
+マニフェストは繰り返しキー形式です。YAML パーサーを持ち込まず `sed`/`awk` で読みます。
+セットアップが決定的でなければならないからです。
+
+| キー | 意味 |
+| --- | --- |
+| `id` · `name` · `status` · `summary` | 一覧に出るもの。`status` は `stable` · `preview` · `planned` |
+| `ships` · `hires` · `gate` | 一行要約 (文書 · ランディングで使用) |
+| `script: key=value` | ルートの `package.json` にマージ。乗り換え時はこのキーだけ回収 |
+| `verify-workspace:` | 依存のリンクまで確認 (なければ失敗) |
+| `verify-dir:` | ディレクトリの存在 + ファイル数 (なければ失敗) |
+| `verify-optional:` | あったほうがよいファイル/ディレクトリ (なければ警告) |
+| `verify-env: VAR=説明` | `.env` の値を確認。未設定なら何がオフになるか通知 |
+| `note-env: VAR=説明` | 空が正常な値。状態を示すだけ |
+| `runtime:` | このテンプレートが使う CLI (なければ警告) |
+| `mcp: サーバー名=説明` | このテンプレートが使う MCP サーバー。登録の有無を検査 |
+| `mcp-claude:` · `mcp-codex:` | 未登録のときに出力する登録コマンド |
+| `rule:` | この会社のハードルール。セッション開始ごとにコアルールの上に注入 |
+| `next:` | セットアップ完了後の案内。`${VAR}` は `.env` から置換 |
+
+マニフェストを読むのは `scripts/template.sh` · `scripts/check-deps.sh` ·
+`scripts/load-context.sh` · `scripts/company-setup.sh` の四か所です。キーを追加したらこのうち
+どれかが読むように一緒に直す必要があります。誰も読まないキーは設定ではなく文書にすぎません。
+
+MCP の登録確認は `claude mcp list` ではなく設定ファイル (`~/.claude.json` · `.mcp.json` ·
+`~/.codex/config.toml`) を読んで行います。あのコマンドはネットワーク越しにヘルスチェックするため、
+`pnpm check` が決定的でなくなるからです。
 
 ---
 
 ## 技術スタック
 
-pnpm workspaces · Turborepo · Next.js 16 (App Router) · React 19 · TypeScript 5.9 (strict) ·
-Tailwind CSS 4 · zod 4 · Supabase · tiptap · Radix UI · gray-matter · marked · turndown
-
----
+pnpm workspaces · Turborepo · TypeScript 5.9 (strict) · 決定的な bash スクリプト。
+アプリのスタック (Next.js · React · Tailwind · zod など) はテンプレートが持ってきます。
 
 ## ライセンス
 

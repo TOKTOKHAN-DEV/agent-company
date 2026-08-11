@@ -5,10 +5,10 @@
 
 ---
 
-## 2026-08-11 — apps-in-toss 템플릿 구현, 매니페스트에 MCP 검사 추가
+## 2026-08-11 — app-in-toss 템플릿 구현, 매니페스트에 MCP 검사 추가
 
 - **무엇**
-  - `apps-in-toss` 를 `planned` → `preview` 로. Vite + React 18 + TDS 스캐폴드, 명세 구조,
+  - `app-in-toss` 를 `planned` → `preview` 로. Vite + React 18 + TDS 스캐폴드, 명세 구조,
     에이전트 3종, 결정적 심사 사전점검(`scripts/preflight.ts`), wiki 4종을 채웠다.
   - 매니페스트에 `mcp:` · `mcp-claude:` · `mcp-codex:` 키를 추가하고 `pnpm check` 가 등록
     여부를 검사하게 했다. 판정은 `scripts/mcp-status.mjs` 가 설정 파일을 읽어서 한다.
@@ -33,7 +33,7 @@
     코어 하드 룰 2번의 연장이다.
 - **영향** — `status: preview` 다. 뼈대는 돌고 빌드·타입체크·게이트가 통과하지만 **실제 심사를
   통과시킨 적이 없다.** 심사 기준은 계속 갱신되므로 제출 전에 원문 확인이 필요하다.
-- **되돌리려면** — `templates/apps-in-toss/files/` 를 지우고 매니페스트를 `planned` 로
+- **되돌리려면** — `templates/app-in-toss/files/` 를 지우고 매니페스트를 `planned` 로
   되돌리면 된다. `mcp:` 키와 `mcp-status.mjs` 는 코어라 남겨도 무해하다.
 
 ---

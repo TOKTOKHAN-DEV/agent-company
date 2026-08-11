@@ -1,9 +1,9 @@
-# apps-in-toss
+# app-in-toss
 
 토스 앱 안에서 도는 **WebView 미니앱**. 명세 → 화면 → 심사 사전점검까지 가는 회사입니다.
 
 ```bash
-pnpm template apply apps-in-toss
+pnpm template apply app-in-toss
 pnpm install
 pnpm dev:miniapp        # vite 개발 서버 (샌드박스 연결은 wiki/03 참고)
 ```

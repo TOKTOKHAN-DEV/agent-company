@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────
-# Template Manifest — apps-in-toss
+# Template Manifest — app-in-toss
 #
 # 토스 앱 안에서 도는 WebView 미니앱. 공식 경로(Vite + React + TDS)를 따릅니다.
 #
@@ -11,8 +11,8 @@
 # 읽는 쪽:  scripts/template.sh · check-deps.sh · load-context.sh · company-setup.sh
 # ─────────────────────────────────────────────────────────────
 
-id: apps-in-toss
-name: Apps in Toss
+id: app-in-toss
+name: App in Toss
 status: preview
 summary: 토스 앱 안에서 도는 WebView 미니앱. 명세 → 화면 → 심사 사전점검.
 ships: 미니앱 · 심사 사전점검

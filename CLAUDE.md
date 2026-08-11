@@ -156,7 +156,7 @@ pnpm template prune                   # 안 쓰는 카탈로그 · 랜딩 정리
 | --- | --- | --- |
 | `blog-autopublish` | stable | 공개 사이트 + 검수 데스크 |
 | `bare` | stable | 코어만. 빈 로스터 |
-| `apps-in-toss` | preview | 토스 WebView 미니앱 (Vite + React 18 + TDS) |
+| `app-in-toss` | preview | 토스 WebView 미니앱 (Vite + React 18 + TDS) |
 
 매니페스트 키의 뜻은 README 의 「새 템플릿 만들기」에 정리돼 있습니다. 매니페스트를 읽는 쪽은
 `scripts/template.sh` · `scripts/check-deps.sh` · `scripts/load-context.sh` 셋뿐입니다 —

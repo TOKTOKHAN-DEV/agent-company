@@ -161,7 +161,7 @@ pnpm template prune                   # 안 쓰는 카탈로그 · 랜딩 정리
 | --- | --- | --- |
 | `blog-autopublish` | stable | 공개 사이트 + 검수 데스크 → [README](./templates/blog-autopublish/README.md) |
 | `bare` | stable | 코어만. 빈 로스터에서 직접 채워 나감 |
-| `apps-in-toss` | preview | 토스 WebView 미니앱 → [README](./templates/apps-in-toss/README.md) |
+| `app-in-toss` | preview | 토스 WebView 미니앱 → [README](./templates/app-in-toss/README.md) |
 
 `planned` 는 `apply` 가 거부합니다. 빈 껍데기를 깔아 놓고 나중에 "왜 안 되지" 하게 만들지
 않기 위해서입니다.

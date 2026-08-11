@@ -21,7 +21,7 @@ codex mcp add apps-in-toss-console \
     --oauth-client-id mcp-gateway
 ```
 
-등록 여부는 `pnpm check` 가 확인합니다. 매니페스트(`templates/apps-in-toss/template.yaml`)의
+등록 여부는 `pnpm check` 가 확인합니다. 매니페스트(`templates/app-in-toss/template.yaml`)의
 `mcp:` 에 선언되어 있어, 미등록이면 경고와 함께 위 명령을 출력합니다.
 
 > `pnpm check` 는 **등록 여부만** 봅니다. 인증까지는 확인하지 않습니다 — 확인하려면 네트워크를

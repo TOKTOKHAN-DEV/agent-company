@@ -10,366 +10,313 @@
 [Português](./README.pt-BR.md) ·
 [Русский](./README.ru.md)
 
-> **⚠️ 此翻译仍是旧结构。** 仓库已改为「核心 + 模板」结构。
-> 最新内容请参阅 [한국어](../../README.md) 或 [English](./README.en.md)。
-
-> 用 AI 智能体团队运行 IT 项目的 monorepo 模板。
-> 上下文跨会话保留，质量由审核关卡把守。
+> 由 AI 团队运转的 monorepo 模板。
+> 组织架构、公司规章、跨会话留存的记忆，以及只有人能按的发布按钮。
 
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.11-339933)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A510-F69220)](https://pnpm.io)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000)](https://nextjs.org)
 [![License](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 ---
 
-## 解决什么问题
+## 项目概述
 
-把项目交给 AI 时，有两件事会反复崩掉。
+Orca、Paseo 这类智能体 IDE 提供了工作环境：并行 worktree、每个智能体一个终端、diff 视图。
+可是真正推进项目时，同样的问题往往还是会出现。
 
-**上下文消失。** 会话结束或负责人更换后，AI 不知道之前做过什么决定。它会重复同样的讨论，并退回到你已经
-废弃的做法。
+过去做过的事情没有留下记录。会话结束或者换一个智能体接手，之前的决策就消失了。已经讲过的内容要
+重新讲一遍，有时还会退回到早已弃用的做法。
 
-**没有质量把关。** 没有审核关卡，AI 产出的东西会直接上生产环境。
+而且成果物的审核也不容易。所以需要一个由人来确认并发布的入口。博客是后台管理页面，Toss 小程序则是
+提审前检查和控制台。
 
-这个模板用**结构**堵住这两个洞。
+这两件事都不是靠打磨提示词能解决的。我们在每个会塌陷的地方各加了一套系统。
 
-| 问题 | 解决方案 |
-| --- | --- |
-| 上下文丢失 | `CLAUDE.md` + `AGENTS.md` + `wiki/` + 长短期记忆，由 SessionStart 钩子自动加载 |
-| 质量控制 | 确定性审计函数 + 后台审核界面 + 只有人能按的发布按钮 |
-| 角色混杂 | 按运行时拆分的独立智能体 + 显式模型映射 + 多终端并行 |
-| 图片可信度 | Codex `imagegen` 单一路径 + 记录来源 + 三重强制 |
+| 塌陷的地方 | 系统 | 强制手段 |
+| --- | --- | --- |
+| 上下文丢失 | 手册 · wiki 索引 · 长短期记忆在每次会话开始时自动加载 | SessionStart 钩子 |
+| 质量漂移 | 发布闸门是确定性函数。人和智能体看到相同判定 | 闸门内不调用 LLM |
+| 角色混淆 | 每个智能体声明运行时 · 模型 · 写入范围 | `agents/registry.yaml` |
+| 来源不明的素材 | 图片生成只有一条路径，每个素材都记录来源 | 工具守卫 + 审计 |
+| 意外发布 | 智能体只能推进到 `in_review`。发布按钮由人来按 | 类型里没有这条路径 |
 
 ---
 
 ## 安装
 
-### 面向人类的安装
+### 交给智能体来做（推荐）
 
-把这段提示词粘贴到你的 LLM 智能体（Claude Code、Codex、Cursor、Gemini CLI 等）里：
+把这段话原样粘贴给你在用的编码智能体（Claude Code、Codex、Cursor、Gemini CLI 等）。
 
 ```text
-Install and configure agent-company by following the instructions here:
+Install Agent Company by following the instructions here:
 https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
-你也可以自己读[安装指南](../../INSTALL.md)。不过说真的，交给智能体吧 —— 人类会把配置文件敲错。
+这份指南从克隆到验证是自包含的。当前目录为空就直接在原地克隆，必需工具、可选工具以及各自的回退
+步骤都写清楚了，智能体卡住时可以自己判断。
 
-### 面向 LLM 智能体的安装
-
-拉取安装指南并照着执行：
-
-```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
-```
-
-这份指南**从克隆到验证都是自包含的**。如果当前目录为空，它会就地克隆而不是嵌套一层子目录；必需与可选
-工具、回退流程也都写清楚了，智能体遇到卡点时能自行判断。最后的 `pnpm check` 会确定性地告诉你安装
-是否成功。
-
-### 自己安装
+### 手动安装
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
 cd agent-company
+
 pnpm install
-pnpm setup     # 依赖全量检查 · 环境准备 · 关注组织 · 给仓库点 star
-pnpm dev       # web → :3000 · admin → :3001
+pnpm company-setup    # 依赖检查 → 选择要开哪家公司 → 准备环境 → 验证
+pnpm dev
 ```
 
-详细步骤与故障排查见 **[INSTALL.md](../../INSTALL.md)**。
+详细步骤和问题排查请看 [INSTALL.md](../../INSTALL.md)。
 
-> INSTALL.md 目前是韩语。AI 智能体读取没有问题。
+> 是 `pnpm company-setup`，不是 `pnpm setup`。`setup` 是 pnpm 的内置命令，同名的脚本会被遮住。
 
 ---
 
-## 结构
+## 核心与模板
+
+仓库由两层构成。核心在任何一家公司里都一样，做什么由模板决定。
 
 ```
 agent-company/
-├── apps/
-│   ├── web/              公开博客 (Next.js 16 App Router, :3000)
-│   └── admin/            内容 · SEO/GEO · 审核面板 (:3001)
-├── packages/
-│   ├── content/          schema · 存储驱动 · 审计 · JSON-LD（唯一可信来源）
-│   └── supabase/         客户端 · 存储 · 迁移（没有密钥时不启用）
-├── content/posts/        Markdown 文章 — 默认驱动
-├── docs/i18n/            README 翻译，8 种语言
-├── agents/
-│   ├── registry.yaml     运行时 · 模型 · 权限（唯一可信来源）
-│   ├── blog-writer/      AGENT.md + skills/ (claude · opus)
-│   └── image-maker/      AGENT.md + skills/ (codex)
-├── wiki/
-│   ├── 00~06-*.md        概览 · 架构 · 约定 · 指南 · 历史
-│   ├── decisions/        ADR
-│   └── memory/           短期 · 长期记忆
-├── .claude/
-│   ├── settings.json     钩子注册
-│   ├── hooks/            SessionStart 上下文加载 · 图片策略守卫
-│   └── skills/           3 个斜杠命令
-├── scripts/              确定性 shell 脚本
-├── CLAUDE.md             给 Claude Code 的指令
-└── AGENTS.md             给所有 AI 编码智能体的指令
+│
+├── ── 核心（始终存在） ─────────────────────────────
+│   ├── .claude/          钩子(SessionStart · PreToolUse) · 斜杠命令
+│   ├── wiki/             项目知识 + 长/短期记忆 + ADR
+│   ├── agents/           花名册所在位置 (registry.yaml + <id>/)
+│   ├── scripts/          确定性 shell 脚本
+│   ├── CLAUDE.md         给 Claude Code 的指引
+│   └── AGENTS.md         给所有 AI 编码智能体的共同指引
+│
+├── ── 模板（选一个铺开） ───────────────────────────
+│   └── templates/<id>/
+│       ├── template.yaml   清单 — 脚本 · 检查项 · 硬性规则 · 下一步
+│       └── files/          按仓库根目录的路径原样存放 (apps/ · packages/ · agents/ …)
+│
+└── ── 产品（仅本仓库） ─────────────────────────────
+    └── site/               落地页。单个静态 HTML，无需构建 → Vercel
 ```
 
----
+`pnpm company-setup` 让你选模板，把 `templates/<id>/files/` 铺到根目录，再把清单里的 `script:`
+合并进根 `package.json`。切换模板时，只有上一个模板加入的脚本键会被准确收回。
 
-## 参考实现：由 AI 运营的博客
+### 现有模板
 
-### web (`:3000`)
+| id | 状态 | 产出 | 花名册 | 闸门 |
+| --- | --- | --- | --- | --- |
+| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | 公开站点 + 审核台 | blog-writer · image-maker | `audit` → `in_review` |
+| `bare` | stable | 只有核心。空花名册 | 自己决定 | 自己做 |
+| [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | Toss WebView 小程序 | spec-writer · ui-builder · release-manager | `preflight` → 控制台审核 |
 
-公开博客。只渲染 `content/posts/` 中 `status: published` 的文章。
-自动生成 JSON-LD（BlogPosting · FAQPage）、`sitemap.xml`、`robots.txt` 和 `rss.xml`。
-明确允许回答引擎的爬虫（GPTBot、ClaudeBot、PerplexityBot 等）。
-
-### admin (`:3001`)
-
-- **编辑器** — tiptap 富文本 + 图片上传。存储格式始终是 Markdown
-- **技术 SEO 面板** — canonical · robots 指令 · OG/Twitter · 站点地图 priority · hreflang
-- **GEO 面板** — 可提取摘要 · FAQ · 实体 · 引用来源 · 语言/目标市场
-- **审核界面** — 自动审计结果、JSON-LD 预览、人工检查清单、发布按钮
-- **SEO/GEO 看板** — 按 lane 汇总所有文章的未解决项
-
-界面使用基于 Radix 的自定义 select，而不是原生 `<select>` —— 由操作系统绘制的下拉框无法应用样式，
-且各浏览器表现不一致。
-
-### agents
-
-```
-blog-writer (claude · opus)                       image-maker (codex)   人
-plan-post → write-draft → optimize-seo-geo    →   generate-cover    →   admin 审核 → 发布
-                 ↓
-         review-and-submit → status: in_review
+```bash
+pnpm template list                    # 列表 · 当前应用的模板
+pnpm template apply <id>              # 铺开
+pnpm template apply <id> --force      # 覆盖到另一个模板之上
+pnpm template prune                   # 清理没用到的目录清单和落地页
 ```
 
-智能体最多推进到 `in_review`。**发布是人的行为。**
+`planned` 表示清单里只写了意图，还没有内容。`apply` 会拒绝，因为铺一个空壳只会让人事后去找为什么
+跑不起来。
 
----
+### 一个项目就是一家公司
 
-## 为什么把 SEO 和 GEO 分开处理
+一个仓库有两副面孔。选定之后，剩下的模板清单和产品落地页对那个项目就不需要了，所以
+`pnpm company-setup` 会提议清理。
 
-| | SEO | GEO（生成式引擎优化） |
+| | 产品仓库（这里） | 用 Use this template 建的自己的项目 |
 | --- | --- | --- |
-| 对象 | 搜索引擎 | 回答引擎（ChatGPT · Claude · Perplexity · AI Overviews） |
-| 目标 | **排名** | **被引用** |
-| 关键信号 | 标题 · meta · 链接 · 速度 | 可提取的结构 · 显式问答 · 出处 · 实体 |
+| `site/`（落地页） | 有 → 部署到 Vercel | 清理时删除 |
+| 没选中的模板 | 全部保留 | 清理时删除 |
+| 选中模板的 `files/` | 有 | 删除（已经铺到根目录） |
+| 选中模板的 `template.yaml` | 有 | 保留 |
+| 核心 | 有 | 有 |
 
-想被引用，页面就得易于摘取。因此 frontmatter 里有独立的 GEO 块：
-`geo.faq` 渲染为 `FAQPage` JSON-LD，`geo.answerSummary` 渲染为页面顶部的摘要块。
+保留清单很关键，因为 `check-deps.sh` 会从中读取 `verify-*`，`load-context.sh` 会读取 `rule:`。
+删掉之后，检查和硬性规则的注入会悄无声息地消失，连报错都没有。
 
-实操规则见 [wiki/04-seo-geo-playbook.md](../../wiki/04-seo-geo-playbook.md)。
+产品仓库带有 `.company/PRODUCT` 标记，所以在这里 prune 会拒绝执行。贡献者克隆下来跑一遍安装，
+目录清单也不会被删掉。
+
+清理之后如果又需要别的模板，可以从 upstream 取回。
+
+```bash
+git remote add upstream https://github.com/TOKTOKHAN-DEV/agent-company.git
+git fetch upstream && git checkout upstream/main -- templates/
+```
+
+### 为什么模板没有放在独立仓库
+
+清单里的键是跟核心脚本一起演进的。它们用 `sed` 读取，所以不认识的键会被静默忽略，远程模板一旦是
+旧版本，整块检查就会在没有报错的情况下消失。放在同一个仓库里就不会有这个问题。而且安装过程中
+夹进网络请求，会破坏“跑两次得到同样状态”的承诺。
+
+体积算不上理由。以 git 的口径看，`templates/` 只有 388K。
+
+该拆分的时机是：第三方开始贡献模板、模板里加入大体积素材、各模板的发布节奏出现分化。到那时要改的
+地方只有一处，就是 `template.sh` 里铺文件的部分。
 
 ---
 
-## 技术 SEO
+## 核心提供的能力
 
-### 自动生成 — 无需维护
+### 1. 上下文层
 
-| 路径 | 内容 |
-| --- | --- |
-| `/sitemap.xml` | 已发布文章 + 每篇的 priority · changefreq · hreflang |
-| `/robots.txt` | 允许搜索爬虫与回答引擎爬虫，屏蔽 `/api/` |
-| `/rss.xml` | 已发布文章的订阅源 |
-| `/llms.txt` | **面向 LLM 的站点摘要** — 模型无需解析 HTML 即可理解本站 |
-
-`llms.txt` 是站点地图的 GEO 对应物。站点地图告诉爬虫"URL 在哪里"，llms.txt 告诉模型"这个站点是什么、
-有哪些文章"。每一条都复用文章的 `geo.answerSummary`，所以写好摘要收益翻倍。
-
-### 每篇文章在后台设置
-
-canonical · noindex/nofollow · robots 指令（`max-snippet` 等）· OG/Twitter 卡片 ·
-站点地图 priority/changefreq · hreflang · 是否收录进 llms.txt。
-
-### 搜索平台与分析
-
-在 `.env` 中填值即可启用。**留空则相应的标签或脚本根本不会输出。**
-
-| 变量 | 对应平台 |
-| --- | --- |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console |
-| `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` | Naver 搜索顾问 |
-| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing 站长工具 |
-| `NEXT_PUBLIC_GA4_MEASUREMENT_ID` | GA4（`afterInteractive` 加载） |
-
-### 自然语言 slug
+会话开始时钩子会自动注入以下内容。
 
 ```
-/blog/next-js-16-缓存组件完全指南
+核心硬性规则 → 当前公司(模板) + 该公司的硬性规则 → wiki 索引
+             → 长期记忆 → 最近的短期记忆 → 花名册 → git 状态
 ```
 
-保留非 ASCII 字符。让目标关键词留在 URL 里是真实的排名与点击率信号，而音译 slug 对目标读者来说
-根本读不懂。
+加载的是索引而不是 wiki 全文。给模型一张地图，需要的文档让它自己去打开
+([ADR-0003](../../wiki/decisions/ADR-0003-session-context-loading.md))。
 
-详见：[wiki/08-technical-seo.md](../../wiki/08-technical-seo.md)
-
----
-
-## 后端 —— 现在是文件，以后是 Supabase
-
-应用代码从不直接接触存储，只面向接口。
+两级记忆只留下能长久的东西。
 
 ```
-web · admin · audit CLI
-        │
-        ▼
-  getRepository()          ← 根据是否存在密钥自动选择
-   ├── file       content/posts/*.md   （默认 · 当前状态）
-   └── supabase   Postgres + Storage   （填入密钥后）
-```
-
-**没有密钥就是正常状态。** `pnpm install && pnpm dev` 直接可用。切换方式：
-
-1. 在 `.env` 填入三个 Supabase 密钥
-2. 执行 `packages/supabase/migrations/0001_init.sql`
-3. `pnpm --filter @repo/supabase migrate` — 迁移已有文章（幂等，文件保留）
-
-应用代码一行都不用改。随时可用 `CONTENT_DRIVER=file` 回退。
-
-RLS 策略限制 anon 密钥只能读取 `published` 且非 `noindex` 的文章 —— 这是即使应用出 bug 也不会
-泄露草稿的最后一道防线。
-
-详见：[wiki/07-supabase.md](../../wiki/07-supabase.md)
-
----
-
-## 上下文如何保留
-
-会话开始时，钩子会自动注入：
-
-```
-硬规则 → wiki 索引 → 长期记忆 → 最近的短期记忆 → 智能体 → git 状态
-```
-
-只加载**索引而非 wiki 全文**。给模型一张地图，需要的文档让它自己打开。
-
-### 两级记忆
-
-```
-短期记忆 ──(被引用 3 次以上 / 确认仍然成立)──▶ 长期记忆
+短期记忆 ──(被引用 3 次以上 / 持续被确认为真)──▶ 长期记忆
 长期记忆 ──(成为项目规则)──────────────────▶ wiki 文档或 ADR
 ```
 
-晋级由 `/save-memory` 技能管理。
+晋级由 `/save-memory` 管理。
 
----
+### 2. 花名册
 
-## 图片策略（硬规则）
-
-**图片只能用 Codex `imagegen` 生成。禁止 Claude 生成图片。**
+这里说的智能体不是 Claude 的子智能体。每个都是在自己终端里运行的独立进程，运行时也各不相同。
+正因如此，Orca 这类 ADE 才能在多终端里真正并行执行。
 
 ```bash
-pnpm imagegen --slug <post-slug> --prompt "<场景描述>"
+pnpm agent --list
+pnpm agent <id> "<任务>"
+pnpm agent <id> "<任务>" --dry-run   # 只输出拼好的命令（贴到另一个终端）
 ```
 
-Codex 不可用时，按此顺序回退：
+启动器从 `agents/registry.yaml` 读取运行时和模型，把 `AGENT.md` 和技能索引（扫描目录自动生成）
+组装成系统提示词，再启动对应 CLI。加了技能不用注册就会立刻生效。
 
-1. **不带图片继续** — 默认。封面不是发布的必需项。
-2. **用户自行上传** — `source: user-upload`
-3. **网络搜索** — 必须确认许可。`source: web-search` 并记录 `license`
+增加智能体的依据是运行时和并行性，而不是角色。已有的智能体能做的事，加一个技能会更好 →
+[wiki/05-agent-operations.md](../../wiki/05-agent-operations.md)
 
-只写在文档里的规则不会被遵守，所以这条**用三层强制**：
+### 3. 发布闸门
+
+闸门是确定性函数。后台页面和 CLI 调用的是同一个函数，所以人和智能体看到相同的判定。闸门里不放
+模型调用，因为让模型评价自己的产出，结果会偏向通过。
+
+闸门具体检查什么由模板决定。`blog-autopublish` 是 `pnpm audit:content`。
+
+### 4. 图片策略
+
+图片生成只有一条路径，就是 Codex `imagegen`。策略属于核心，执行命令由模板提供，因为生成的图片放
+在哪里、把来源写进哪个元数据，各领域并不一样。`blog-autopublish` 是这样的。
+
+```bash
+pnpm imagegen --slug <slug> --prompt "<场景说明>"
+```
+
+用不了 Codex 时，按这个顺序回退。
+
+1. 不带图片继续（默认）
+2. 请用户自己上传（`source: user-upload`）
+3. 网络搜索。必须确认许可，并记录 `source: web-search` 和 `license`
+
+只写在文档里的规则不会被遵守，所以用三层来强制。
 
 | 层 | 手段 |
 | --- | --- |
-| 类型 | `ImageSource` 里根本不存在 `claude` 这个值 |
+| 类型 | `ImageSource` 里不存在 `claude` 这个值 |
 | 钩子 | `PreToolUse` 拦截非 Codex 的图片生成命令 |
-| 审计 | 未记录来源、无许可的网络图片判为 error → 无法发布 |
+| 审计 | 未记录来源 · 没有许可的网络图片按 error 处理 → 无法发布 |
 
 依据：[ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
 ---
 
-## 技能（斜杠命令）
+## 核心硬性规则
 
-| 命令 | 作用 |
-| --- | --- |
-| `/company-setup` | 依赖全量检查 · 安装 · 关注组织 · 点 star（确定性脚本） |
-| `/save-memory` | 把会话内容存入短期记忆，必要时晋级到长期/wiki |
-| `/create-agent` | 一次性在 registry + AGENT.md + skills/ 中生成新智能体 |
+与模板无关，始终成立。要改动其中一条，得先在 `wiki/decisions/` 写一份 ADR。
 
-智能体读取的技能（`agents/<id>/skills/`）是另一回事。那些是启动器注入系统提示词的运行时中立
-playbook，codex 智能体同样会读。
+1. **图片生成只有一条路径。** 不允许调用别的图片模型，也不允许用 SVG 顶替。
+2. **发布按钮由人来按。** 智能体只推进到待审核（`in_review`）。
+3. **真相在仓库文件里。** 产出和决策都和代码放在同一个仓库里做版本管理。
+4. **闸门是确定性的。** 审核里不加入模型推理。
+5. **上下文会自己加载。** 谁都不需要专门去带上它。
 
----
-
-## 智能体
-
-**它们不是 Claude 子智能体。** 每个都是各自终端里的独立进程，运行时也不同。正因如此 Orca 才能在多终端里
-真正并行运行。
-
-| ID | 运行时 | 模型 | 角色 |
-| --- | --- | --- | --- |
-| `blog-writer` | `claude` | opus | 策划 → 写作 → SEO/GEO → 审核 |
-| `image-maker` | `codex` | default | 用 imagegen 生成图片 · 记录来源 |
-
-```bash
-pnpm agent --list
-pnpm agent blog-writer "写一篇关于 Turborepo 缓存策略的文章"
-pnpm agent image-maker "turborepo-cache-strategy 的封面图"
-```
-
-```
-agents/blog-writer/
-├── AGENT.md                       作为系统提示词注入
-└── skills/
-    ├── plan-post/SKILL.md         策划 · 查重 · 大纲
-    ├── write-draft/SKILL.md       写正文
-    ├── optimize-seo-geo/SKILL.md  元数据
-    └── review-and-submit/SKILL.md 审计 · in_review
-```
-
-启动器把 `AGENT.md` 和技能索引（扫描文件夹自动生成）组装成系统提示词，并用正确的模型启动对应 CLI。
-新增技能无需注册即刻生效。
-
-### 为什么只有两个
-
-**划分依据是运行时和并行性，不是角色。** 内容流水线的四个阶段都在顺序地改同一个文件，拆成进程没有收益 ——
-所以改用技能来拆分。而图片的运行时本身就不同（仅限 Codex），这条边界没有商量余地，于是把它做成进程边界，
-让规则变成结构。
-
-多终端规则见 [wiki/05-agent-operations.md](../../wiki/05-agent-operations.md)。
+领域规则写在 `templates/<id>/template.yaml` 的 `rule:` 里，会话开始时叠加在这五条之上注入。
 
 ---
 
 ## 命令
 
+### 核心（始终可用）
+
 | 命令 | 说明 |
 | --- | --- |
-| `pnpm setup` | 完整环境检查 + 安装 + GitHub 关注/star |
-| `pnpm check` | 只检查环境状态（不安装） |
-| `pnpm dev` | 同时运行 web 和 admin |
-| `pnpm dev:web` / `pnpm dev:admin` | 单独运行 |
-| `pnpm build` | 构建两个应用 |
-| `pnpm typecheck` | 类型检查 |
-| `pnpm audit:content` | 在 CLI 里跑发布关卡（与后台审核界面同一个函数） |
+| `pnpm company-setup` | 依赖检查 → 选择模板 → 准备环境 → 验证（+ 可选：GitHub 关注/star） |
+| `pnpm check` | 只检查状态（不安装）。包含当前模板的检查项 |
+| `pnpm template list \| apply <id> \| prune` | 模板的查看 · 应用 · 清理 |
+| `pnpm agent --list \| <id> "<任务>"` | 智能体列表 · 运行 |
 | `pnpm context` | 手动输出会话上下文 |
-| `pnpm imagegen` | 用 Codex 生成图片 |
-| `pnpm memory:new <topic>` | 创建新记忆文件（`--long` 为长期） |
-| `pnpm --filter @repo/supabase migrate` | 把文章从文件迁移到 Supabase（支持 `--dry-run`） |
+| `pnpm memory:new <topic>` | 创建新的记忆文件（`--long` 为长期） |
+| `pnpm dev \| build \| typecheck \| lint \| test` | 整个工作区（turbo） |
+
+### 模板追加的命令
+
+应用 `blog-autopublish` 会加上 `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+`imagegen`。具体会来哪些键，写在清单的 `script:` 行里。
 
 ---
 
-## 改成其他领域
+## 斜杠命令
 
-博客只是帮助理解的参考实现。要改成电商、仪表盘或文档站：
+| 命令 | 作用 |
+| --- | --- |
+| `/company-setup` | 依赖全量检查 + 安装 · 选择模板（关注 · star 为可选） |
+| `/save-memory` | 把会话内容存进短期记忆，必要时晋级到长期/wiki |
+| `/create-agent` | 一次性在 registry + AGENT.md + skills/ 里创建新智能体 |
 
-1. 替换 `packages/content/src/schema.ts` 中的 schema
-2. 替换 `packages/content/src/audit.ts` 中的审计规则
-3. 用 `/create-agent` 重建 `agents/`
-4. 把 `wiki/03` 和 `wiki/04` 换成你的领域指南
+智能体读的技能（`agents/<id>/skills/`）是另一回事。那边是启动器注入系统提示词的运行时中立
+playbook，所以 codex 智能体也会读。
 
-**保留不动的**：钩子、记忆结构、审核关卡模式、图片策略、monorepo 骨架。
-这部分才是模板的真正价值。
+---
+
+## 编写新模板
+
+```
+templates/<id>/
+├── template.yaml    清单
+└── files/           按仓库根目录的路径原样存放
+```
+
+清单采用重复键格式。不引入 YAML 解析器，用 `sed`/`awk` 读取，因为安装过程必须是确定性的。
+
+| 键 | 含义 |
+| --- | --- |
+| `id` · `name` · `status` · `summary` | 列表里显示的内容。`status` 为 `stable` · `preview` · `planned` |
+| `ships` · `hires` · `gate` | 一行摘要（文档 · 落地页会用到） |
+| `script: key=value` | 合并进根 `package.json`。切换时只收回这些键 |
+| `verify-workspace:` | 连依赖链接一起确认（没有则失败） |
+| `verify-dir:` | 目录存在 + 文件数量（没有则失败） |
+| `verify-optional:` | 有更好的文件/目录（没有则警告） |
+| `verify-env: VAR=说明` | 确认 `.env` 的值。未设置时说明什么功能会关闭 |
+| `note-env: VAR=说明` | 空着才正常的值。只展示状态 |
+| `runtime:` | 该模板使用的 CLI（没有则警告） |
+| `mcp: 服务名=说明` | 该模板使用的 MCP 服务。检查是否已注册 |
+| `mcp-claude:` · `mcp-codex:` | 未注册时输出的注册命令 |
+| `rule:` | 这家公司的硬性规则。每次会话开始叠加在核心规则之上注入 |
+| `next:` | 安装完成后的提示。`${VAR}` 会从 `.env` 替换 |
+
+读取清单的有四处：`scripts/template.sh` · `scripts/check-deps.sh` · `scripts/load-context.sh` ·
+`scripts/company-setup.sh`。加了新键，就得让其中一处学会读它。没人读的键只是文档，不是配置。
+
+MCP 的注册检查是读取配置文件（`~/.claude.json` · `.mcp.json` · `~/.codex/config.toml`）来完成的，
+而不是执行 `claude mcp list`。那条命令会通过网络做健康检查，会让 `pnpm check` 失去确定性。
 
 ---
 
 ## 技术栈
 
-pnpm workspaces · Turborepo · Next.js 16 (App Router) · React 19 · TypeScript 5.9 (strict) ·
-Tailwind CSS 4 · zod 4 · Supabase · tiptap · Radix UI · gray-matter · marked · turndown
-
----
+pnpm workspaces · Turborepo · TypeScript 5.9（strict）· 确定性 bash 脚本。
+应用侧的技术栈（Next.js · React · Tailwind · zod 等）由模板带来。
 
 ## 许可证
 

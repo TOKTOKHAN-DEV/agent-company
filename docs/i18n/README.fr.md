@@ -10,376 +10,337 @@
 [Português](./README.pt-BR.md) ·
 [Русский](./README.ru.md)
 
-> **⚠️ Cette traduction décrit l'ancienne structure.** Le dépôt est passé à une structure cœur + modèles.
-> Voir [한국어](../../README.md) ou [English](./README.en.md) pour le contenu actuel.
-
-> Modèle monorepo pour mener des projets informatiques avec une équipe d'agents IA.
-> Le contexte survit d'une session à l'autre et la qualité est protégée par une barrière de relecture.
+> Un monorepo que fait tourner une équipe d'IA.
+> Un organigramme, un règlement intérieur, une mémoire qui survit à la session et un bouton de publication que seul un humain peut presser.
 
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.11-339933)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A510-F69220)](https://pnpm.io)
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000)](https://nextjs.org)
 [![License](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
 
 ---
 
-## Ce que ça résout
+## Présentation du projet
 
-Quand on confie un projet à une IA, deux choses cassent systématiquement.
+Les IDE pour agents comme Orca et Paseo fournissent un environnement de travail : worktrees
+parallèles, un terminal par agent, une vue diff. Dès qu'on mène un vrai projet dessus, les mêmes
+problèmes finissent pourtant par apparaître.
 
-**Le contexte disparaît.** Dès qu'une session se termine ou que la personne en charge change, l'IA ne sait
-plus ce qui a été décidé. Elle rouvre des débats tranchés et revient à des approches déjà abandonnées.
+L'historique de ce qui a déjà été fait ne reste pas. La session se termine, ou un autre agent
+reprend le travail, et les décisions passées disparaissent. On se retrouve à réexpliquer ce qui
+était déjà tranché, et il arrive que le travail reparte sur une approche pourtant abandonnée.
 
-**Il n'y a pas de contrôle qualité.** Sans étape de relecture, ce que produit l'IA part directement en
-production.
+La relecture du résultat n'est pas simple non plus. Il faut donc un endroit où une personne vérifie
+le travail et le publie. Pour un blog, c'est une page d'administration ; pour une mini-app Toss, ce
+sont la pré-vérification avant soumission et la console.
 
-Ce modèle bloque les deux **par la structure**.
+Ni l'un ni l'autre ne se règle en peaufinant les prompts. Nous avons ajouté un système à chaque
+endroit où les choses cèdent.
 
-| Problème | Solution |
-| --- | --- |
-| Perte de contexte | `CLAUDE.md` + `AGENTS.md` + `wiki/` + mémoire courte/longue, chargés par un hook SessionStart |
-| Contrôle qualité | Fonction d'audit déterministe + écran de relecture + bouton de publication réservé à un humain |
-| Rôles confus | Agents indépendants séparés par runtime + correspondance explicite des modèles + parallélisme multi-terminal |
-| Provenance des images | Une seule voie via Codex `imagegen` + provenance enregistrée + triple contrainte |
+| Ce qui cède | Système | Ce qui l'impose |
+| --- | --- | --- |
+| Perte de contexte | Le manuel, l'index du wiki et la mémoire court/long terme se chargent à chaque début de session | Hook SessionStart |
+| Dérive de qualité | La barrière de publication est une fonction déterministe. Humains et agents voient le même verdict | Aucun appel de LLM dedans |
+| Rôles qui se mélangent | Chaque agent déclare son runtime, son modèle et son périmètre d'écriture | `agents/registry.yaml` |
+| Ressources sans provenance | Un seul chemin pour générer des images, provenance enregistrée sur chaque ressource | Garde-fou d'outil + audit |
+| Publication accidentelle | Les agents vont jusqu'à `in_review` et s'arrêtent. Le bouton, c'est un humain | Ce chemin n'existe pas dans les types |
 
 ---
 
 ## Installation
 
-### Installation pour les humains
+### Laisser un agent s'en charger (recommandé)
 
-Collez ce prompt dans votre agent LLM (Claude Code, Codex, Cursor, Gemini CLI, …) :
+Collez ceci tel quel dans l'agent de code que vous utilisez : Claude Code, Codex, Cursor, Gemini
+CLI.
 
 ```text
-Install and configure agent-company by following the instructions here:
+Install Agent Company by following the instructions here:
 https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
 ```
 
-Ou lisez le [guide d'installation](../../INSTALL.md) vous-même. Sérieusement, laissez faire l'agent :
-les humains cassent les fichiers de configuration avec des fautes de frappe.
+Le guide se suffit à lui-même, du clone jusqu'à la vérification. Si le dossier courant est vide, il
+clone sur place, et chaque outil requis ou optionnel est décrit avec sa solution de repli, de sorte
+que l'agent peut décider seul là où il bloque.
 
-### Installation pour les agents LLM
-
-Récupérez le guide d'installation et suivez-le :
-
-```bash
-curl -s https://raw.githubusercontent.com/TOKTOKHAN-DEV/agent-company/refs/heads/main/INSTALL.md
-```
-
-Le guide est **autonome, du clonage à la vérification**. Si le répertoire courant est vide, il clone sur
-place plutôt que d'imbriquer un sous-répertoire, et il documente tous les outils obligatoires et
-optionnels ainsi que les procédures de repli — l'agent peut donc décider lui-même partout où il bloque.
-Le `pnpm check` final indique de façon déterministe si l'installation a réussi.
-
-### Installer soi-même
+### À la main
 
 ```bash
 git clone https://github.com/TOKTOKHAN-DEV/agent-company.git
 cd agent-company
+
 pnpm install
-pnpm setup     # vérification complète des dépendances · préparation (le suivi/l'étoile sont proposés, jamais imposés)
-pnpm dev       # web → :3000 · admin → :3001
+pnpm company-setup    # vérifier les dépendances → choisir quelle entreprise monter → préparer l'environnement → vérifier
+pnpm dev
 ```
 
-Voir **[INSTALL.md](../../INSTALL.md)** pour la procédure détaillée et le dépannage.
+Pour la procédure complète et le dépannage, voir [INSTALL.md](../../INSTALL.md).
 
-> INSTALL.md est pour l'instant rédigé en coréen. Les agents IA le lisent sans difficulté.
+> C'est `pnpm company-setup`, pas `pnpm setup`. `setup` est une commande interne de pnpm, donc un
+> script portant ce nom serait masqué.
 
 ---
 
-## Structure
+## Cœur et modèles
+
+Le dépôt se compose de deux couches. Le cœur est le même dans toutes les entreprises, et c'est le
+modèle qui décide de ce qui est construit.
 
 ```
 agent-company/
-├── apps/
-│   ├── web/              blog public (Next.js 16 App Router, :3000)
-│   └── admin/            contenu · SEO/GEO · tableau de bord de relecture (:3001)
-├── packages/
-│   ├── content/          schéma · pilotes de stockage · audit · JSON-LD (source de vérité unique)
-│   └── supabase/         client · stockage · migrations (inactif sans clés)
-├── content/posts/        articles markdown — pilote par défaut
-├── docs/i18n/            traductions du README, 8 langues
-├── agents/
-│   ├── registry.yaml     runtime · modèle · permissions (source de vérité unique)
-│   ├── blog-writer/      AGENT.md + skills/ (claude · opus)
-│   └── image-maker/      AGENT.md + skills/ (codex)
-├── wiki/
-│   ├── 00~06-*.md        vue d'ensemble · architecture · conventions · guides · historique
-│   ├── decisions/        ADR
-│   └── memory/           mémoire à court et long terme
-├── .claude/
-│   ├── settings.json     enregistrement des hooks
-│   ├── hooks/            chargement du contexte SessionStart · garde-fou de la politique d'images
-│   └── skills/           3 commandes slash
-├── scripts/              scripts shell déterministes
-├── CLAUDE.md             instructions pour Claude Code
-└── AGENTS.md             instructions pour tout agent de codage IA
+│
+├── ── cœur (toujours présent) ──────────────────────
+│   ├── .claude/          hooks (SessionStart · PreToolUse) · commandes slash
+│   ├── wiki/             connaissances du projet + mémoire court/long terme + ADR
+│   ├── agents/           l'emplacement de l'effectif (registry.yaml + <id>/)
+│   ├── scripts/          scripts shell déterministes
+│   ├── CLAUDE.md         consignes pour Claude Code
+│   └── AGENTS.md         consignes communes à tous les agents de code IA
+│
+├── ── modèles (en choisir un et le déployer) ───────
+│   └── templates/<id>/
+│       ├── template.yaml   manifeste — scripts · vérifications · règles dures · étapes suivantes
+│       └── files/          chemins relatifs à la racine du dépôt (apps/ · packages/ · agents/ …)
+│
+└── ── produit (ce dépôt uniquement) ────────────────
+    └── site/               landing. un seul fichier HTML statique, sans build → Vercel
 ```
 
----
+`pnpm company-setup` vous fait choisir un modèle, copie `templates/<id>/files/` à la racine, puis
+fusionne les `script:` du manifeste dans le `package.json` racine. En changeant de modèle, seules
+les clés de script ajoutées par le précédent sont retirées.
 
-## Implémentation de référence : un blog piloté par IA
+### Modèles disponibles
 
-### web (`:3000`)
-
-Le blog public. Ne rend que les articles en `status: published` de `content/posts/`.
-Génère automatiquement le JSON-LD (BlogPosting · FAQPage), `sitemap.xml`, `robots.txt` et `rss.xml`.
-Les robots des moteurs de réponse (GPTBot, ClaudeBot, PerplexityBot, …) sont explicitement autorisés.
-
-### admin (`:3001`)
-
-- **Éditeur** — texte riche tiptap avec téléversement d'images. Toujours stocké en markdown
-- **Panneau SEO technique** — canonical · directives robots · OG/Twitter · priority du sitemap · hreflang
-- **Panneau GEO** — résumé extractible · FAQ · entités · citations · locale/marchés cibles
-- **Écran de relecture** — résultats d'audit, aperçu JSON-LD, checklist humaine, bouton de publication
-- **Tableau de bord SEO/GEO** — points en suspens de tous les articles, agrégés par voie
-
-L'interface utilise un select basé sur Radix plutôt que le `<select>` natif : la liste dessinée par le
-système d'exploitation ignore les styles et diffère d'un navigateur à l'autre.
-
-### agents
-
-```
-blog-writer (claude · opus)                       image-maker (codex)   humain
-plan-post → write-draft → optimize-seo-geo    →   generate-cover    →   relecture admin → publication
-                 ↓
-         review-and-submit → status: in_review
-```
-
-Les agents ne vont que jusqu'à `in_review`. **Publier est un acte humain.**
-
----
-
-## Pourquoi SEO et GEO sont traités séparément
-
-| | SEO | GEO (Generative Engine Optimization) |
-| --- | --- | --- |
-| Cible | Moteurs de recherche | Moteurs de réponse (ChatGPT · Claude · Perplexity · AI Overviews) |
-| Objectif | **Classement** | **Citation** |
-| Signaux clés | Titre · meta · liens · vitesse | Structure extractible · questions-réponses explicites · sources · entités |
-
-Pour être cité, il faut être facile à extraire. D'où un bloc GEO distinct dans le frontmatter :
-`geo.faq` est rendu en JSON-LD `FAQPage` et `geo.answerSummary` en bloc de résumé en haut de page.
-
-Les règles pratiques : [wiki/04-seo-geo-playbook.md](../../wiki/04-seo-geo-playbook.md).
-
----
-
-## SEO technique
-
-### Généré automatiquement — rien à maintenir
-
-| Chemin | Contenu |
-| --- | --- |
-| `/sitemap.xml` | Articles publiés, avec priority · changefreq · hreflang par article |
-| `/robots.txt` | Robots de recherche et de moteurs de réponse autorisés, `/api/` bloqué |
-| `/rss.xml` | Flux des articles publiés |
-| `/llms.txt` | **Résumé du site pour les LLM** — les modèles le comprennent sans analyser le HTML |
-
-`llms.txt` est le pendant GEO du sitemap. Le sitemap indique *où* sont les URL ; llms.txt indique *ce
-qu'est ce site et quels articles existent*. Chaque entrée réutilise le `geo.answerSummary` de l'article :
-remplir ce résumé rapporte donc deux fois.
-
-### Par article, depuis l'admin
-
-canonical · noindex/nofollow · directives robots (`max-snippet`, …) · cartes OG/Twitter ·
-priority/changefreq du sitemap · hreflang · inclusion ou non dans llms.txt.
-
-### Search console et analytics
-
-Renseignez une valeur dans `.env` pour activer chaque intégration. **Laissée vide, la balise ou le script
-n'est jamais émis.**
-
-| Variable | Cible |
-| --- | --- |
-| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console |
-| `NEXT_PUBLIC_NAVER_SITE_VERIFICATION` | Naver Search Advisor |
-| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster Tools |
-| `NEXT_PUBLIC_GA4_MEASUREMENT_ID` | GA4 (chargé en `afterInteractive`) |
-
-### Slugs en langage naturel
-
-```
-/blog/next-js-16-캐시-컴포넌트-완전-정복
-```
-
-Le non-ASCII est conservé. Garder le mot-clé cible dans l'URL est un vrai signal de classement et de taux
-de clic, et un slug translittéré est illisible pour le public visé.
-
-Détails : [wiki/08-technical-seo.md](../../wiki/08-technical-seo.md)
-
----
-
-## Backend — des fichiers maintenant, Supabase plus tard
-
-Le code applicatif ne touche jamais directement au stockage. Il ne voit qu'une interface.
-
-```
-web · admin · audit CLI
-        │
-        ▼
-  getRepository()          ← choisi automatiquement selon la présence de clés
-   ├── file       content/posts/*.md   (par défaut · l'état actuel)
-   └── supabase   Postgres + Storage   (dès que les clés sont là)
-```
-
-**L'absence de clés est l'état normal.** `pnpm install && pnpm dev` fonctionne tel quel. Pour basculer :
-
-1. Mettez les trois clés Supabase dans `.env`
-2. Appliquez `packages/supabase/migrations/0001_init.sql`
-3. `pnpm --filter @repo/supabase migrate` — migre les articles (idempotent ; les fichiers sont conservés)
-
-Pas une ligne de code applicatif ne change. `CONTENT_DRIVER=file` permet de revenir à tout moment.
-
-Une politique RLS limite la clé anon aux articles `published` non `noindex` — la dernière ligne de défense
-pour qu'un bug applicatif ne puisse toujours pas divulguer un brouillon.
-
-Détails : [wiki/07-supabase.md](../../wiki/07-supabase.md)
-
----
-
-## Comment le contexte est préservé
-
-Au démarrage d'une session, un hook injecte automatiquement :
-
-```
-règles strictes → index du wiki → mémoire longue → mémoire courte récente → agents → état git
-```
-
-Il charge **l'index, pas le wiki entier.** On donne une carte au modèle et il ouvre ce dont il a besoin.
-
-### Mémoire à deux niveaux
-
-```
-court terme ──(référencée 3+ fois / toujours vraie)──▶ long terme
-long terme  ──(devient une règle du projet)──────────▶ document wiki ou ADR
-```
-
-La promotion est gérée par la skill `/save-memory`.
-
----
-
-## Politique d'images (règle stricte)
-
-**Les images sont générées uniquement par Codex `imagegen`. Il est interdit à Claude d'en générer.**
+| id | statut | ce qui est produit | effectif | barrière |
+| --- | --- | --- | --- | --- |
+| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | site public + poste de relecture | blog-writer · image-maker | `audit` → `in_review` |
+| `bare` | stable | le cœur seul. effectif vide | à vous de décider | à vous de le faire |
+| [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | mini-app WebView Toss | spec-writer · ui-builder · release-manager | `preflight` → relecture en console |
 
 ```bash
-pnpm imagegen --slug <post-slug> --prompt "<description de la scène>"
+pnpm template list                    # liste · modèle appliqué
+pnpm template apply <id>              # déployer
+pnpm template apply <id> --force      # écraser par-dessus un autre modèle
+pnpm template prune                   # nettoyer le catalogue inutilisé et la landing
 ```
 
-Si Codex est indisponible, on se replie dans cet ordre :
+`planned` signifie que le manifeste énonce l'intention mais qu'il n'y a pas encore de contenu.
+`apply` refuse, car déposer une coquille vide revient à chercher plus tard pourquoi rien ne marche.
 
-1. **Continuer sans image** — par défaut. Une couverture n'est pas obligatoire pour publier.
-2. **L'utilisateur en fournit une** — `source: user-upload`
-3. **Recherche web** — vérification de licence obligatoire. `source: web-search` et un `license` enregistré
+### Un projet, une entreprise
 
-Une règle qui ne vit que dans la documentation n'est pas respectée : celle-ci est donc **imposée sur trois
-couches**.
+Un même dépôt a deux visages. Une fois le choix fait, le reste du catalogue et la landing du produit
+ne servent plus à ce projet, donc `pnpm company-setup` propose de les nettoyer.
+
+| | Dépôt produit (celui-ci) | Votre projet créé via Use this template |
+| --- | --- | --- |
+| `site/` (landing) | présent → déployé sur Vercel | supprimé au nettoyage |
+| Modèles non retenus | tous présents | supprimés au nettoyage |
+| `files/` du modèle retenu | présent | supprimé (déjà à la racine) |
+| `template.yaml` du modèle retenu | présent | conservé |
+| Cœur | présent | présent |
+
+Conserver le manifeste est le point important, car `check-deps.sh` y lit `verify-*` et
+`load-context.sh` y lit `rule:`. Si vous le supprimez, les vérifications et les règles dures
+disparaissent sans la moindre erreur.
+
+Le dépôt produit porte le marqueur `.company/PRODUCT`, donc prune y refuse d'agir. Un contributeur
+qui clone et lance le setup ne perdra pas le catalogue.
+
+Si vous avez besoin d'un autre modèle plus tard, vous pouvez le récupérer depuis upstream.
+
+```bash
+git remote add upstream https://github.com/TOKTOKHAN-DEV/agent-company.git
+git fetch upstream && git checkout upstream/main -- templates/
+```
+
+### Pourquoi les modèles ne sont pas dans des dépôts séparés
+
+Les clés du manifeste évoluent en même temps que les scripts du cœur. Elles sont lues avec `sed`,
+donc une clé inconnue est ignorée en silence, et un modèle distant obsolète ferait disparaître des
+vérifications entières sans aucune erreur. Tout garder dans un dépôt évite cela. Par ailleurs, une
+requête réseau au milieu du setup casserait la promesse d'obtenir le même état en le relançant.
+
+Le poids n'est pas un argument solide. Pour git, `templates/` pèse 388 Ko.
+
+Le moment de séparer viendra quand des tiers commenceront à contribuer des modèles, quand un modèle
+embarquera de gros fichiers, ou quand les rythmes de publication divergeront. Le seul endroit à
+modifier serait la copie de fichiers dans `template.sh`.
+
+---
+
+## Ce que fournit le cœur
+
+### 1. La couche de contexte
+
+Au démarrage de la session, un hook injecte ceci.
+
+```
+règles dures du cœur → entreprise actuelle (modèle) + ses règles dures → index du wiki
+                     → mémoire long terme → mémoire courte récente → effectif → état git
+```
+
+Il charge un index, pas le wiki entier. On donne une carte au modèle et il ouvre ce dont il a besoin
+([ADR-0003](../../wiki/decisions/ADR-0003-session-context-loading.md)).
+
+La mémoire à deux niveaux ne garde que ce qui dure.
+
+```
+court terme ──(référencée 3 fois ou plus / toujours vraie)──▶ long terme
+long terme  ──(devient une règle du projet)────────────────▶ document wiki ou ADR
+```
+
+`/save-memory` gère la promotion.
+
+### 2. L'effectif
+
+Les agents dont il est question ici ne sont pas des sous-agents Claude. Chacun est un processus
+indépendant dans son propre terminal, et leurs runtimes diffèrent. C'est ce qui permet à un ADE
+comme Orca de les exécuter réellement en parallèle.
+
+```bash
+pnpm agent --list
+pnpm agent <id> "<tâche>"
+pnpm agent <id> "<tâche>" --dry-run   # n'affiche que la commande assemblée (pour un autre terminal)
+```
+
+Le lanceur lit le runtime et le modèle dans `agents/registry.yaml`, assemble `AGENT.md` et un index
+des skills (généré en parcourant le dossier) dans le prompt système, puis démarre le CLI
+correspondant. Une skill ajoutée apparaît sans aucun enregistrement.
+
+On ajoute un agent pour une question de runtime et de parallélisme, pas de rôle. Si un agent
+existant peut faire le travail, mieux vaut ajouter une skill →
+[wiki/05-agent-operations.md](../../wiki/05-agent-operations.md)
+
+### 3. La barrière de publication
+
+La barrière est une fonction déterministe. L'écran d'administration et la CLI appellent la même
+fonction, donc humains et agents voient le même verdict. Aucun appel de modèle à l'intérieur, car un
+modèle qui évalue sa propre production penche vers l'acceptation.
+
+Ce que contrôle la barrière dépend du modèle. Pour `blog-autopublish`, c'est `pnpm audit:content`.
+
+### 4. La politique d'images
+
+Il n'y a qu'un seul chemin pour générer des images : Codex `imagegen`. La politique appartient au
+cœur et la commande vient du modèle, car l'endroit où atterrit l'image et la métadonnée qui note sa
+provenance changent selon le domaine. Pour `blog-autopublish`, cela donne ceci.
+
+```bash
+pnpm imagegen --slug <slug> --prompt "<description de la scène>"
+```
+
+Si Codex n'est pas disponible, on se replie dans cet ordre.
+
+1. Continuer sans image (valeur par défaut)
+2. Demander à l'utilisateur d'en joindre une (`source: user-upload`)
+3. Recherche web. La licence doit être vérifiée, et `source: web-search` ainsi que `license` sont enregistrés
+
+Une règle qui ne vit que dans un document n'est pas suivie, elle est donc imposée sur trois couches.
 
 | Couche | Mécanisme |
 | --- | --- |
-| Types | `ImageSource` ne contient aucune valeur `claude` |
+| Types | `ImageSource` ne comporte pas de valeur `claude` |
 | Hook | `PreToolUse` bloque les commandes de génération d'images hors Codex |
-| Audit | Provenance manquante ou image web sans licence = erreur → publication bloquée |
+| Audit | Provenance non enregistrée ou image web sans licence traitées en error → publication impossible |
 
 Justification : [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
 ---
 
-## Skills (commandes slash)
+## Règles dures du cœur
 
-| Commande | Rôle |
-| --- | --- |
-| `/company-setup` | Vérification complète des dépendances · installation (script déterministe) · suivi/étoile facultatifs |
-| `/save-memory` | Enregistre les acquis en mémoire courte et les promeut vers le long terme/wiki si justifié |
-| `/create-agent` | Crée un nouvel agent dans registry + AGENT.md + skills/ de manière cohérente |
+Vraies quel que soit le modèle. En changer une suppose d'écrire d'abord un ADR dans
+`wiki/decisions/`.
 
-Les skills que lit un agent (`agents/<id>/skills/`) sont autre chose : ce sont des playbooks neutres
-vis-à-vis du runtime, injectés par le lanceur dans le prompt système — l'agent codex les lit aussi.
+1. **Un seul chemin pour générer des images.** Ni autre modèle d'image, ni SVG en remplacement.
+2. **Le bouton de publication, c'est un humain.** Les agents vont jusqu'à `in_review` et s'arrêtent.
+3. **La vérité est dans les fichiers du dépôt.** Résultats et décisions sont versionnés dans le même dépôt que le code.
+4. **La barrière est déterministe.** Aucune inférence de modèle dans la relecture.
+5. **Le contexte se charge tout seul.** Personne n'a à penser à l'apporter.
 
----
-
-## Agents
-
-**Ce ne sont pas des sous-agents Claude.** Chacun est un processus indépendant dans son propre terminal, et
-les runtimes diffèrent. C'est ce qui permet à Orca de les exécuter réellement en parallèle.
-
-| ID | Runtime | Modèle | Rôle |
-| --- | --- | --- | --- |
-| `blog-writer` | `claude` | opus | planifier → rédiger → SEO/GEO → relire |
-| `image-maker` | `codex` | default | générer des images avec imagegen · enregistrer la provenance |
-
-```bash
-pnpm agent --list
-pnpm agent blog-writer "Écris un article sur la stratégie de cache de Turborepo"
-pnpm agent image-maker "Image de couverture pour turborepo-cache-strategy"
-```
-
-```
-agents/blog-writer/
-├── AGENT.md                       injecté comme prompt système
-└── skills/
-    ├── plan-post/SKILL.md         planification · vérification des doublons · plan
-    ├── write-draft/SKILL.md       rédaction du corps
-    ├── optimize-seo-geo/SKILL.md  métadonnées
-    └── review-and-submit/SKILL.md audit · in_review
-```
-
-Le lanceur assemble `AGENT.md` et un index des skills (généré en scannant le dossier) dans le prompt
-système, puis démarre la bonne CLI avec le bon modèle. Ajouter une skill prend effet immédiatement, sans
-enregistrement séparé.
-
-### Pourquoi seulement deux
-
-**Le critère de séparation, c'est le runtime et le parallélisme, pas le rôle.** Les quatre étapes du
-pipeline de contenu touchent le même fichier l'une après l'autre : les séparer en processus n'apporte rien,
-elles ont donc été séparées en skills. Les images, elles, exigent un runtime différent (Codex uniquement),
-et cette frontière n'est pas négociable — elle est devenue une frontière de processus, et la règle est
-devenue structurelle.
-
-Règles multi-terminal : [wiki/05-agent-operations.md](../../wiki/05-agent-operations.md).
+Les règles de domaine se placent dans `rule:` au sein de `templates/<id>/template.yaml` et sont
+injectées par-dessus ces cinq-là au démarrage de la session.
 
 ---
 
 ## Commandes
 
+### Cœur (toujours)
+
 | Commande | Description |
 | --- | --- |
-| `pnpm setup` | Vérification complète de l'environnement + installation (+ suivi/étoile GitHub facultatifs) |
-| `pnpm check` | Vérifie uniquement l'état de l'environnement (n'installe rien) |
-| `pnpm dev` | Lance web et admin ensemble |
-| `pnpm dev:web` / `pnpm dev:admin` | Lancement individuel |
-| `pnpm build` | Compile les deux applications |
-| `pnpm typecheck` | Vérification des types |
-| `pnpm audit:content` | Exécute la barrière de publication en CLI (même fonction que l'écran de relecture) |
-| `pnpm context` | Affiche manuellement le contexte de session |
-| `pnpm imagegen` | Génère une image avec Codex |
-| `pnpm memory:new <topic>` | Crée un fichier de mémoire (`--long` pour le long terme) |
-| `pnpm --filter @repo/supabase migrate` | Migre les articles des fichiers vers Supabase (`--dry-run` pris en charge) |
+| `pnpm company-setup` | Vérifier les dépendances → choisir un modèle → préparer l'environnement → vérifier (+ optionnel : suivre/étoiler sur GitHub) |
+| `pnpm check` | Inspecte seulement l'état (n'installe rien), y compris les vérifications du modèle courant |
+| `pnpm template list \| apply <id> \| prune` | Consulter · appliquer · nettoyer les modèles |
+| `pnpm agent --list \| <id> "<tâche>"` | Lister · exécuter les agents |
+| `pnpm context` | Afficher manuellement le contexte de session |
+| `pnpm memory:new <topic>` | Créer un fichier de mémoire (`--long` pour le long terme) |
+| `pnpm dev \| build \| typecheck \| lint \| test` | Tout le workspace (turbo) |
+
+### Ce qu'ajoute un modèle
+
+Appliquer `blog-autopublish` ajoute `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+`imagegen`. Les clés qui arrivent sont indiquées dans les lignes `script:` du manifeste.
 
 ---
 
-## L'adapter à un autre domaine
+## Commandes slash
 
-Le blog est une référence destinée à rendre le modèle concret. Pour en faire du commerce, un tableau de
-bord ou un site de documentation :
+| Commande | Rôle |
+| --- | --- |
+| `/company-setup` | Vérification complète des dépendances + installation · choix du modèle (suivre/étoiler facultatifs) |
+| `/save-memory` | Enregistre la session en mémoire courte et la promeut en long terme/wiki si nécessaire |
+| `/create-agent` | Crée un agent dans registry + AGENT.md + skills/ en une seule fois |
 
-1. Remplacez le schéma dans `packages/content/src/schema.ts`
-2. Remplacez les règles d'audit dans `packages/content/src/audit.ts`
-3. Reconstruisez les agents de `agents/` via `/create-agent`
-4. Remplacez `wiki/03` et `wiki/04` par vos guides métier
+Les skills que lisent les agents (`agents/<id>/skills/`) sont autre chose. Ce sont des playbooks
+neutres vis-à-vis du runtime que le lanceur injecte dans le prompt système, donc les agents codex
+les lisent aussi.
 
-**Ce qui reste** : les hooks, la structure de mémoire, le motif de barrière de relecture, la politique
-d'images et le squelette monorepo. C'est là qu'est la vraie valeur du modèle.
+---
+
+## Créer un nouveau modèle
+
+```
+templates/<id>/
+├── template.yaml    manifeste
+└── files/           chemins relatifs à la racine du dépôt
+```
+
+Le manifeste utilise un format à clés répétées. Aucun parseur YAML n'est introduit : `sed`/`awk` le
+lisent, parce que l'installation doit rester déterministe.
+
+| Clé | Signification |
+| --- | --- |
+| `id` · `name` · `status` · `summary` | Ce qui apparaît dans la liste. `status` vaut `stable` · `preview` · `planned` |
+| `ships` · `hires` · `gate` | Résumés d'une ligne (utilisés dans la doc et la landing) |
+| `script: key=value` | Fusionné dans le `package.json` racine. Seules ces clés sont retirées au changement |
+| `verify-workspace:` | Vérifie jusqu'au lien des dépendances (échec sinon) |
+| `verify-dir:` | Existence du répertoire + nombre de fichiers (échec sinon) |
+| `verify-optional:` | Fichier/répertoire souhaitable (avertissement s'il manque) |
+| `verify-env: VAR=raison` | Contrôle la valeur dans `.env`. Si absente, indique ce qui est désactivé |
+| `note-env: VAR=raison` | Valeurs normalement vides. Affiche seulement l'état |
+| `runtime:` | CLI utilisés par ce modèle (avertissement s'ils manquent) |
+| `mcp: nom=raison` | Serveurs MCP utilisés par ce modèle. L'enregistrement est vérifié |
+| `mcp-claude:` · `mcp-codex:` | La commande d'ajout à afficher lorsqu'il en manque un |
+| `rule:` | Règles dures de cette entreprise, injectées par-dessus celles du cœur |
+| `next:` | Indications après le setup. `${VAR}` est substitué depuis `.env` |
+
+Quatre scripts lisent le manifeste : `scripts/template.sh` · `scripts/check-deps.sh` ·
+`scripts/load-context.sh` · `scripts/company-setup.sh`. Si vous ajoutez une clé, l'un d'eux doit
+apprendre à la lire, car une clé que personne ne lit relève de la documentation, pas de la
+configuration.
+
+L'enregistrement MCP est vérifié en lisant des fichiers de configuration (`~/.claude.json` ·
+`.mcp.json` · `~/.codex/config.toml`) plutôt qu'en lançant `claude mcp list`. Cette commande fait un
+health check par le réseau, ce qui rendrait `pnpm check` non déterministe.
 
 ---
 
 ## Stack
 
-pnpm workspaces · Turborepo · Next.js 16 (App Router) · React 19 · TypeScript 5.9 (strict) ·
-Tailwind CSS 4 · zod 4 · Supabase · tiptap · Radix UI · gray-matter · marked · turndown
-
----
+pnpm workspaces · Turborepo · TypeScript 5.9 (strict) · scripts bash déterministes.
+La stack applicative (Next.js · React · Tailwind · zod, etc.) est apportée par le modèle.
 
 ## Licence
 

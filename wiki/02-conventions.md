@@ -30,7 +30,7 @@
 | --- | --- | --- |
 | 파일(컴포넌트) | PascalCase | `StatusBadge.tsx` |
 | 파일(그 외) | kebab-case 또는 camelCase | `session-start.sh`, `markdown.ts` |
-| 템플릿 id | 소문자 kebab-case | `blog-autopublish`, `apps-in-toss` |
+| 템플릿 id | 소문자 kebab-case | `blog-autopublish`, `app-in-toss` |
 | 에이전트 id | 소문자 kebab-case, 역할 명사 | `blog-writer`, `release-manager` |
 | wiki 문서 | `NN-topic.md` (2자리 접두) | `04-seo-geo-playbook.md` |
 | 메모리 파일 | `YYYY-MM-DD-topic.md` | `2026-07-27-admin-server-actions.md` |
