@@ -1,0 +1,29 @@
+{
+  "name": "@repo/miniapp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "_comment_react18": "TDS(@toss/tds-mobile)의 peer 가 react ^16.8.3 || ^17 || ^18 입니다. 비게임 WebView 미니앱은 TDS 가 필수라 React 18 에 고정합니다. 공식 예제가 React 19 를 쓰는 것은 TDS 를 쓰지 않기 때문입니다.",
+    "_comment_commands": "web-framework v3 기준입니다. dev 는 평범한 vite, build 는 ait 가 .ait 아티팩트까지 만듭니다. v2 의 `granite dev` 와 granite.config.ts 의 web.commands·outdir 는 v3 에서 없어졌습니다 — 공식 예제 저장소는 아직 v2 라 다르게 보입니다.",
+    "dev": "vite dev",
+    "build": "ait build",
+    "deploy": "ait deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@apps-in-toss/web-framework": "^3.0.3",
+    "@emotion/react": "^11.14.0",
+    "@toss/tds-mobile": "^2.5.1",
+    "@toss/tds-mobile-ait": "^2.5.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^6.2.0"
+  }
+}

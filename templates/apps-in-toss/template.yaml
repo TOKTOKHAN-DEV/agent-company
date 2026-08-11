@@ -1,0 +1,60 @@
+# ─────────────────────────────────────────────────────────────
+# Template Manifest — apps-in-toss
+#
+# 토스 앱 안에서 도는 WebView 미니앱. 공식 경로(Vite + React + TDS)를 따릅니다.
+#
+# status: preview — 뼈대는 돌지만 실제 심사를 통과시킨 적이 없습니다.
+# 심사 기준은 계속 갱신되므로 제출 전에 공식 체크리스트를 다시 확인하세요.
+#   https://developers-apps-in-toss.toss.im/checklist/app-nongame.md
+#
+# 반복 키 형식입니다. YAML 파서를 들이지 않고 sed/awk 로 읽습니다.
+# 읽는 쪽:  scripts/template.sh · check-deps.sh · load-context.sh · company-setup.sh
+# ─────────────────────────────────────────────────────────────
+
+id: apps-in-toss
+name: Apps in Toss
+status: preview
+summary: 토스 앱 안에서 도는 WebView 미니앱. 명세 → 화면 → 심사 사전점검.
+ships: 미니앱 · 심사 사전점검
+hires: spec-writer · ui-builder · release-manager
+gate: preflight → 콘솔 검수 신청
+
+# ── 루트 package.json 에 병합할 스크립트 ─────────────────────
+# 템플릿을 바꾸면 여기 적힌 키만 정확히 회수됩니다.
+script: dev:miniapp=turbo run dev --filter=@repo/miniapp
+script: build:miniapp=turbo run build --filter=@repo/miniapp
+# 출고 게이트. 심사 체크리스트 중 기계로 판정 가능한 것만 결정적으로 검사합니다.
+script: preflight=node --experimental-strip-types --no-warnings scripts/preflight.ts
+
+# ── check-deps.sh 가 검사할 항목 ─────────────────────────────
+verify-workspace: apps/miniapp
+verify-dir: specs
+verify-optional: apps/miniapp/granite.config.ts
+
+verify-env: TOSS_MINIAPP_NAME=granite.config.ts 의 appName 과 맞춰야 콘솔 번들 업로드가 붙습니다
+note-env: TOSS_PRIVACY_POLICY_URL=비어 있으면 preflight 가 개인정보처리방침 항목을 error 로 잡습니다
+
+# ── 이 템플릿이 쓰는 런타임 (없으면 경고) ────────────────────
+runtime: claude
+runtime: codex
+
+# ── 이 템플릿이 쓰는 MCP 서버 ────────────────────────────────
+# check-deps.sh 가 등록 여부를 확인합니다. 인증(OAuth)까지는 확인하지 않습니다.
+mcp: apps-in-toss-console=콘솔에 들어가지 않고 워크스페이스·미니앱·검수·번들·대시보드를 다룹니다
+mcp-claude: apps-in-toss-console=claude mcp add --transport http apps-in-toss-console https://mcp.toss.im/adapters/apps-in-toss-console/mcp --client-id mcp-gateway
+mcp-codex: apps-in-toss-console=codex mcp add apps-in-toss-console --url https://mcp.toss.im/adapters/apps-in-toss-console/mcp --oauth-client-id mcp-gateway
+
+# ── 이 회사의 하드 룰 (세션 시작마다 코어 룰 위에 주입) ──────
+rule: SSR 을 쓰지 않는다. 심사가 CSR·SSG 만 허용한다 — 정적 빌드 산출물만 번들에 들어간다.
+rule: 명세(`specs/*.md`)에 없는 화면을 만들지 않는다. 수용 기준이 먼저다.
+rule: 비게임 미니앱은 TDS(`@toss/tds-mobile`)를 쓴다. 자체 디자인 시스템으로 대체하지 않는다.
+rule: 라이트 모드만 지원한다. `prefers-color-scheme: dark` 분기를 넣지 않는다.
+rule: `eval` 과 동적 코드 실행을 쓰지 않는다. 심사에서 바로 반려된다.
+rule: 소켓은 `wss://` 만. 공유 링크는 `intoss://` 만 (`intoss-private://` 금지).
+rule: 콘솔 검수 신청과 출시 버튼은 사람이 누른다. 에이전트는 preflight 통과까지만.
+
+# ── 셋업 완료 후 안내 (${VAR} 는 .env 에서 치환) ─────────────
+next: pnpm dev:miniapp — vite 개발 서버. 샌드박스 앱 연결은 wiki/03 의 테스트 절을 보세요
+next: pnpm agent spec-writer "<기능>" — 수용 기준부터 씁니다
+next: pnpm preflight — 심사 사전점검을 직접 돌려봅니다
+next: 콘솔 MCP 등록이 아직이면 pnpm check 가 명령을 알려줍니다

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <!--
+      확대 제스처를 막습니다. 심사 항목입니다 — 지도처럼 확대가 본질인 화면이
+      아니면 꺼야 합니다. viewport-fit=cover 는 노치 대응(Safe Area)에 필요합니다.
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <!-- 라이트 모드만 지원합니다. 심사 항목입니다. -->
+    <meta name="color-scheme" content="light" />
+    <title>내 미니앱</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

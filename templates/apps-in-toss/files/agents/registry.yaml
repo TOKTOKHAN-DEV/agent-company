@@ -1,0 +1,59 @@
+# ─────────────────────────────────────────────────────────────
+# Agent Registry — 에이전트 · 런타임 · 모델의 단일 진실 공급원
+#
+# 여기 있는 에이전트는 Claude 서브에이전트가 아닙니다.
+# 각자 별도 터미널에서 도는 **독립 프로세스**입니다.
+#   spec-writer      → claude CLI
+#   ui-builder       → claude CLI  (화면마다 병렬로 띄웁니다)
+#   release-manager  → codex CLI
+#
+# 실행:  pnpm agent <id> "<작업>"        (scripts/run-agent.sh)
+# 추가:  /create-agent                   (손으로 만들지 마세요)
+#
+# 왜 셋인가 — 나누는 기준은 역할이 아니라 런타임과 병렬성입니다.
+#   spec-writer 는 기능 하나의 맥락을 통째로 쥐고 판단합니다 (opus).
+#   ui-builder 는 명세가 확정된 뒤 **화면마다 따로** 돌 수 있습니다.
+#     서로 다른 파일(src/screens/*.tsx)을 건드리므로 진짜 병렬입니다 (sonnet).
+#   release-manager 는 런타임이 다릅니다 (codex).
+# ─────────────────────────────────────────────────────────────
+
+version: 2
+
+agents:
+  - id: spec-writer
+    name: Spec Writer
+    runtime: claude
+    model: opus
+    summary: 기능의 수용 기준과 화면 흐름을 specs/ 에 쓴다. 심사 항목을 명세 단계에서 반영한다.
+    writes: specs/**
+    skills: agents/spec-writer/skills
+    definition: agents/spec-writer/AGENT.md
+    hard_rules:
+      - 화면을 만들지 않는다. 명세만 쓴다.
+      - 열린 질문이 남아 있으면 구현으로 넘기지 않는다.
+
+  - id: ui-builder
+    name: UI Builder
+    runtime: claude
+    model: sonnet
+    summary: 확정된 명세대로 화면을 만든다. TDS 컴포넌트만 쓰고 라이트 모드만 지원한다.
+    writes: apps/miniapp/**
+    skills: agents/ui-builder/skills
+    definition: agents/ui-builder/AGENT.md
+    hard_rules:
+      - 명세에 없는 화면을 만들지 않는다.
+      - 색·타이포를 직접 정의하지 않는다. TDS 를 쓴다.
+      - SSR·서버 미들웨어를 도입하지 않는다. 정적 빌드여야 한다.
+
+  - id: release-manager
+    name: Release Manager
+    runtime: codex
+    # codex 기본 모델을 사용합니다. 특정 모델로 고정하려면 이 값을 바꾸세요.
+    model: default
+    summary: preflight 를 돌리고 번들과 릴리즈 노트를 준비한다. 콘솔 MCP 로 검수 상태를 조회한다.
+    writes: release/**
+    skills: agents/release-manager/skills
+    definition: agents/release-manager/AGENT.md
+    hard_rules:
+      - 검수 신청과 출시 버튼은 사람이 누른다. 대신 누르지 않는다.
+      - preflight 에 error 가 있으면 제출 준비를 멈추고 보고한다.

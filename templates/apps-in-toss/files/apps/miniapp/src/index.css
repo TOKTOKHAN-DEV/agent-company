@@ -1,0 +1,38 @@
+/*
+ * 라이트 모드만 지원합니다. 심사 항목이라 `prefers-color-scheme: dark` 분기를
+ * 넣지 마세요 — preflight 가 error 로 잡습니다.
+ *
+ * 색·타이포·간격은 직접 정의하지 말고 TDS 컴포넌트를 쓰세요. 비게임 WebView
+ * 미니앱은 TDS 사용이 필수입니다.
+ */
+
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #191f28;
+  /* 토스 앱과 같은 시스템 폰트 스택 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard',
+    'Malgun Gothic', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* 가로 스크롤은 미니앱에서 항상 버그입니다 */
+  overflow-x: hidden;
+  /* iOS 에서 탭 하이라이트가 토스 UI 와 어긋나 보입니다 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+#root {
+  min-height: 100vh;
+  /* 노치·홈 인디케이터 대응. 런타임 값은 SafeArea SDK 로 다시 받습니다. */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
