@@ -113,8 +113,8 @@ chaves de script que o anterior tinha adicionado são recolhidas.
 
 | id | status | o que entrega | quadro | portão |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | site público + mesa de revisão | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | só o núcleo. quadro vazio | você decide | você monta |
+| [`blog`](../../templates/blog/README.md) | stable | site público + mesa de revisão | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | só o núcleo. quadro vazio | você decide | você monta |
 | [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | mini app WebView da Toss | spec-writer · ui-builder · release-manager | `preflight` → revisão no console |
 
 ```bash
@@ -217,13 +217,13 @@ O portão é uma função determinística. A tela de administração e a CLI cha
 pessoas e agentes veem o mesmo veredito. Não há chamada de modelo lá dentro, porque um modelo que
 avalia o próprio resultado tende a aprovar.
 
-O que o portão checa é decisão do template. Em `blog-autopublish` é `pnpm audit:content`.
+O que o portão checa é decisão do template. Em `blog` é `pnpm audit:content`.
 
 ### 4. A política de imagens
 
 Existe um único caminho para gerar imagens: Codex `imagegen`. A política pertence ao núcleo e o
 comando vem do template, porque onde a imagem vai parar e em qual metadado a procedência é anotada
-muda conforme o domínio. Em `blog-autopublish` fica assim.
+muda conforme o domínio. Em `blog` fica assim.
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<descrição da cena>"
@@ -278,7 +278,7 @@ cima dessas cinco no início da sessão.
 
 ### O que um template acrescenta
 
-Aplicar `blog-autopublish` adiciona `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+Aplicar `blog` adiciona `dev:web` · `dev:admin` · `audit:content` · `cover` ·
 `imagegen`. Quais chaves chegam está escrito nas linhas `script:` do manifesto.
 
 ---

@@ -6,7 +6,7 @@
 #
 # 옵션:
 #   --template <id>          템플릿을 묻지 않고 바로 적용 (CI · 자동화)
-#   --prune / --no-prune     안 쓰는 템플릿·랜딩 정리 여부 (기본: 물어봄)
+#   --no-prune               안 쓰는 템플릿·랜딩을 정리하지 않음 (기본: 정리함)
 #   --yes                    모든 확인을 자동 승인 (CI 용)
 #   --skip-install           pnpm install 을 건너뜀
 #   --no-community-prompt    GitHub 응원(7단계)을 묻지 않고 넘어감
@@ -36,7 +36,7 @@ ASSUME_YES=0
 DO_INSTALL=1
 COMMUNITY_PROMPT=1
 WANT_TEMPLATE=""
-PRUNE="ask"
+PRUNE="yes"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -206,27 +206,19 @@ fi
 CURRENT_TEMPLATE="$(bash "$TEMPLATE_SH" current)"
 
 # ── 3-b. 카탈로그 정리 ────────────────────────────────────────
-# 프로젝트 하나는 회사 하나입니다. 고르고 나면 나머지 템플릿과 제품 랜딩은
-# 이 프로젝트에 아무 의미가 없습니다.
+# 프로젝트 하나는 회사 하나입니다. 회사를 골랐으면 나머지 템플릿과 제품 랜딩은
+# 이 프로젝트에 아무 의미가 없으므로 **셋업의 일부로 바로 정리합니다.**
 #
-# 되돌릴 수 없는 삭제라 기본값은 **묻기**입니다. 제품 레포(.company/PRODUCT)에서는
-# template.sh 가 알아서 거부하므로 여기서 따로 가르지 않습니다.
-if [ "$CURRENT_TEMPLATE" != "none" ] && [ ! -f .company/PRODUCT ]; then
-  do_prune=0
-  if [ "$PRUNE" = "yes" ]; then
-    do_prune=1
-  elif [ "$PRUNE" = "no" ]; then
-    info "--no-prune — 카탈로그를 그대로 둡니다"
-  elif [ -t 0 ]; then
-    printf '\n  %s이 프로젝트는 %s 회사 하나입니다. 나머지 템플릿과 제품 랜딩을 지울까요?%s\n' \
-      "$BOLD" "$CURRENT_TEMPLATE" "$RESET"
-    printf '  %s적용된 템플릿의 매니페스트는 남습니다 (검사·하드 룰이 계속 동작).%s\n\n' "$DIM" "$RESET"
-    if confirm "정리할까요?"; then do_prune=1; fi
+# 예전에는 여기서 물어봤는데, 그 질문은 tty 를 요구해서 비대화형 설치에서 조용히
+# 건너뛰어졌습니다. 고르는 행위 자체가 이미 의사 표시이므로 따로 묻지 않습니다.
+# 남기려면 --no-prune 을 붙이세요.
+#
+# 제품 레포(.company/PRODUCT)에서는 template.sh prune 이 스스로 거부하므로
+# 여기서 따로 가르지 않습니다.
+if [ "$CURRENT_TEMPLATE" != "none" ]; then
+  if [ "$PRUNE" = "no" ]; then
+    info "--no-prune — 카탈로그를 그대로 둡니다 (나중에: pnpm template prune)"
   else
-    info "비대화형 — 카탈로그를 그대로 둡니다 (정리: bash $TEMPLATE_SH prune)"
-  fi
-
-  if [ "$do_prune" -eq 1 ]; then
     bash "$TEMPLATE_SH" prune 2>&1 | sed 's/^/  /'
   fi
 fi

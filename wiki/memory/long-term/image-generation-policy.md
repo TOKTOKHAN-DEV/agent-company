@@ -17,7 +17,7 @@ promoted: true
 pnpm imagegen --slug <post-slug> --prompt "<설명>"
 ```
 
-명령은 템플릿이 제공합니다 (`blog-autopublish` 는 `pnpm imagegen`). 정책은 코어라 템플릿과
+명령은 템플릿이 제공합니다 (`blog` 는 `pnpm imagegen`). 정책은 코어라 템플릿과
 무관하게 PreToolUse 훅이 강제합니다. 템플릿에 이미지 명령이 없으면 이미지 없이 진행하는 것이
 정답입니다.
 

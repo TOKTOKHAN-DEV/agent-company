@@ -56,7 +56,7 @@ templates/<id>/files/          레포 루트 기준 경로 그대로
 템플릿과 무관하게 항상 참이고, 바꾸려면 `wiki/decisions/` 에 ADR 을 먼저 써야 합니다.
 
 1. **이미지 생성 경로는 하나다.**
-   정책은 코어, 명령은 템플릿이 줍니다 (`blog-autopublish` 는
+   정책은 코어, 명령은 템플릿이 줍니다 (`blog` 는
    `pnpm imagegen --slug <slug> --prompt "<설명>"`). 템플릿에 이미지 명령이 없으면
    이미지 없이 진행하는 것이 정답입니다.
    다른 이미지 모델이나 API 를 호출하지 않습니다. SVG 로 대체하지 않습니다.
@@ -105,7 +105,7 @@ pnpm dev | build        # 워크스페이스 전체 (turbo)
 
 ### 템플릿이 얹는 것
 
-`templates/<id>/template.yaml` 의 `script:` 줄에 적혀 있습니다. `blog-autopublish` 라면
+`templates/<id>/template.yaml` 의 `script:` 줄에 적혀 있습니다. `blog` 라면
 `dev:web` · `dev:admin` · `audit:content` · `cover` · `imagegen`.
 
 ---
@@ -182,6 +182,6 @@ pnpm build       # 앱을 건드렸다면
 pnpm check       # scripts/ · .claude/ · templates/ 를 건드렸다면
 ```
 
-템플릿의 게이트가 따로 있으면 그것도 돌립니다 (`blog-autopublish` 는 `pnpm audit:content`).
+템플릿의 게이트가 따로 있으면 그것도 돌립니다 (`blog` 는 `pnpm audit:content`).
 
 통과하지 못한 상태로 완료를 보고하지 마세요. 실패했으면 출력과 함께 실패를 보고합니다.

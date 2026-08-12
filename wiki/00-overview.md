@@ -68,10 +68,10 @@ agent-company/
 
 | id | 상태 | 만드는 것 | 로스터 |
 | --- | --- | --- | --- |
-| `blog-autopublish` | stable | 공개 사이트 + 검수 데스크 | blog-writer · image-maker |
-| `bare` | stable | 코어만. 빈 로스터 | 직접 정함 |
+| `blog` | stable | 공개 사이트 + 검수 데스크 | blog-writer · image-maker |
+| `blank` | stable | 빈 템플릿. 코어만 있음 | 직접 정함 |
 | `app-in-toss` | preview | 토스 WebView 미니앱 | spec-writer · ui-builder · release-manager |
 
-`blog-autopublish` 는 이 템플릿이 무엇을 하는지 이해하기 가장 쉬운 레퍼런스입니다 —
+`blog` 는 이 템플릿이 무엇을 하는지 이해하기 가장 쉬운 레퍼런스입니다 —
 콘텐츠 파이프라인이 계획 → 작성 → 메타데이터 → 검수로 명확하게 나뉘고, 게이트가 무엇을 막는지
 눈으로 볼 수 있습니다.

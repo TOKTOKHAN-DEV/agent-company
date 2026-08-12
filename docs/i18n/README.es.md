@@ -113,8 +113,8 @@ exactamente las claves de script que había añadido la anterior.
 
 | id | estado | qué produce | plantilla de personal | compuerta |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | sitio público + mesa de revisión | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | solo el núcleo. plantilla vacía | lo decides tú | lo haces tú |
+| [`blog`](../../templates/blog/README.md) | stable | sitio público + mesa de revisión | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | solo el núcleo. plantilla vacía | lo decides tú | lo haces tú |
 | [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | mini app WebView de Toss | spec-writer · ui-builder · release-manager | `preflight` → revisión en consola |
 
 ```bash
@@ -220,13 +220,13 @@ La compuerta es una función determinista. La pantalla de administración y la C
 función, así que personas y agentes ven el mismo veredicto. Dentro no hay ninguna llamada a un
 modelo, porque un modelo que evalúa su propio resultado tiende a aprobarlo.
 
-Qué comprueba la compuerta lo decide la plantilla. En `blog-autopublish` es `pnpm audit:content`.
+Qué comprueba la compuerta lo decide la plantilla. En `blog` es `pnpm audit:content`.
 
 ### 4. La política de imágenes
 
 Solo hay un camino para generar imágenes: Codex `imagegen`. La política pertenece al núcleo y el
 comando lo aporta la plantilla, porque dónde acaba la imagen y en qué metadato se anota su
-procedencia cambia según el dominio. En `blog-autopublish` queda así.
+procedencia cambia según el dominio. En `blog` queda así.
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<descripción de la escena>"
@@ -282,7 +282,7 @@ de estas cinco al iniciar la sesión.
 
 ### Lo que añade una plantilla
 
-Aplicar `blog-autopublish` añade `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+Aplicar `blog` añade `dev:web` · `dev:admin` · `audit:content` · `cover` ·
 `imagegen`. Qué claves llegan está escrito en las líneas `script:` del manifiesto.
 
 ---

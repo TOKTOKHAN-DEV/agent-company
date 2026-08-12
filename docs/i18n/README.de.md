@@ -115,8 +115,8 @@ hatte.
 
 | id | Status | Was entsteht | Belegschaft | Gate |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | öffentliche Website + Prüfoberfläche | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | nur der Kern. leere Belegschaft | entscheiden Sie selbst | bauen Sie selbst |
+| [`blog`](../../templates/blog/README.md) | stable | öffentliche Website + Prüfoberfläche | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | nur der Kern. leere Belegschaft | entscheiden Sie selbst | bauen Sie selbst |
 | [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | Toss-WebView-Mini-App | spec-writer · ui-builder · release-manager | `preflight` → Prüfung in der Konsole |
 
 ```bash
@@ -222,13 +222,13 @@ Das Gate ist eine deterministische Funktion. Die Admin-Oberfläche und die CLI r
 Funktion auf, deshalb sehen Menschen und Agenten dasselbe Urteil. Im Inneren steckt kein
 Modellaufruf, denn ein Modell, das sein eigenes Ergebnis bewertet, neigt zum Durchwinken.
 
-Was das Gate prüft, legt das Template fest. Bei `blog-autopublish` ist es `pnpm audit:content`.
+Was das Gate prüft, legt das Template fest. Bei `blog` ist es `pnpm audit:content`.
 
 ### 4. Die Bildrichtlinie
 
 Für die Bilderzeugung gibt es genau einen Weg: Codex `imagegen`. Die Richtlinie gehört zum Kern, das
 Kommando kommt vom Template, denn wo ein Bild landet und in welchem Metadatum seine Herkunft
-vermerkt wird, unterscheidet sich je nach Domäne. Bei `blog-autopublish` sieht es so aus.
+vermerkt wird, unterscheidet sich je nach Domäne. Bei `blog` sieht es so aus.
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<Beschreibung der Szene>"
@@ -285,7 +285,7 @@ Domänenregeln stehen unter `rule:` in `templates/<id>/template.yaml` und werden
 
 ### Was ein Template hinzufügt
 
-`blog-autopublish` ergänzt `dev:web` · `dev:admin` · `audit:content` · `cover` · `imagegen`.
+`blog` ergänzt `dev:web` · `dev:admin` · `audit:content` · `cover` · `imagegen`.
 Welche Schlüssel dazukommen, steht in den `script:`-Zeilen des Manifests.
 
 ---

@@ -113,8 +113,8 @@ agent-company/
 
 | id | статус | что получается | состав | шлюз |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | публичный сайт + стол проверки | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | только ядро. пустой состав | решаете сами | делаете сами |
+| [`blog`](../../templates/blog/README.md) | stable | публичный сайт + стол проверки | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | только ядро. пустой состав | решаете сами | делаете сами |
 | [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | WebView мини-приложение Toss | spec-writer · ui-builder · release-manager | `preflight` → проверка в консоли |
 
 ```bash
@@ -218,13 +218,13 @@ pnpm agent <id> "<задача>" --dry-run   # выводит только со�
 агенты видят одинаковый вердикт. Внутри нет вызова модели, потому что модель, оценивающая
 собственный результат, склоняется к одобрению.
 
-Что именно проверяет шлюз, решает шаблон. Для `blog-autopublish` это `pnpm audit:content`.
+Что именно проверяет шлюз, решает шаблон. Для `blog` это `pnpm audit:content`.
 
 ### 4. Политика изображений
 
 Путь генерации изображений ровно один: Codex `imagegen`. Политика принадлежит ядру, а команда
 приходит из шаблона, потому что куда попадает изображение и в каких метаданных фиксируется его
-происхождение, зависит от предметной области. Для `blog-autopublish` это выглядит так.
+происхождение, зависит от предметной области. Для `blog` это выглядит так.
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<описание сцены>"
@@ -280,7 +280,7 @@ pnpm imagegen --slug <slug> --prompt "<описание сцены>"
 
 ### Что добавляет шаблон
 
-Применение `blog-autopublish` добавляет `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+Применение `blog` добавляет `dev:web` · `dev:admin` · `audit:content` · `cover` ·
 `imagegen`. Какие ключи придут, написано в строках `script:` манифеста.
 
 ---

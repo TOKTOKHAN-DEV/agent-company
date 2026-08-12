@@ -9,7 +9,7 @@
 - `any` 금지. 모르면 `unknown`으로 받고 좁히세요.
 - 외부에서 들어오는 데이터(폼, 파일, 환경 변수)는 **반드시** zod로 검증한 뒤 사용합니다.
 - 파일 IO는 도메인 패키지를 통해서만. 앱 코드에 `fs`를 직접 import하지 마세요 — 검증·감사·경로
-  해석이 한 곳에 모여 있어야 우회로가 생기지 않습니다. (`blog-autopublish` 는 `@repo/content`)
+  해석이 한 곳에 모여 있어야 우회로가 생기지 않습니다. (`blog` 는 `@repo/content`)
 
 ## 셸 스크립트
 
@@ -30,7 +30,7 @@
 | --- | --- | --- |
 | 파일(컴포넌트) | PascalCase | `StatusBadge.tsx` |
 | 파일(그 외) | kebab-case 또는 camelCase | `session-start.sh`, `markdown.ts` |
-| 템플릿 id | 소문자 kebab-case | `blog-autopublish`, `app-in-toss` |
+| 템플릿 id | 소문자 kebab-case | `blog`, `app-in-toss` |
 | 에이전트 id | 소문자 kebab-case, 역할 명사 | `blog-writer`, `release-manager` |
 | wiki 문서 | `NN-topic.md` (2자리 접두) | `04-seo-geo-playbook.md` |
 | 메모리 파일 | `YYYY-MM-DD-topic.md` | `2026-07-27-admin-server-actions.md` |
@@ -48,7 +48,7 @@ chore(deps): Next.js 16.2로 업그레이드
 ```
 
 코어 스코프는 `core` · `template` · `agents` · `wiki` · `skills` · `scripts`.
-템플릿이 자기 스코프를 추가합니다 (`blog-autopublish` 는 `web` · `admin` · `content`).
+템플릿이 자기 스코프를 추가합니다 (`blog` 는 `web` · `admin` · `content`).
 
 에이전트가 커밋할 때는 무엇을 왜 바꿨는지 본문에 남깁니다.
 
@@ -62,7 +62,7 @@ pnpm build       # 앱을 건드렸다면
 pnpm check       # 의존성 · 환경 · 현재 템플릿의 검사 항목
 ```
 
-템플릿의 게이트가 따로 있으면 그것도 돌립니다 (`blog-autopublish` 는 `pnpm audit:content`).
+템플릿의 게이트가 따로 있으면 그것도 돌립니다 (`blog` 는 `pnpm audit:content`).
 
 ## 하지 말아야 할 것
 

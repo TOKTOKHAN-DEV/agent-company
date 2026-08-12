@@ -51,12 +51,11 @@ bash scripts/template.sh list       # 고를 수 있는 것
 ## 2. 실행
 
 ```bash
-bash scripts/company-setup.sh --no-community-prompt --template <id> --no-prune
+bash scripts/company-setup.sh --no-community-prompt --template <id>
 ```
 
-`--no-prune` 을 붙이는 이유: 정리(prune)는 **되돌릴 수 없는 삭제**이고 확인 질문은 tty 를
-요구합니다. 정리 여부는 셋업이 끝난 뒤 [아래 절차](#카탈로그-정리-prune)대로 당신이
-AskUserQuestion 으로 따로 묻습니다.
+**정리(prune)는 셋업에 포함되어 자동으로 실행됩니다.** 회사를 고른 것 자체가 의사 표시이므로
+따로 묻지 않습니다. 남은 카탈로그가 필요한 특수한 경우에만 `--no-prune` 을 붙이세요.
 
 `--no-community-prompt` 를 **항상** 붙이세요. 스크립트의 텍스트 메뉴는 `/dev/tty` 에서 입력을 읽는데,
 Claude Code 의 Bash 도구에는 tty 가 없어 그 자리에서 막히거나 조용히 기본값(건너뛰기)으로 떨어집니다.

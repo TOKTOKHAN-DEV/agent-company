@@ -44,11 +44,11 @@ pnpm template current
 
 **당신은 이미지를 생성하지 않습니다.** 예외 없습니다.
 
-정책은 코어이고 실행 명령은 템플릿이 줍니다 (`blog-autopublish` 는 `pnpm imagegen`).
+정책은 코어이고 실행 명령은 템플릿이 줍니다 (`blog` 는 `pnpm imagegen`).
 템플릿에 이미지 명령이 없으면 **이미지 없이 진행하는 것이 정답**입니다.
 
 ```bash
-pnpm imagegen --slug <slug> --prompt "<장면 설명>"    # blog-autopublish
+pnpm imagegen --slug <slug> --prompt "<장면 설명>"    # blog
 ```
 
 금지되는 것:
@@ -119,7 +119,7 @@ pnpm build       # 앱을 건드렸다면
 pnpm check       # scripts · .claude · templates 를 건드렸다면
 ```
 
-템플릿의 게이트가 따로 있으면 그것도 돌립니다 (`blog-autopublish` 는 `pnpm audit:content`).
+템플릿의 게이트가 따로 있으면 그것도 돌립니다 (`blog` 는 `pnpm audit:content`).
 
 통과 못 한 상태로 "완료"라고 말하지 마세요. 실패했으면 실패했다고 출력과 함께 보고하세요.
 
@@ -154,8 +154,8 @@ pnpm template prune                   # 안 쓰는 카탈로그 · 랜딩 정리
 
 | id | 상태 | 만드는 것 |
 | --- | --- | --- |
-| `blog-autopublish` | stable | 공개 사이트 + 검수 데스크 |
-| `bare` | stable | 코어만. 빈 로스터 |
+| `blog` | stable | 공개 사이트 + 검수 데스크 |
+| `blank` | stable | 빈 템플릿. 코어만 있음 |
 | `app-in-toss` | preview | 토스 WebView 미니앱 (Vite + React 18 + TDS) |
 
 매니페스트 키의 뜻은 README 의 「새 템플릿 만들기」에 정리돼 있습니다. 매니페스트를 읽는 쪽은

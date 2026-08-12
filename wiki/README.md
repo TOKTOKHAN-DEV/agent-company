@@ -25,10 +25,10 @@
 
 | 문서 | 내용 | 어느 템플릿 |
 | --- | --- | --- |
-| `03-content-guidelines.md` | 톤앤매너, 글 구조 | `blog-autopublish` |
-| `04-seo-geo-playbook.md` | SEO / GEO 최적화 실행 규칙 | `blog-autopublish` |
-| `07-supabase.md` | 백엔드 드라이버 · 전환 절차 | `blog-autopublish` |
-| `08-technical-seo.md` | 메타 · 사이트맵 · llms.txt · 소유 확인 · GA4 | `blog-autopublish` |
+| `03-content-guidelines.md` | 톤앤매너, 글 구조 | `blog` |
+| `04-seo-geo-playbook.md` | SEO / GEO 최적화 실행 규칙 | `blog` |
+| `07-supabase.md` | 백엔드 드라이버 · 전환 절차 | `blog` |
+| `08-technical-seo.md` | 메타 · 사이트맵 · llms.txt · 소유 확인 · GA4 | `blog` |
 
 도메인 문서는 `templates/<id>/files/wiki/` 에 들어 있습니다. 새 도메인 문서를 쓸 때는
 코어 wiki 가 아니라 그쪽에 두세요 — 여기 두면 템플릿을 갈아탄 사람에게 남의 회사 문서가

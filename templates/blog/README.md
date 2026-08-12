@@ -1,9 +1,9 @@
-# blog-autopublish
+# blog
 
 조사하고, 초안을 쓰고, SEO 와 답변엔진 메타데이터를 채운 뒤 **검수 앞에서 멈추는 편집국**.
 
 ```bash
-pnpm template apply blog-autopublish
+pnpm template apply blog
 pnpm install
 pnpm dev        # web → :3000 · admin → :3001
 ```
@@ -201,9 +201,9 @@ pnpm start
 2. `packages/content/src/audit.ts` 의 감사 규칙을 교체
 3. `agents/` 를 `/create-agent` 로 재구성
 4. `wiki/03`, `wiki/04` 를 도메인 가이드로 교체
-5. `templates/blog-autopublish/template.yaml` 의 `rule:` · `verify-*` 를 새 도메인에 맞게 수정
+5. `templates/blog/template.yaml` 의 `rule:` · `verify-*` 를 새 도메인에 맞게 수정
 
 **그대로 두는 것**: 훅 · 메모리 구조 · 게이트 패턴 · 이미지 정책 · 저장소 드라이버 · 모노레포 뼈대.
 이 부분은 코어라 어느 템플릿에서나 같습니다.
 
-도메인이 블로그와 많이 다르다면 지우면서 시작하는 것보다 `bare` 에서 올라가는 편이 빠릅니다.
+도메인이 블로그와 많이 다르다면 지우면서 시작하는 것보다 `blank` 에서 올라가는 편이 빠릅니다.

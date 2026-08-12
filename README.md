@@ -108,8 +108,8 @@ agent-company/
 
 | id | 상태 | 만드는 것 | 로스터 | 게이트 |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](./templates/blog-autopublish/README.md) | stable | 공개 사이트 + 검수 데스크 | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | 코어만. 빈 로스터 | 직접 정하세요 | 직접 만드세요 |
+| [`blog`](./templates/blog/README.md) | stable | 공개 사이트 + 검수 데스크 | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | 빈 템플릿. 코어만 있음 | 직접 정하세요 | 직접 만드세요 |
 | [`app-in-toss`](./templates/app-in-toss/README.md) | preview | 토스 WebView 미니앱 | spec-writer · ui-builder · release-manager | `preflight` → 콘솔 검수 |
 
 ```bash
@@ -211,13 +211,13 @@ pnpm agent <id> "<작업>" --dry-run   # 조립된 명령만 출력 (다른 터�
 판정을 봅니다. 게이트 안에 모델 호출을 넣지 않습니다. 모델이 자기 결과물을 평가하면 통과 쪽으로
 기울기 때문입니다.
 
-게이트의 구체적인 규칙은 템플릿이 정합니다. `blog-autopublish` 라면 `pnpm audit:content` 입니다.
+게이트의 구체적인 규칙은 템플릿이 정합니다. `blog` 라면 `pnpm audit:content` 입니다.
 
 ### 4. 이미지 정책
 
 이미지 생성 경로는 Codex `imagegen` 하나입니다. 정책은 코어이고, 실행 명령은 템플릿이 제공합니다.
 생성한 이미지를 어디에 두고 어떤 메타데이터에 출처를 적을지는 도메인마다 다르기 때문입니다.
-`blog-autopublish` 라면 아래와 같습니다.
+`blog` 라면 아래와 같습니다.
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<장면 설명>"
@@ -272,7 +272,7 @@ Codex 를 쓸 수 없으면 이 순서로 폴백합니다.
 
 ### 템플릿이 얹는 것
 
-`blog-autopublish` 를 적용하면 `dev:web` · `dev:admin` · `audit:content` · `cover` · `imagegen`
+`blog` 를 적용하면 `dev:web` · `dev:admin` · `audit:content` · `cover` · `imagegen`
 이 추가됩니다. 어떤 키가 오는지는 매니페스트의 `script:` 줄에 적혀 있습니다.
 
 ---

@@ -112,8 +112,8 @@ agent-company/
 
 | id | 状態 | 作るもの | ロスター | ゲート |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | 公開サイト + レビューデスク | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | コアのみ。空のロスター | ご自身で決める | ご自身で作る |
+| [`blog`](../../templates/blog/README.md) | stable | 公開サイト + レビューデスク | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | コアのみ。空のロスター | ご自身で決める | ご自身で作る |
 | [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | Toss の WebView ミニアプリ | spec-writer · ui-builder · release-manager | `preflight` → コンソール審査 |
 
 ```bash
@@ -216,13 +216,13 @@ pnpm agent <id> "<タスク>" --dry-run   # 組み立てたコマンドだけ出
 見ます。ゲートの中にモデル呼び出しを入れません。モデルが自分の成果物を評価すると合格側に傾く
 からです。
 
-ゲートが何を見るかはテンプレートが決めます。`blog-autopublish` なら `pnpm audit:content` です。
+ゲートが何を見るかはテンプレートが決めます。`blog` なら `pnpm audit:content` です。
 
 ### 4. 画像ポリシー
 
 画像生成の経路は Codex `imagegen` の一つだけです。ポリシーはコアにあり、実行コマンドは
 テンプレートが提供します。生成した画像をどこに置き、どのメタデータに出所を書くかはドメインごとに
-異なるからです。`blog-autopublish` なら次のようになります。
+異なるからです。`blog` なら次のようになります。
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<シーンの説明>"
@@ -277,7 +277,7 @@ Codex が使えない場合は、この順にフォールバックします。
 
 ### テンプレートが載せるもの
 
-`blog-autopublish` を適用すると `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+`blog` を適用すると `dev:web` · `dev:admin` · `audit:content` · `cover` ·
 `imagegen` が追加されます。どのキーが来るかはマニフェストの `script:` 行に書かれています。
 
 ---

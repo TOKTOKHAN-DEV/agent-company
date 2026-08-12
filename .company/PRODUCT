@@ -1,7 +1,0 @@
-# 이 파일이 있으면 여기는 Agent Company 의 **제품 레포**입니다.
-#
-# `template.sh prune` 이 이 파일을 보고 정리를 거부합니다 — 카탈로그(templates/)와
-# 랜딩(site/)은 이 레포의 내용물이지 지울 대상이 아니기 때문입니다.
-#
-# Use this template 으로 만들어진 사용자 프로젝트에는 이 파일이 없어야 합니다.
-# 실수로 딸려왔다면 지우세요. 그래야 `pnpm company-setup` 이 정리를 제안합니다.

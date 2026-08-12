@@ -112,8 +112,8 @@ and exactly the keys the previous template added are reclaimed.
 
 | id | status | ships | roster | gate |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | public site + review desk | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | core only, empty roster | you decide | bring your own |
+| [`blog`](../../templates/blog/README.md) | stable | public site + review desk | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | core only, empty roster | you decide | bring your own |
 | [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | Toss WebView mini app | spec-writer · ui-builder · release-manager | `preflight` → console review |
 
 ```bash
@@ -216,13 +216,13 @@ The gate is a deterministic function. The admin screen and the CLI call the same
 people and agents see the same verdict. No model call goes inside it, because a model asked to
 grade its own output leans toward passing.
 
-What the gate checks is up to the template. For `blog-autopublish` it is `pnpm audit:content`.
+What the gate checks is up to the template. For `blog` it is `pnpm audit:content`.
 
 ### 4. The image policy
 
 There is one path for image generation: Codex `imagegen`. The policy belongs to the core and the
 command comes from the template, because where an image lands and which metadata records its
-provenance differ per domain. For `blog-autopublish` it looks like this.
+provenance differ per domain. For `blog` it looks like this.
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<scene>"
@@ -277,7 +277,7 @@ five at session start.
 
 ### What a template adds
 
-Applying `blog-autopublish` adds `dev:web`, `dev:admin`, `audit:content`, `cover`, and
+Applying `blog` adds `dev:web`, `dev:admin`, `audit:content`, `cover`, and
 `imagegen`. The manifest's `script:` lines say exactly which keys arrive.
 
 ---

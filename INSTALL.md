@@ -139,7 +139,7 @@ pnpm company-setup
 | `--no-community-prompt` | 7단계를 묻지 않고 넘어감 |
 
 ```bash
-bash scripts/company-setup.sh --template blog-autopublish --yes   # 예: CI (GH_TOKEN 필요)
+bash scripts/company-setup.sh --template blog --yes   # 예: CI (GH_TOKEN 필요)
 ```
 
 `--template` 없이 비대화형으로 돌리면 3단계를 **건너뜁니다**. 임의로 하나를 고르지 않습니다 —
@@ -159,8 +159,8 @@ pnpm template prune                   # 안 쓰는 카탈로그 · 랜딩 정리
 
 | id | 상태 | 만드는 것 |
 | --- | --- | --- |
-| `blog-autopublish` | stable | 공개 사이트 + 검수 데스크 → [README](./templates/blog-autopublish/README.md) |
-| `bare` | stable | 코어만. 빈 로스터에서 직접 채워 나감 |
+| `blog` | stable | 공개 사이트 + 검수 데스크 → [README](./templates/blog/README.md) |
+| `blank` | stable | 빈 템플릿. 코어만 있고 로스터는 직접 채움 |
 | `app-in-toss` | preview | 토스 WebView 미니앱 → [README](./templates/app-in-toss/README.md) |
 
 `planned` 는 `apply` 가 거부합니다. 빈 껍데기를 깔아 놓고 나중에 "왜 안 되지" 하게 만들지
@@ -206,7 +206,7 @@ git fetch upstream && git checkout upstream/main -- templates/
 pnpm dev
 ```
 
-`blog-autopublish` 라면:
+`blog` 라면:
 
 | 앱 | 주소 |
 | --- | --- |
@@ -237,7 +237,7 @@ pnpm dev:admin
 ### 템플릿
 
 템플릿을 펼치면 그 템플릿의 `.env.example` 이 루트 파일을 덮어씁니다 (코어 이미지 블록은 그대로
-포함되어 있습니다). `blog-autopublish` 는 `NEXT_PUBLIC_SITE_URL` · `WEB_PORT` · `ADMIN_PORT` ·
+포함되어 있습니다). `blog` 는 `NEXT_PUBLIC_SITE_URL` · `WEB_PORT` · `ADMIN_PORT` ·
 `CONTENT_DIR` · Supabase · 검색엔진 소유 확인 · GA4 를 추가합니다.
 
 어떤 값이 비어 있어서 무엇이 꺼져 있는지는 `pnpm check` 가 알려줍니다.
@@ -322,7 +322,7 @@ codex --version
 ```
 
 사용 — **명령은 템플릿이 제공합니다.** 생성한 이미지를 어디에 두고 어떤 메타데이터에 출처를
-적을지가 도메인마다 다르기 때문입니다. `blog-autopublish` 라면:
+적을지가 도메인마다 다르기 때문입니다. `blog` 라면:
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<장면 설명>"
@@ -349,7 +349,7 @@ pnpm imagegen --slug my-post --prompt "..."
 2. **직접 첨부** — `source: user-upload`
 3. **웹 검색** — 라이선스 기록 필수. `source: web-search` + `license`
 
-폴백을 프론트매터에 반영하는 명령은 템플릿이 제공합니다 (`blog-autopublish` 는 `pnpm cover`).
+폴백을 프론트매터에 반영하는 명령은 템플릿이 제공합니다 (`blog` 는 `pnpm cover`).
 
 ---
 
@@ -377,7 +377,7 @@ pnpm check
 종료 코드 0 이면 통과입니다. `✘` 는 반드시 해결해야 하고, `!` 는 선택 항목이라 실행에는 지장이
 없습니다.
 
-출고 게이트는 템플릿이 제공합니다. `blog-autopublish` 라면:
+출고 게이트는 템플릿이 제공합니다. `blog` 라면:
 
 ```bash
 pnpm audit:content            # 모든 글
@@ -449,7 +449,7 @@ bash -n .claude/hooks/session-start.sh      # 3. 셸 문법 검사
 
 ### 이미지 생성이 차단됨
 
-의도된 동작입니다. 템플릿이 주는 이미지 명령(`blog-autopublish` 는 `pnpm imagegen`)을 쓰세요.
+의도된 동작입니다. 템플릿이 주는 이미지 명령(`blog` 는 `pnpm imagegen`)을 쓰세요.
 다른 이미지 생성 도구는 PreToolUse 훅이 차단합니다. Codex 가 없으면 위의 폴백 절차를 따르세요.
 
 ### `gh` 팔로우 실패 (스코프 부족)
@@ -484,8 +484,8 @@ bash scripts/community.sh reset                # 다시 묻게
 
 ## 배포
 
-템플릿에 따라 다릅니다. `blog-autopublish` 는
-[templates/blog-autopublish/README.md](./templates/blog-autopublish/README.md#배포) 를 보세요.
+템플릿에 따라 다릅니다. `blog` 는
+[templates/blog/README.md](./templates/blog/README.md#배포) 를 보세요.
 
 ---
 

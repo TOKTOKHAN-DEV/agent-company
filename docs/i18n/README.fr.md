@@ -113,8 +113,8 @@ les clés de script ajoutées par le précédent sont retirées.
 
 | id | statut | ce qui est produit | effectif | barrière |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | site public + poste de relecture | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | le cœur seul. effectif vide | à vous de décider | à vous de le faire |
+| [`blog`](../../templates/blog/README.md) | stable | site public + poste de relecture | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | le cœur seul. effectif vide | à vous de décider | à vous de le faire |
 | [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | mini-app WebView Toss | spec-writer · ui-builder · release-manager | `preflight` → relecture en console |
 
 ```bash
@@ -218,13 +218,13 @@ La barrière est une fonction déterministe. L'écran d'administration et la CLI
 fonction, donc humains et agents voient le même verdict. Aucun appel de modèle à l'intérieur, car un
 modèle qui évalue sa propre production penche vers l'acceptation.
 
-Ce que contrôle la barrière dépend du modèle. Pour `blog-autopublish`, c'est `pnpm audit:content`.
+Ce que contrôle la barrière dépend du modèle. Pour `blog`, c'est `pnpm audit:content`.
 
 ### 4. La politique d'images
 
 Il n'y a qu'un seul chemin pour générer des images : Codex `imagegen`. La politique appartient au
 cœur et la commande vient du modèle, car l'endroit où atterrit l'image et la métadonnée qui note sa
-provenance changent selon le domaine. Pour `blog-autopublish`, cela donne ceci.
+provenance changent selon le domaine. Pour `blog`, cela donne ceci.
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<description de la scène>"
@@ -280,7 +280,7 @@ injectées par-dessus ces cinq-là au démarrage de la session.
 
 ### Ce qu'ajoute un modèle
 
-Appliquer `blog-autopublish` ajoute `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+Appliquer `blog` ajoute `dev:web` · `dev:admin` · `audit:content` · `cover` ·
 `imagegen`. Les clés qui arrivent sont indiquées dans les lignes `script:` du manifeste.
 
 ---

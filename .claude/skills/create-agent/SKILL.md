@@ -87,7 +87,7 @@ grep -A1 'writes:' agents/registry.yaml
 `agents/<id>/AGENT.md`. 이 파일이 **통째로 시스템 프롬프트에 들어갑니다.**
 
 이미 있는 에이전트가 있으면 그 `AGENT.md` 의 구조를 따르세요. 로스터가 비어 있으면
-(`bare` 템플릿) 아래 뼈대에서 시작합니다.
+(`blank` 템플릿) 아래 뼈대에서 시작합니다.
 
 ```markdown
 # <이름>

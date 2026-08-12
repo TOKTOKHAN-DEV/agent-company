@@ -104,8 +104,8 @@ agent-company/
 
 | id | 状态 | 产出 | 花名册 | 闸门 |
 | --- | --- | --- | --- | --- |
-| [`blog-autopublish`](../../templates/blog-autopublish/README.md) | stable | 公开站点 + 审核台 | blog-writer · image-maker | `audit` → `in_review` |
-| `bare` | stable | 只有核心。空花名册 | 自己决定 | 自己做 |
+| [`blog`](../../templates/blog/README.md) | stable | 公开站点 + 审核台 | blog-writer · image-maker | `audit` → `in_review` |
+| `blank` | stable | 只有核心。空花名册 | 自己决定 | 自己做 |
 | [`app-in-toss`](../../templates/app-in-toss/README.md) | preview | Toss WebView 小程序 | spec-writer · ui-builder · release-manager | `preflight` → 控制台审核 |
 
 ```bash
@@ -202,12 +202,12 @@ pnpm agent <id> "<任务>" --dry-run   # 只输出拼好的命令（贴到另一
 闸门是确定性函数。后台页面和 CLI 调用的是同一个函数，所以人和智能体看到相同的判定。闸门里不放
 模型调用，因为让模型评价自己的产出，结果会偏向通过。
 
-闸门具体检查什么由模板决定。`blog-autopublish` 是 `pnpm audit:content`。
+闸门具体检查什么由模板决定。`blog` 是 `pnpm audit:content`。
 
 ### 4. 图片策略
 
 图片生成只有一条路径，就是 Codex `imagegen`。策略属于核心，执行命令由模板提供，因为生成的图片放
-在哪里、把来源写进哪个元数据，各领域并不一样。`blog-autopublish` 是这样的。
+在哪里、把来源写进哪个元数据，各领域并不一样。`blog` 是这样的。
 
 ```bash
 pnpm imagegen --slug <slug> --prompt "<场景说明>"
@@ -261,7 +261,7 @@ pnpm imagegen --slug <slug> --prompt "<场景说明>"
 
 ### 模板追加的命令
 
-应用 `blog-autopublish` 会加上 `dev:web` · `dev:admin` · `audit:content` · `cover` ·
+应用 `blog` 会加上 `dev:web` · `dev:admin` · `audit:content` · `cover` ·
 `imagegen`。具体会来哪些键，写在清单的 `script:` 行里。
 
 ---

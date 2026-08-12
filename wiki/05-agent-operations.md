@@ -26,7 +26,7 @@ pnpm agent --list        # 지금 누가 있는지
 
 정의는 `agents/<id>/AGENT.md`, 런타임·모델·쓰기 범위는 `agents/registry.yaml`.
 
-### 예: `blog-autopublish` 의 로스터
+### 예: `blog` 의 로스터
 
 | ID | 런타임 | 모델 | 역할 | 쓰기 범위 |
 | --- | --- | --- | --- | --- |
@@ -52,7 +52,7 @@ pnpm agent --list        # 지금 누가 있는지
 ```bash
 pnpm agent --list                                    # 등록된 에이전트
 pnpm agent <id> "<작업>"
-pnpm agent blog-writer "Turborepo 캐시 전략으로 글 하나"    # blog-autopublish 예시
+pnpm agent blog-writer "Turborepo 캐시 전략으로 글 하나"    # blog 예시
 ```
 
 | 옵션 | 용도 |
@@ -99,7 +99,7 @@ pnpm agent blog-writer "작업" --dry-run
 
 파이프라인의 모양은 템플릿이 정합니다. 공통점은 **끝이 사람이라는 것**입니다.
 
-`blog-autopublish` 라면:
+`blog` 라면:
 
 ```
 blog-writer                                    image-maker         사람

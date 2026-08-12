@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────
-# Template Manifest — blog-autopublish
+# Template Manifest — blog
 #
 # 반복 키 형식입니다 (agents/registry.yaml 과 같은 규칙). YAML 파서를 들이지
 # 않고 grep/awk 로 읽습니다 — 셋업이 결정적이어야 하기 때문입니다.
@@ -7,8 +7,10 @@
 # 읽는 쪽:  scripts/template.sh · scripts/check-deps.sh · scripts/load-context.sh
 # ─────────────────────────────────────────────────────────────
 
-id: blog-autopublish
-name: Blog Autopublish
+id: blog
+# 목록에 보이는 순서. 작을수록 먼저. 빈 템플릿은 맨 끝에 둡니다.
+order: 20
+name: Blog
 status: stable
 summary: 조사하고, 초안을 쓰고, SEO/GEO 를 채운 뒤 검수 앞에서 멈추는 편집국.
 ships: 공개 사이트 · 검수 데스크

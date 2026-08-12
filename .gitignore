@@ -24,6 +24,10 @@ coverage/
 .company/cache/
 # 사람마다 다른 선택입니다 (GitHub 응원 건너뛰기 기록) — 공유하지 않습니다
 .company/state/
+# "여기는 제품 레포" 마커. **커밋하지 않습니다** — 커밋하면 클론한 모든 사람이
+# 이 마커를 갖게 되고 prune 이 영원히 거부됩니다 (설치 경로가 clone 이라 100% 재현).
+# 이 저장소를 유지보수하는 사람만 로컬에 만들어 둡니다.
+.company/PRODUCT
 wiki/memory/short-term/*.local.md
 
 # Local tooling state — session ids and absolute paths, never shared

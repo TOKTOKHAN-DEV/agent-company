@@ -49,12 +49,17 @@ meta_all() {
 }
 meta() { meta_all "$1" "$2" | head -n1; }
 
+# 매니페스트의 `order:` 순으로 출력한다. 없으면 50.
+# 알파벳 순에 맡기면 blank 가 app-in-toss 와 blog 사이에 끼어 목록 순서가
+# 의도와 달라집니다. 순서는 의도이므로 매니페스트가 정합니다.
 template_ids() {
-  local d
+  local d id
   for d in "$TEMPLATES_DIR"/*/; do
     [ -f "$d/template.yaml" ] || continue
-    basename "$d"
-  done
+    id="$(basename "$d")"
+    printf '%s\t%s\n' "$(meta "$id" order || true)" "$id"
+  done | awk -F'\t' '{ printf "%s\t%s\n", ($1 == "" ? 50 : $1), $2 }' \
+       | sort -n -k1,1 -k2,2 | cut -f2
 }
 
 current_id() { [ -f "$STATE_FILE" ] && cat "$STATE_FILE" || printf 'none'; }
