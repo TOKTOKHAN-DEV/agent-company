@@ -21,6 +21,7 @@
     "check": "bash scripts/check-deps.sh",
     "template": "bash scripts/template.sh",
     "agent": "bash scripts/run-agent.sh",
+    "intake": "bash scripts/intake.sh",
     "context": "bash scripts/load-context.sh",
     "memory:new": "bash scripts/memory-new.sh",
     "clean": "rm -rf node_modules apps/*/node_modules apps/*/.next packages/*/node_modules .turbo"

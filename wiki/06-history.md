@@ -5,6 +5,48 @@
 
 ---
 
+## 2026-08-14 — 인계(intake)를 코어에, 에셋 에이전트를 app-in-toss 에
+
+- **무엇**
+  - 코어에 `pnpm intake <zip · tar.gz · 폴더>` 추가. `inbox/<이름>/` 에 풀고
+    목차(`INVENTORY.md`)를 만든다. `inbox/` 는 gitignore.
+  - `app-in-toss` 에 `asset-maker` (codex) 추가. 로고·썸네일·IAP 아이콘을 만들고
+    콘솔에 올린다. `pnpm assets` · `pnpm imagegen` 이 함께 들어왔다.
+- **왜 인계가 코어인가**
+  남의 워크스페이스에서 뭔가를 받는 일은 도메인과 무관하게 생긴다. blog 라면 초안 뭉치,
+  app-in-toss 라면 옮겨올 기존 서비스. 템플릿마다 따로 만들면 세 번 만들게 된다.
+  대신 **도메인 지식은 스킬로** 갈랐다 — `spec-writer/from-intake` 는 "SSR 은 못 옮긴다"를
+  알고, `asset-maker/from-intake` 는 "600×600 보다 작은 로고는 못 쓴다"를 안다.
+- **왜 `inbox/` 를 버전 관리하지 않는가**
+  하드 룰 3번은 "진실은 저장소 파일" 이지 "받은 것을 다 넣는다"가 아니다. 받은 zip 은
+  재료다. 남의 코드와 `.env` 가 통째로 커밋되는 것을 막는 효과도 있다.
+  대신 **에이전트가 근거를 인용할 때 경로만 적지 않고 내용을 옮겨 적도록** 스킬에 못박았다 —
+  `inbox/` 가 없는 사람에게 경로는 빈 참조다.
+- **왜 asset-maker 가 별도 에이전트인가**
+  에이전트를 늘리는 기준은 역할이 아니라 런타임과 병렬성이다. 이미지 생성 경로가 codex
+  뿐이라(하드 룰 1) claude 에이전트가 대신할 수 없다. 쓰기 범위(`assets/`)가 앱 코드와
+  겹치지 않아 화면 작업과 동시에 돈다. release-manager 도 codex 지만 쓰는 곳이 다르다.
+- **왜 에셋에 결정적 게이트를 붙였나**
+  콘솔은 리사이즈도 크롭도 하지 않고 **1px 만 달라도 거부한다.** 그런데 거부는 업로드가
+  아니라 그 URL 을 쓰는 `miniapp_update_*` 에서 일어나고, 그건 검토 요청과 같이 나가는
+  호출이라 실패를 늦게 안다. 반려되면 영업일 3일이다. `scripts/asset-spec.ts` 를
+  `pnpm assets` 와 `pnpm preflight` 가 함께 읽어 판정이 갈리지 않게 했다.
+- **스크린샷은 생성하지 않기로 했다.** 실제 화면이어야 한다. `imagegen --kind screenshot` 은
+  거부하고 찍는 방법을 안내한다. 규격 맞추기(`assets fit`)만 돕는다.
+- **`miniapp_update_*` 를 금지 목록에 넣었다.** 이름은 값을 바꾸는 것처럼 보이지만 실제로는
+  앱정보 검토 요청이 함께 나간다. 반면 `image_upload_url` + PUT 은 아무것도 신청하지 않아
+  에이전트가 해도 된다 — **바이트를 올리는 것과 버튼을 누르는 것의 경계**를 여기에 그었다.
+- **영향** — 코어: `scripts/intake.sh` · `scripts/intake-inventory.mjs` · `package.json` ·
+  `.gitignore` · README · CLAUDE.md · `wiki/01`. 템플릿: `agents/asset-maker/` ·
+  `scripts/{asset-spec,assets}.ts` · `scripts/codex-imagegen.sh` · `assets/` ·
+  `wiki/09-store-assets.md` · 매니페스트(`script:` 2개 · `rule:` 3개).
+- **되돌리려면** — 에셋 쪽은 매니페스트에서 `script:` 와 `rule:` 을 빼고 registry 에서
+  `asset-maker` 를 지우면 된다(`preflight.ts` 의 import 도 함께). 인계는 `package.json` 의
+  `intake` 키를 빼면 죽는다. 다만 되돌리기 전에 확인할 것 — 에셋 규격 검사를 빼면
+  **반려를 3일 뒤에 알게 된다.**
+
+---
+
 ## 2026-08-12 — 정리(prune)를 셋업에 편입, 템플릿 이름을 blog · blank 로
 
 - **무엇**

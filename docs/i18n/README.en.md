@@ -244,6 +244,31 @@ A rule that only lives in a doc isn't followed, so it is enforced in three layer
 
 Rationale: [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
+### 5. Intake
+
+Bring in work from another workspace. Use it when porting an existing service to a
+mini app, receiving a design kit, or picking up a half-finished project.
+
+```bash
+pnpm intake ~/Downloads/design-kit.zip
+pnpm intake ~/work/other-repo --as reference
+```
+
+It unpacks a zip · tar.gz · folder into `inbox/<name>/`, strips things like
+`node_modules`, and **writes an index (`INVENTORY.md`)** — the stack, which docs to read
+first, images with their resolutions, design files that can't be opened, and a warning if
+credentials appear to be mixed in.
+
+The index exists for context. Hand an agent a whole folder and it burns context opening
+files one by one. Tell it what is where and it opens only what it needs.
+
+Nothing received is executed. Symlinks are deleted (they can point outside the repo), and
+unpacked code is never installed or built. A zip someone hands you is reading material,
+not something to run.
+
+`inbox/` is not version controlled. **It is raw material, not output** — only the specs
+and assets extracted from it stay in the repo (core hard rule 3).
+
 ---
 
 ## Core hard rules
@@ -271,6 +296,7 @@ five at session start.
 | `pnpm check` | Inspect state only (installs nothing), including the current template's checks |
 | `pnpm template list \| apply <id> \| prune` | List · apply · clean up templates |
 | `pnpm agent --list \| <id> "<task>"` | List · run agents |
+| `pnpm intake <zip \| folder>` | Bring work from another workspace into `inbox/` and index it |
 | `pnpm context` | Print the session context manually |
 | `pnpm memory:new <topic>` | Create a memory file (`--long` for long-term) |
 | `pnpm dev \| build \| typecheck \| lint \| test` | Whole workspace (turbo) |

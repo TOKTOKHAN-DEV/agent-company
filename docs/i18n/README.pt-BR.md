@@ -245,6 +245,32 @@ Uma regra que só existe num documento não é seguida, então ela é imposta em
 
 Fundamentação: [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
+### 5. Recebimento
+
+Traga o que foi feito em outro workspace. Útil ao portar um serviço existente para um
+mini app, ao receber um kit de design ou ao assumir um projeto pela metade.
+
+```bash
+pnpm intake ~/Downloads/design-kit.zip
+pnpm intake ~/work/other-repo --as reference
+```
+
+O comando descompacta zip · tar.gz · pasta em `inbox/<nome>/`, remove coisas como
+`node_modules` e **escreve um índice (`INVENTORY.md`)** — a stack, quais documentos ler
+primeiro, as imagens com sua resolução, arquivos de design que não dá para abrir e um
+aviso caso pareça haver credenciais misturadas.
+
+O índice existe por causa do contexto. Entregue uma pasta inteira a um agente e ele
+queimará contexto abrindo arquivo por arquivo. Diga o que está onde e ele abre só o
+necessário.
+
+Nada do que chega é executado. Symlinks são apagados (podem apontar para fora do
+repositório) e o código descompactado nunca é instalado nem compilado. Um zip que alguém
+te passa é material de leitura, não algo para rodar.
+
+`inbox/` não entra no versionamento. **É matéria-prima, não resultado** — só as
+especificações e os assets extraídos dali ficam no repositório (regra dura do núcleo 3).
+
 ---
 
 ## Regras rígidas do núcleo
@@ -272,6 +298,7 @@ cima dessas cinco no início da sessão.
 | `pnpm check` | Só inspeciona o estado (não instala), incluindo as verificações do template atual |
 | `pnpm template list \| apply <id> \| prune` | Consultar · aplicar · limpar templates |
 | `pnpm agent --list \| <id> "<tarefa>"` | Listar · executar agentes |
+| `pnpm intake <zip \| pasta>` | Trazer trabalho de outro workspace para `inbox/` e indexar |
 | `pnpm context` | Imprimir o contexto da sessão manualmente |
 | `pnpm memory:new <topic>` | Criar um arquivo de memória (`--long` para longo prazo) |
 | `pnpm dev \| build \| typecheck \| lint \| test` | Todo o workspace (turbo) |

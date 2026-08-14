@@ -17,6 +17,7 @@
 // ─────────────────────────────────────────────────────────────
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { checkAssets, missingRequired, josa } from './asset-spec.ts';
 
 type Level = 'error' | 'warn';
 
@@ -264,6 +265,25 @@ if (existsSync(DIST)) {
   }
 } else {
   report('warn', 'bundle', '빌드 산출물이 없습니다. `pnpm build:miniapp` 뒤에 다시 돌리세요.');
+}
+
+// ── 8. 스토어 에셋 ────────────────────────────────────────────
+// 규격 판정은 scripts/asset-spec.ts 가 합니다. `pnpm assets` 와 같은 모듈을 쓰므로
+// 두 명령이 다른 답을 내놓을 수 없습니다 — 판정이 갈리면 사람은 게이트를 믿지 않습니다.
+//
+// 아직 안 만든 것은 warn 입니다. 화면을 만드는 중에 로고가 없다고 빌드를 막으면
+// 사람들이 --errors 만 보기 시작하고, 그러면 게이트가 죽습니다.
+for (const finding of checkAssets(ROOT).findings) {
+  report(finding.level, 'store-assets', finding.message, finding.file);
+}
+
+for (const spec of missingRequired(ROOT)) {
+  report(
+    'warn',
+    'store-assets',
+    `${spec.label}(${spec.width}×${spec.height})${josa(spec.label, '이', '가')} 없습니다. 검수 신청에 필요합니다.`,
+    spec.path,
+  );
 }
 
 // ── 출력 ──────────────────────────────────────────────────────

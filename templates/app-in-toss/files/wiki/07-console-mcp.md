@@ -63,8 +63,21 @@ codex mcp add apps-in-toss-console \
 | `promotion_money_charge` | 돈이 나감 |
 | `push_send_scheduled` | 사용자에게 알림이 나감 |
 | `iap_product_change_status` | 판매 시작·중지는 사업 결정 |
+| `miniapp_update_icon` · `miniapp_update_screenshots` | **이름과 달리 앱정보 검토를 함께 신청** |
+| `miniapp_update_basic_info` · `miniapp_update_category` | 같은 이유 |
 
 이 도구가 필요한 상황이면 에이전트는 **무엇을 왜 눌러야 하는지 정리해서 사람에게 넘깁니다.**
+
+### `miniapp_update_*` 를 조심하는 이유
+
+이름만 보면 값을 바꾸는 도구 같지만, 콘솔 웹의 **"검토 요청" 버튼과 같은 호출**입니다.
+불러 놓고 "설정만 바꿨습니다" 라고 보고하면 사실이 아니게 됩니다.
+
+에이전트는 페이로드까지 조립해 `release/` 에 두고 멈춥니다. 사람이 5개 확약 문구를 확인한
+뒤 누릅니다 → `wiki/09-store-assets.md`
+
+**이미지 업로드는 다릅니다.** `image_upload_url` + PUT 은 CDN 에 바이트를 올릴 뿐 아무것도
+신청하지 않습니다. `asset-maker` 가 여기까지 합니다.
 
 ---
 

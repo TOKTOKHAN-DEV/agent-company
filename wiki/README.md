@@ -29,6 +29,11 @@
 | `04-seo-geo-playbook.md` | SEO / GEO 최적화 실행 규칙 | `blog` |
 | `07-supabase.md` | 백엔드 드라이버 · 전환 절차 | `blog` |
 | `08-technical-seo.md` | 메타 · 사이트맵 · llms.txt · 소유 확인 · GA4 | `blog` |
+| `03-miniapp-conventions.md` | 미니앱 구조 · 번들 제약 · 테스트 | `app-in-toss` |
+| `04-review-checklist.md` | 심사 체크리스트 · 기계가 못 잡는 항목 | `app-in-toss` |
+| `07-console-mcp.md` | 콘솔 MCP 도구 · 인증 | `app-in-toss` |
+| `08-monetization.md` | IAP · IAA · 프로모션 | `app-in-toss` |
+| `09-store-assets.md` | 로고 · 썸네일 · 스크린샷 규격과 업로드 | `app-in-toss` |
 
 도메인 문서는 `templates/<id>/files/wiki/` 에 들어 있습니다. 새 도메인 문서를 쓸 때는
 코어 wiki 가 아니라 그쪽에 두세요 — 여기 두면 템플릿을 갈아탄 사람에게 남의 회사 문서가

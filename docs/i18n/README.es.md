@@ -248,6 +248,31 @@ Una regla que solo vive en un documento no se cumple, así que se impone en tres
 
 Fundamento: [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
+### 5. Recepción
+
+Trae trabajo hecho en otro espacio de trabajo. Sirve al portar un servicio existente a
+una mini app, al recibir un kit de diseño o al retomar un proyecto a medio hacer.
+
+```bash
+pnpm intake ~/Downloads/design-kit.zip
+pnpm intake ~/work/other-repo --as reference
+```
+
+Descomprime un zip · tar.gz · carpeta en `inbox/<nombre>/`, retira cosas como
+`node_modules` y **escribe un índice (`INVENTORY.md`)**: el stack, qué documentos leer
+primero, las imágenes con su resolución, los archivos de diseño que no se pueden abrir y
+una advertencia si parece haber credenciales mezcladas.
+
+El índice existe por el contexto. Si le entregas una carpeta entera a un agente, quemará
+contexto abriendo archivos uno por uno. Si le dices qué hay dónde, abre solo lo necesario.
+
+Nada de lo recibido se ejecuta. Los enlaces simbólicos se borran (pueden apuntar fuera del
+repositorio) y el código descomprimido nunca se instala ni se compila. Un zip que alguien
+te pasa es material de lectura, no algo que ejecutar.
+
+`inbox/` no se versiona. **Es materia prima, no resultado**: solo las especificaciones y
+los recursos extraídos de ahí se quedan en el repositorio (regla dura del núcleo 3).
+
 ---
 
 ## Reglas duras del núcleo
@@ -276,6 +301,7 @@ de estas cinco al iniciar la sesión.
 | `pnpm check` | Solo inspecciona el estado (no instala), incluidas las comprobaciones de la plantilla actual |
 | `pnpm template list \| apply <id> \| prune` | Consultar · aplicar · limpiar plantillas |
 | `pnpm agent --list \| <id> "<tarea>"` | Listar · ejecutar agentes |
+| `pnpm intake <zip \| carpeta>` | Traer trabajo de otro espacio a `inbox/` e indexarlo |
 | `pnpm context` | Imprimir el contexto de sesión a mano |
 | `pnpm memory:new <topic>` | Crear un archivo de memoria (`--long` para largo plazo) |
 | `pnpm dev \| build \| typecheck \| lint \| test` | Todo el workspace (turbo) |

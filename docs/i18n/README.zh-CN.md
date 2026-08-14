@@ -229,6 +229,29 @@ pnpm imagegen --slug <slug> --prompt "<场景说明>"
 
 依据：[ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
+### 5. 交接
+
+把在别的工作区做的东西引入进来。将既有服务移植为小程序、接收设计资源包、
+接手做了一半的项目时使用。
+
+```bash
+pnpm intake ~/Downloads/design-kit.zip
+pnpm intake ~/work/other-repo --as reference
+```
+
+它会把 zip · tar.gz · 文件夹解开到 `inbox/<名称>/`，剔除 `node_modules` 之类的内容，
+然后**生成目录（`INVENTORY.md`）**——技术栈、该先读哪些文档、图片及其分辨率、
+打不开的设计文件，以及疑似混入密钥时的警告。
+
+做目录是为了上下文。把整个文件夹丢给智能体，它会一个个打开文件烧掉上下文。
+先告诉它什么在哪里，它就只打开需要的那些。
+
+收到的东西不会被执行。软链接会被删除（可能指向仓库之外），解开的代码不会安装也不会构建。
+别人给的 zip 是读物，不是拿来运行的。
+
+`inbox/` 不纳入版本管理。**它是原料而不是产出**——只有从中提炼出的规格与素材会留在仓库里
+（核心硬性规则 3）。
+
 ---
 
 ## 核心硬性规则
@@ -255,6 +278,7 @@ pnpm imagegen --slug <slug> --prompt "<场景说明>"
 | `pnpm check` | 只检查状态（不安装）。包含当前模板的检查项 |
 | `pnpm template list \| apply <id> \| prune` | 模板的查看 · 应用 · 清理 |
 | `pnpm agent --list \| <id> "<任务>"` | 智能体列表 · 运行 |
+| `pnpm intake <zip \| 文件夹>` | 把其他工作区的成果引入 `inbox/` 并生成目录 |
 | `pnpm context` | 手动输出会话上下文 |
 | `pnpm memory:new <topic>` | 创建新的记忆文件（`--long` 为长期） |
 | `pnpm dev \| build \| typecheck \| lint \| test` | 整个工作区（turbo） |

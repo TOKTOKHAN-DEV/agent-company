@@ -30,6 +30,11 @@ coverage/
 .company/PRODUCT
 wiki/memory/short-term/*.local.md
 
+# 다른 워크스페이스에서 들여온 재료 (pnpm intake). 저장소의 진실이 아니라
+# 재료입니다 — 여기서 뽑아낸 명세·에셋만 커밋합니다. 남의 코드나 키가 섞여
+# 들어오기도 하므로, 통째로 커밋되지 않게 막아 둡니다.
+inbox/
+
 # Local tooling state — session ids and absolute paths, never shared
 .omc/
 

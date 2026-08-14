@@ -5,16 +5,20 @@
 # 각자 별도 터미널에서 도는 **독립 프로세스**입니다.
 #   spec-writer      → claude CLI
 #   ui-builder       → claude CLI  (화면마다 병렬로 띄웁니다)
+#   asset-maker      → codex CLI
 #   release-manager  → codex CLI
 #
 # 실행:  pnpm agent <id> "<작업>"        (scripts/run-agent.sh)
 # 추가:  /create-agent                   (손으로 만들지 마세요)
 #
-# 왜 셋인가 — 나누는 기준은 역할이 아니라 런타임과 병렬성입니다.
+# 왜 넷인가 — 나누는 기준은 역할이 아니라 런타임과 병렬성입니다.
 #   spec-writer 는 기능 하나의 맥락을 통째로 쥐고 판단합니다 (opus).
 #   ui-builder 는 명세가 확정된 뒤 **화면마다 따로** 돌 수 있습니다.
 #     서로 다른 파일(src/screens/*.tsx)을 건드리므로 진짜 병렬입니다 (sonnet).
-#   release-manager 는 런타임이 다릅니다 (codex).
+#   asset-maker 는 런타임이 다릅니다 — 이미지 생성 경로가 codex 뿐이라
+#     (코어 하드 룰 1) claude 에이전트가 대신할 수 없습니다.
+#   release-manager 도 codex 지만 쓰기 범위가 다릅니다 (release/ vs assets/).
+#     화면을 만드는 동안 에셋을 만들 수 있어서 둘은 동시에 돕니다.
 # ─────────────────────────────────────────────────────────────
 
 version: 2
@@ -44,6 +48,21 @@ agents:
       - 명세에 없는 화면을 만들지 않는다.
       - 색·타이포를 직접 정의하지 않는다. TDS 를 쓴다.
       - SSR·서버 미들웨어를 도입하지 않는다. 정적 빌드여야 한다.
+
+  - id: asset-maker
+    name: Asset Maker
+    runtime: codex
+    # codex 기본 모델을 사용합니다. 이미지 생성 도구는 모델 선택과 무관합니다.
+    model: default
+    summary: 스토어에 올릴 로고·썸네일·상품 아이콘을 규격대로 만든다. 검토 요청은 사람이 누른다.
+    writes: assets/**
+    skills: agents/asset-maker/skills
+    definition: agents/asset-maker/AGENT.md
+    hard_rules:
+      - 이미지는 pnpm imagegen 으로만 만든다. 다른 이미지 모델을 찾지 않는다.
+      - 스크린샷을 그리지 않는다. 실제 화면이어야 한다.
+      - miniapp_update_* 를 부르지 않는다. 검토 요청이 함께 나간다.
+      - 규격(해상도·포맷·5MB)에 맞지 않는 파일을 올리지 않는다.
 
   - id: release-manager
     name: Release Manager

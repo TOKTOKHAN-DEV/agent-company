@@ -239,6 +239,29 @@ Codex 를 쓸 수 없으면 이 순서로 폴백합니다.
 
 근거: [ADR-0002](./wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
+### 5. 인계
+
+다른 워크스페이스에서 만들던 것을 들여옵니다. 기존 서비스를 미니앱으로 옮기거나, 디자인
+킷을 넘겨받거나, 반쯤 만들다 만 프로젝트를 이어받을 때 씁니다.
+
+```bash
+pnpm intake ~/Downloads/design-kit.zip
+pnpm intake ~/work/other-repo --as reference
+```
+
+zip · tar.gz · 폴더를 `inbox/<이름>/` 에 풀고, `node_modules` 같은 것을 걷어낸 뒤
+**목차(`INVENTORY.md`)를 만듭니다** — 스택, 먼저 읽을 문서, 이미지와 그 해상도, 열 수 없는
+디자인 파일, 그리고 키가 섞여 있으면 경고까지.
+
+목차를 만드는 이유는 컨텍스트입니다. 폴더를 통째로 던지면 에이전트가 파일을 하나씩 열어
+보며 컨텍스트를 태웁니다. 무엇이 어디 있는지 먼저 알려주면 필요한 것만 엽니다.
+
+받은 것은 실행하지 않습니다. 심볼릭 링크는 지우고(저장소 밖을 가리킬 수 있습니다), 압축을
+푼 코드를 설치하거나 빌드하지 않습니다. 남이 준 zip 은 읽을거리이지 실행할 것이 아닙니다.
+
+`inbox/` 는 버전 관리하지 않습니다. **재료이지 결과물이 아니기 때문입니다** — 여기서 뽑아낸
+명세와 에셋만 저장소에 남습니다 (코어 하드 룰 3).
+
 ---
 
 ## 코어 하드 룰
@@ -266,6 +289,7 @@ Codex 를 쓸 수 없으면 이 순서로 폴백합니다.
 | `pnpm check` | 환경 상태만 검사 (설치하지 않음). 현재 템플릿의 검사 항목까지 확인 |
 | `pnpm template list \| apply <id> \| prune` | 템플릿 조회 · 적용 · 정리 |
 | `pnpm agent --list \| <id> "<작업>"` | 에이전트 목록 · 실행 |
+| `pnpm intake <zip \| 폴더>` | 다른 워크스페이스의 작업물을 `inbox/` 로 들여오고 목차 생성 |
 | `pnpm context` | 세션 컨텍스트 수동 출력 |
 | `pnpm memory:new <topic>` | 새 메모리 파일 생성 (`--long` 으로 장기) |
 | `pnpm dev \| build \| typecheck \| lint \| test` | 워크스페이스 전체 (turbo) |

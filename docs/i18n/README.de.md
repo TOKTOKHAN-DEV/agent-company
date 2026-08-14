@@ -251,6 +251,33 @@ erzwungen.
 
 Begründung: [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
+### 5. Übernahme
+
+Holen Sie herein, was in einem anderen Workspace entstanden ist. Nützlich, wenn Sie einen
+bestehenden Dienst zur Mini-App portieren, ein Design-Kit erhalten oder ein halbfertiges
+Projekt übernehmen.
+
+```bash
+pnpm intake ~/Downloads/design-kit.zip
+pnpm intake ~/work/other-repo --as reference
+```
+
+Der Befehl entpackt zip · tar.gz · Ordner nach `inbox/<Name>/`, entfernt Dinge wie
+`node_modules` und **schreibt ein Inhaltsverzeichnis (`INVENTORY.md`)** — den Stack, welche
+Dokumente zuerst zu lesen sind, Bilder samt Auflösung, nicht öffenbare Designdateien und
+eine Warnung, falls Zugangsdaten mit hineingeraten sind.
+
+Das Verzeichnis existiert wegen des Kontexts. Wirft man einem Agenten einen ganzen Ordner
+hin, verbrennt er Kontext, indem er Datei für Datei öffnet. Sagt man ihm, was wo liegt,
+öffnet er nur das Nötige.
+
+Nichts davon wird ausgeführt. Symlinks werden gelöscht (sie können aus dem Repository
+hinauszeigen), entpackter Code wird nie installiert oder gebaut. Ein zip, das jemand
+übergibt, ist Lesestoff und nichts zum Ausführen.
+
+`inbox/` wird nicht versioniert. **Es ist Rohmaterial, kein Ergebnis** — nur die daraus
+gewonnenen Spezifikationen und Assets bleiben im Repository (Kern-Hardrule 3).
+
 ---
 
 ## Harte Kernregeln
@@ -279,6 +306,7 @@ Domänenregeln stehen unter `rule:` in `templates/<id>/template.yaml` und werden
 | `pnpm check` | Prüft nur den Zustand (installiert nichts), inklusive der Prüfungen des aktuellen Templates |
 | `pnpm template list \| apply <id> \| prune` | Templates ansehen · anwenden · aufräumen |
 | `pnpm agent --list \| <id> "<Aufgabe>"` | Agenten auflisten · ausführen |
+| `pnpm intake <zip \| Ordner>` | Arbeit aus einem anderen Workspace nach `inbox/` holen und indexieren |
 | `pnpm context` | Sitzungskontext manuell ausgeben |
 | `pnpm memory:new <topic>` | Neue Gedächtnisdatei anlegen (`--long` für langfristig) |
 | `pnpm dev \| build \| typecheck \| lint \| test` | Gesamter Workspace (turbo) |

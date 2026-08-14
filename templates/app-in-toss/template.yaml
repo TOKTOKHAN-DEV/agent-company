@@ -17,8 +17,8 @@ order: 10
 name: App in Toss
 status: preview
 summary: 토스 앱 안에서 도는 WebView 미니앱. 명세 → 화면 → 심사 사전점검.
-ships: 미니앱 · 심사 사전점검
-hires: spec-writer · ui-builder · release-manager
+ships: 미니앱 · 스토어 에셋 · 심사 사전점검
+hires: spec-writer · ui-builder · asset-maker · release-manager
 gate: preflight → 콘솔 검수 신청
 
 # ── 루트 package.json 에 병합할 스크립트 ─────────────────────
@@ -27,11 +27,18 @@ script: dev:miniapp=turbo run dev --filter=@repo/miniapp
 script: build:miniapp=turbo run build --filter=@repo/miniapp
 # 출고 게이트. 심사 체크리스트 중 기계로 판정 가능한 것만 결정적으로 검사합니다.
 script: preflight=node --experimental-strip-types --no-warnings scripts/preflight.ts
+# 스토어 에셋 규격 대조. 콘솔이 1px 도 봐주지 않아서 올리기 전에 기계로 잡습니다.
+script: assets=node --experimental-strip-types --no-warnings scripts/assets.ts
+# 이미지 정책은 코어지만, 명령은 템플릿이 줍니다.
+# 여기서는 스토어 에셋(로고 · 썸네일 · IAP 아이콘)을 만듭니다 — 규격이 달라
+# blog 의 imagegen 과 같은 이름이지만 다른 스크립트입니다.
+script: imagegen=bash scripts/codex-imagegen.sh
 
 # ── check-deps.sh 가 검사할 항목 ─────────────────────────────
 verify-workspace: apps/miniapp
 verify-dir: specs
 verify-optional: apps/miniapp/granite.config.ts
+verify-optional: assets/icon.png
 
 verify-env: TOSS_MINIAPP_NAME=granite.config.ts 의 appName 과 맞춰야 콘솔 번들 업로드가 붙습니다
 note-env: TOSS_PRIVACY_POLICY_URL=비어 있으면 preflight 가 개인정보처리방침 항목을 error 로 잡습니다
@@ -54,9 +61,14 @@ rule: 라이트 모드만 지원한다. `prefers-color-scheme: dark` 분기를 �
 rule: `eval` 과 동적 코드 실행을 쓰지 않는다. 심사에서 바로 반려된다.
 rule: 소켓은 `wss://` 만. 공유 링크는 `intoss://` 만 (`intoss-private://` 금지).
 rule: 콘솔 검수 신청과 출시 버튼은 사람이 누른다. 에이전트는 preflight 통과까지만.
+rule: 스토어 스크린샷은 실제 화면이어야 한다. 없는 화면을 그려 올리지 않는다.
+rule: `miniapp_update_*` 를 부르지 않는다 — 이름과 달리 앱정보 검토 요청이 함께 나간다.
+rule: 에셋 해상도는 정확히 맞춘다. 콘솔은 1px 만 달라도 거부하고, 반려되면 영업일 3일이다.
 
 # ── 셋업 완료 후 안내 (${VAR} 는 .env 에서 치환) ─────────────
 next: pnpm dev:miniapp — vite 개발 서버. 샌드박스 앱 연결은 wiki/03 의 테스트 절을 보세요
 next: pnpm agent spec-writer "<기능>" — 수용 기준부터 씁니다
+next: pnpm intake <zip 또는 폴더> — 다른 워크스페이스에서 만들던 것을 들여옵니다
+next: pnpm agent asset-maker "<앱 설명>" — 로고와 썸네일을 만듭니다 (codex)
 next: pnpm preflight — 심사 사전점검을 직접 돌려봅니다
 next: 콘솔 MCP 등록이 아직이면 pnpm check 가 명령을 알려줍니다

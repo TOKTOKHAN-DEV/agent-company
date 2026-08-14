@@ -246,6 +246,33 @@ Une règle qui ne vit que dans un document n'est pas suivie, elle est donc impos
 
 Justification : [ADR-0002](../../wiki/decisions/ADR-0002-codex-only-image-generation.md)
 
+### 5. Reprise
+
+Récupérez ce qui a été fait dans un autre espace de travail. Utile pour porter un service
+existant vers une mini-app, recevoir un kit de design ou reprendre un projet à mi-chemin.
+
+```bash
+pnpm intake ~/Downloads/design-kit.zip
+pnpm intake ~/work/other-repo --as reference
+```
+
+La commande décompresse un zip · tar.gz · dossier dans `inbox/<nom>/`, écarte des choses
+comme `node_modules`, puis **écrit un index (`INVENTORY.md`)** : la stack, les documents à
+lire en premier, les images et leur résolution, les fichiers de design impossibles à
+ouvrir, et un avertissement si des identifiants semblent s'y être glissés.
+
+L'index existe pour le contexte. Donnez un dossier entier à un agent et il brûlera du
+contexte en ouvrant les fichiers un par un. Dites-lui où se trouve quoi et il n'ouvrira
+que le nécessaire.
+
+Rien de ce qui est reçu n'est exécuté. Les liens symboliques sont supprimés (ils peuvent
+pointer hors du dépôt) et le code décompressé n'est ni installé ni compilé. Un zip qu'on
+vous transmet est de la lecture, pas quelque chose à lancer.
+
+`inbox/` n'est pas versionné. **C'est de la matière première, pas un résultat** : seules
+les spécifications et les ressources qui en sont tirées restent dans le dépôt
+(règle dure du cœur 3).
+
 ---
 
 ## Règles dures du cœur
@@ -274,6 +301,7 @@ injectées par-dessus ces cinq-là au démarrage de la session.
 | `pnpm check` | Inspecte seulement l'état (n'installe rien), y compris les vérifications du modèle courant |
 | `pnpm template list \| apply <id> \| prune` | Consulter · appliquer · nettoyer les modèles |
 | `pnpm agent --list \| <id> "<tâche>"` | Lister · exécuter les agents |
+| `pnpm intake <zip \| dossier>` | Importer le travail d'un autre espace dans `inbox/` et l'indexer |
 | `pnpm context` | Afficher manuellement le contexte de session |
 | `pnpm memory:new <topic>` | Créer un fichier de mémoire (`--long` pour le long terme) |
 | `pnpm dev \| build \| typecheck \| lint \| test` | Tout le workspace (turbo) |
