@@ -1,4 +1,4 @@
-<title>Agent Company — AI 팀이 굴리는 모노레포 템플릿</title>
+<title>Agent Company — 자동화 조직을 만드세요</title>
 
 <style>
 @font-face {
@@ -196,6 +196,26 @@ a { color: inherit; }
 }
 .nav-links a:hover { color: var(--text); }
 
+/* 한국어에서는 mono · uppercase · 넓은 자간을 걷어냅니다.
+   한글에 text-transform: uppercase 는 아무 효과가 없고, 자간을 벌리면 음절이
+   흩어져 읽히며, mono 폰트는 한글 글리프가 없어 문자열 중간에 폰트가 바뀝니다.
+   Latin 이 섞인 히어로 eyebrow 와 푸터는 그대로 둡니다 — 거기서는 mono 가 맞습니다. */
+:root[lang="ko"] .nav-links a {
+  font-family: var(--f-sans);
+  font-size: .9375rem;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  text-transform: none;
+}
+:root[lang="ko"] .nav-links { gap: 1.625rem; }
+:root[lang="ko"] .sec-rail .tag {
+  font-family: var(--f-sans);
+  font-size: .875rem;
+  font-weight: 600;
+  letter-spacing: -.005em;
+  text-transform: none;
+}
+
 /* language switch */
 .lang { display: flex; border: 1px solid var(--rule-2); }
 .lang button {
@@ -378,6 +398,16 @@ thead th {
   background: var(--surface-2); white-space: nowrap;
 }
 tbody tr:last-child td { border-bottom: 0; }
+/* 표 헤더도 같은 이유로 한국어에서는 mono · uppercase · 넓은 자간을 걷어냅니다.
+   "무너지는 것" · "쓰기 범위" 처럼 띄어쓰기가 있는 라벨에서 특히 벌어져 보였습니다. */
+:root[lang="ko"] thead th {
+  font-family: var(--f-sans);
+  font-size: .8125rem;
+  font-weight: 600;
+  letter-spacing: -.005em;
+  text-transform: none;
+  color: var(--text-2);
+}
 td { font-size: .9375rem; color: var(--text-2); }
 td.k { color: var(--text); font-family: var(--f-mono); font-size: .875rem; white-space: nowrap; letter-spacing: 0; }
 .chip {
@@ -504,7 +534,7 @@ code {
         <p class="eyebrow tag">
           <b>Orca</b><i>·</i><b>Paseo</b><i>·</i><b>Claude Code</b><i>·</i><b data-ko="모든 ADE" data-en="any ADE">모든 ADE</b>
         </p>
-        <h1 data-ko-html="AI 팀이 굴리는<br><em>모노레포 템플릿</em>" data-en-html="A monorepo<br>run by an <em>AI team</em>">AI 팀이 굴리는<br><em>모노레포 템플릿</em></h1>
+        <h1 data-ko-html="AI Company로<br><em>자동화 조직</em>을 만드세요." data-en-html="Build an <em>automated org</em><br>with AI Company.">AI Company로<br><em>자동화 조직</em>을 만드세요.</h1>
         <p class="hero-sub" data-ko="에이전트 IDE 는 사무실을 줍니다. 병렬 워크트리, 에이전트마다 하나씩인 터미널, diff 뷰. 여기 들어갈 회사를 담았습니다. 조직도, 사규, 세션이 끝나도 남는 기억, 그리고 사람만 누를 수 있는 출고 버튼." data-en="Agent IDEs give you the office: parallel worktrees, a terminal per agent, a diff view. This is the company that moves into it. An org chart, a handbook, memory that outlives the session, and a ship button only a person can press.">에이전트 IDE 는 사무실을 줍니다. 병렬 워크트리, 에이전트마다 하나씩인 터미널, diff 뷰. 여기 들어갈 회사를 담았습니다. 조직도, 사규, 세션이 끝나도 남는 기억, 그리고 사람만 누를 수 있는 출고 버튼.</p>
 
         <div class="install">
@@ -925,7 +955,6 @@ code {
   }
 
   /* ── terminal ────────────────────────────────────────── */
-  var term = document.getElementById("term");
   var boot = document.getElementById("boot");
   var timer = null;
 
@@ -965,7 +994,9 @@ code {
       }
       renderRoster();
       runBoot(key);
-      term.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      /* 예전에는 여기서 term.scrollIntoView 를 불렀습니다. 터미널이 히어로에 있어서
+         카드를 고를 때마다 페이지 맨 위로 튀었습니다 — 바로 아래 로스터를 보려던
+         사람에게는 방해였습니다. 카드 선택은 제자리에서 끝나야 합니다. */
     });
   }
 
