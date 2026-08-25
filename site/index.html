@@ -487,10 +487,10 @@ code {
         <button type="button" id="ko" aria-pressed="true">KO</button>
         <button type="button" id="en" aria-pressed="false">EN</button>
       </div>
-      <a class="gh" href="https://github.com/TOKTOKHAN-DEV/agent-company" aria-label="GitHub — 10 stars">
+      <a class="gh" href="https://github.com/TOKTOKHAN-DEV/agent-company" id="ghLink" aria-label="GitHub — 28 stars">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
         <svg class="gh-star" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .25l2.19 4.79 5.06.57-3.77 3.44 1.02 5.2L8 11.67 3.5 14.25l1.02-5.2L.75 5.61l5.06-.57z"/></svg>
-        <span class="gh-n">10</span>
+        <span class="gh-n" id="ghStars">28</span>
       </a>
     </div>
   </div>
@@ -1052,6 +1052,45 @@ code {
     var t = null;
     window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(boot2, 180); });
     boot2();
+  })();
+
+  /* ── github stars ────────────────────────────────────────
+     HTML 의 숫자는 폴백입니다. 이 블록이 실패해도(오프라인 · 레이트리밋 ·
+     차단) 페이지는 그 값을 그대로 보여줍니다 — 그래서 폴백도 최신으로
+     유지해야 합니다.
+
+     비인증 GitHub API 는 IP 당 시간 60회입니다. 6시간 캐시를 두어 재방문이
+     한도를 태우지 않게 합니다. localStorage 는 사생활 모드나 차단 설정에서
+     접근 자체가 던지므로 읽기·쓰기 모두 try 로 감쌉니다. */
+  (function () {
+    var el = document.getElementById("ghStars");
+    var link = document.getElementById("ghLink");
+    if (!el) return;
+
+    var KEY = "ac:stars";
+    var TTL = 6 * 60 * 60 * 1000;
+
+    function paint(n) {
+      if (typeof n !== "number" || !isFinite(n) || n < 0) return;
+      el.textContent = n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, "") + "k" : String(n);
+      if (link) link.setAttribute("aria-label", "GitHub — " + n + " stars");
+    }
+
+    try {
+      var hit = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (hit && Date.now() - hit.t < TTL) { paint(hit.n); return; }
+    } catch (e) {}
+
+    fetch("https://api.github.com/repos/TOKTOKHAN-DEV/agent-company", {
+      headers: { Accept: "application/vnd.github+json" }
+    })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || typeof d.stargazers_count !== "number") return;
+        paint(d.stargazers_count);
+        try { localStorage.setItem(KEY, JSON.stringify({ n: d.stargazers_count, t: Date.now() })); } catch (e) {}
+      })
+      .catch(function () {});
   })();
 
   /* ── go ──────────────────────────────────────────────── */
