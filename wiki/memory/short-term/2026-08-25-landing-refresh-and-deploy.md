@@ -67,10 +67,31 @@ homepage 필드와 README 9종(한국어 + 번역 8)의 배지도 이 주소를 
 `site/index.html` 을 함께 봐야 한다. 대조 대상은 `templates/*/template.yaml` 의
 `hires:` · `ships:` · `status:` 와 `templates/*/files/agents/registry.yaml`.
 
+## GitHub 저장소를 채웠다
+
+별 28 · 포크 9로 쓰이는데 description · topics · `.github/` 가 전부 비어 있었다.
+설정(description · topics 12개 · homepage · **Use this template**)은 `gh repo edit` 로,
+문서(`CONTRIBUTING.md` · `SECURITY.md` · 이슈 폼 3종 · PR 템플릿 · CI)는 커밋으로 넣었다.
+
+- **`isTemplate` 이 false 였다.** README 130 번째 줄이 이미 "Use this template 한 내
+  프로젝트"라고 쓰고 있었는데 버튼이 없었다. 문서가 약속한 것을 설정이 배신하고 있었다.
+- **GitHub Wiki 탭을 껐다.** 내용이 없는데 켜져 있어 in-tree `wiki/` 와 헷갈렸다.
+- **CI 는 `scripts/` 를 부르기만 한다.** 워크플로에 검사를 직접 쓰면 사람·에이전트·CI 가
+  다른 판정을 보게 된다(하드 룰 4). node 는 `22.16.0` 으로 고정 — `engines` 범위로 두면
+  러너 이미지가 바뀔 때 결과가 조용히 달라진다.
+- 이슈 폼이 규칙을 물어보게 만들었다. 새 에이전트 제안은 **"왜 스킬이 아니라 별도
+  프로세스인가"** 를 필수로 받는다 ([[agent-granularity]]).
+
+**소셜 프리뷰 이미지는 넣지 못했다** — 코어 하드 룰 1. 이미지 생성 경로는 Codex
+`imagegen` 뿐이고 이 레포에는 그 명령이 없다(`blog` 템플릿이 가진다). 사람이 직접
+올리거나, 템플릿을 펼친 곳에서 만들어야 한다.
+
 ## 이어서 할 것
 
 - **git 연동 자동 배포는 안 걸려 있다.** 푸시해도 재배포되지 않는다.
   붙이려면 `vercel git connect` — Root Directory 는 이미 `site` 라 추가 설정은 없다.
+- **소셜 프리뷰 이미지** (사용자 작업 또는 `blog` 템플릿에서 `pnpm imagegen`)
+- GitHub Discussions 는 껐다 — 필요해지면 켠다.
 - **`app-in-toss` 는 여전히 `preview`.** 실제 심사를 통과시켜 본 적이 없다는 상황은
   그대로다 — [[2026-08-14-intake-and-asset-agent]] 참조.
 

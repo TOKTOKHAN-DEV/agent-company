@@ -23,11 +23,11 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # engines 는 >=20.11.0 이지만 CI 는 한 버전으로 고정합니다 —
           # 범위로 두면 러너 이미지가 바뀔 때 검사 결과가 조용히 달라집니다.
