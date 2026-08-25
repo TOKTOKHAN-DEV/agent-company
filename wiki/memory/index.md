@@ -9,6 +9,7 @@
 - [image-generation-policy.md](./long-term/image-generation-policy.md) — 이미지는 Codex imagegen 전용, Claude 생성 금지
 - [publish-gate.md](./long-term/publish-gate.md) — 출고는 사람만, 에이전트는 in_review까지
 - [agent-granularity.md](./long-term/agent-granularity.md) — 에이전트는 역할이 아니라 런타임·병렬성으로 나눈다 (Claude 서브에이전트 아님)
+- [tool-side-effects-not-names.md](./long-term/tool-side-effects-not-names.md) — 도구는 이름이 아니라 부작용으로 판단한다 (바이트 업로드는 에이전트, 버튼은 사람)
 
 ## 팀 · 선호
 
@@ -17,4 +18,4 @@
 ## 현재 상태
 
 - 활성 단기 메모리: `short-term/` 참조
-- 마지막 갱신: 2026-07-28
+- 마지막 갱신: 2026-08-14
