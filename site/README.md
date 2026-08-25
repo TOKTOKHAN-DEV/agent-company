@@ -23,23 +23,12 @@ site/
 
 **운영 중** — https://agent-company-ten.vercel.app (Vercel 팀 `toktokhan-dev`)
 
-### CLI 로 배포하기 (권장)
-
-**이 디렉터리 안에서** 실행하세요. CWD 가 곧 배포 루트라 Root Directory 설정이 필요 없습니다.
+프로젝트의 **Root Directory 가 `site`** 로 설정돼 있습니다. 그래서 배포는 **레포 루트에서**
+합니다 — `site/` 안에서 돌리면 Vercel 이 `site/site` 를 찾아 실패합니다.
 
 ```bash
-cd site
-vercel deploy --prod --scope toktokhan-dev
+vercel deploy --prod --scope toktokhan-dev      # 레포 루트에서
 ```
-
-`site/.vercel/` 에 프로젝트 링크가 생깁니다. 계정에 묶인 ID 라 `.gitignore` 에 있습니다.
-
-**레포 루트에서 실행하지 마세요.** 모노레포 전체가 업로드됩니다.
-
-### git 연동 자동 배포를 쓴다면
-
-이때만 대시보드 설정이 필요합니다. Root Directory 는 `vercel.json` 으로 지정할 수 없는
-프로젝트 설정입니다.
 
 | 항목 | 값 |
 | --- | --- |
@@ -49,17 +38,35 @@ vercel deploy --prod --scope toktokhan-dev
 | Install Command | 없음 |
 | Output Directory | `.` |
 
-이걸 레포 루트의 `vercel.json` 으로 대신하지 않는 이유: 그러면 정리 단계가 `site/` 를 지운
-뒤에도 루트에 배포 설정이 남아 사용자 프로젝트의 배포를 깨뜨립니다.
+### 왜 루트에 `.vercelignore` 가 있나
+
+CLI 배포는 로컬 디스크를 그대로 업로드합니다. 거르지 않으면 `templates/` 아래 `node_modules`
+와 `.next` 까지 올라가 **배포가 3분 49초** 걸렸습니다. `/*` + `!site` 로 site 만 남기니
+**5.7초**가 됐습니다.
+
+`vercel.json` 을 루트에 두지 않는 것과는 다른 이야기입니다. `.vercelignore` 는 배포를
+*설정*하지 않고 업로드 대상만 거르므로, 정리(prune)로 `site/` 가 사라진 사용자 프로젝트에서는
+아무 일도 하지 않습니다. `vercel.json` 이었다면 남아서 그 프로젝트의 배포를 깨뜨립니다.
+
+### 링크 파일
+
+`vercel link` 가 루트 `.vercel/project.json` 에 `projectId` 와 `orgId` 를 씁니다. 계정에 묶인
+ID 라 `.gitignore` 에 있습니다.
 
 ### 도메인
 
-`agent-company.vercel.app` 은 **다른 계정이 이미 선점**했습니다. 그래서 자동 생성된
+`agent-company.vercel.app` 은 다른 계정이 선점했습니다. 그래서 자동 생성된
 `agent-company-ten` 이 운영 도메인입니다.
 
-팀 이름이 붙은 `agent-company-toktokhan-dev.vercel.app` 은 Vercel Authentication 때문에
-SSO 로그인으로 리다이렉트됩니다 — **공유용으로 쓸 수 없습니다.** 보기 좋은 주소가 필요하면
-커스텀 도메인을 붙이는 쪽이 맞습니다.
+- `agent-company-toktokhan-dev.vercel.app` — Vercel Authentication 때문에 SSO 로 302
+  리다이렉트됩니다. **공유용으로 쓸 수 없습니다.**
+- `agent-company.site` — 팀에 등록돼 있고 배포마다 별칭이 붙지만, 네임서버가 외부(Third
+  Party)라 **아직 Vercel 을 가리키지 않습니다.** DNS 를 붙이면 이쪽이 정식 주소가 됩니다.
+
+### git 연동 자동 배포
+
+아직 연결하지 않았습니다. 지금은 푸시해도 재배포되지 않고 위 CLI 명령으로만 나갑니다.
+붙이려면 `vercel git connect` — Root Directory 는 이미 `site` 라 추가 설정은 없습니다.
 
 ## 수정할 때
 
