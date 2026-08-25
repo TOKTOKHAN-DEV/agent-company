@@ -1,0 +1,54 @@
+# ─────────────────────────────────────────────────────────────
+# 로컬에서 도는 것과 같은 검사를 돌립니다.
+#
+# 새 검사를 여기에만 추가하지 마세요. 게이트는 결정적이어야 하고(코어 하드 룰 4),
+# 사람과 에이전트와 CI 가 같은 판정을 봐야 합니다. 검사는 scripts/ 에 넣고
+# 여기서는 부르기만 하세요.
+# ─────────────────────────────────────────────────────────────
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # engines 는 >=20.11.0 이지만 CI 는 한 버전으로 고정합니다 —
+          # 범위로 두면 러너 이미지가 바뀔 때 검사 결과가 조용히 달라집니다.
+          node-version: '22.16.0'
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # 셸 스크립트는 결정적으로 (wiki/02-conventions.md).
+      # 문법이 깨진 스크립트는 셋업을 통째로 멈추므로 가장 먼저 봅니다.
+      - name: 셸 문법
+        run: |
+          set -e
+          for f in scripts/*.sh .claude/hooks/*.sh; do
+            bash -n "$f" && echo "  ok  $f"
+          done
+
+      # 의존성 전수 검사 + 매니페스트 정합성 + typecheck.
+      # claude · codex · gh 는 선택 항목이라 러너에 없어도 경고까지만 갑니다.
+      - name: pnpm check
+        run: pnpm check
+
+      - name: pnpm typecheck
+        run: pnpm typecheck

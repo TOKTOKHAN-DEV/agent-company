@@ -357,6 +357,14 @@ MCP 등록 확인은 `claude mcp list` 대신 설정 파일(`~/.claude.json` · 
 pnpm workspaces · Turborepo · TypeScript 5.9 (strict) · 결정적 bash 스크립트.
 앱 스택(Next.js · React · Tailwind · zod 등)은 템플릿이 가져옵니다.
 
+## 기여
+
+[CONTRIBUTING.md](./CONTRIBUTING.md) 에 이 저장소에서만 통하는 규칙을 모아 두었습니다.
+바꾸기 전에 ADR 이 필요한 것, 하나를 고치면 짝을 함께 고쳐야 하는 것, 에이전트를 늘리는
+기준입니다.
+
+취약점은 공개 이슈 대신 [SECURITY.md](./SECURITY.md) 의 절차로 신고해 주세요.
+
 ## 라이선스
 
 MIT

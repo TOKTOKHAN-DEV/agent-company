@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 설치가 안 됩니다
+    url: https://github.com/TOKTOKHAN-DEV/agent-company/blob/main/INSTALL.md
+    about: 먼저 INSTALL.md 를 확인하세요. 대부분의 설치 문제는 `pnpm company-setup` 이 진단해 줍니다.
+  - name: 이건 무엇을 하는 프로젝트인가요
+    url: https://www.agent-company.site
+    about: 코어와 템플릿, 로스터, 하드 룰을 한 장으로 봅니다.

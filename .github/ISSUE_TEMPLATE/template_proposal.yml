@@ -1,0 +1,68 @@
+name: 새 템플릿 제안
+description: 새로운 종류의 회사(도메인)를 제안합니다
+labels: [template]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        템플릿은 **무엇을 만들고 누구를 뽑는지**를 정합니다. 코어(훅 · 메모리 · 런처 ·
+        게이트)는 어느 템플릿에서나 같습니다 — 코어를 바꿔야 하는 제안이라면 이 템플릿
+        대신 `wiki/decisions/` 의 ADR 로 시작해 주세요.
+
+  - type: input
+    id: id
+    attributes:
+      label: 템플릿 id
+      placeholder: "예: docs-site, discord-bot, chrome-extension"
+    validations:
+      required: true
+
+  - type: textarea
+    id: ships
+    attributes:
+      label: 무엇을 출고하나요
+      description: 이 회사가 만들어 내는 결과물. `template.yaml` 의 `ships:` 가 됩니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: gate
+    attributes:
+      label: 출고 게이트
+      description: |
+        **결정적이어야 합니다** (코어 하드 룰 4). 검수 함수에 LLM 호출을 넣지 않습니다 —
+        모델이 자기 결과물을 평가하면 통과 쪽으로 기웁니다. 무엇을 무엇으로 판정하나요?
+      placeholder: "예: 링크 검사 + 프론트매터 스키마 → in_review"
+    validations:
+      required: true
+
+  - type: textarea
+    id: hires
+    attributes:
+      label: 로스터와 그 근거
+      description: |
+        에이전트를 나누는 기준은 **역할이 아니라 런타임과 병렬성**입니다. 기존 에이전트가
+        할 수 있는 일이면 에이전트 대신 스킬을 추가합니다. 각 에이전트마다 런타임(claude ·
+        codex)과 쓰기 범위, 그리고 **왜 스킬이 아니라 별도 프로세스여야 하는지**를 적어
+        주세요.
+      placeholder: |
+        - writer / claude / opus / content/**
+          왜 별도인가: …
+        - asset-maker / codex / assets/**
+          왜 별도인가: 이미지 생성 경로가 codex 뿐이라 claude 로는 표현이 불가능
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: 코어 하드 룰과 충돌하지 않는지
+      options:
+        - label: 이미지 생성은 Codex `imagegen` 경로만 쓰거나, 이미지를 아예 쓰지 않습니다
+          required: true
+        - label: 에이전트는 `in_review` 까지만 올립니다. 출고는 사람이 누릅니다
+          required: true
+        - label: 결과물의 진실은 저장소 파일입니다
+          required: true
+        - label: 게이트에 LLM 호출이 없습니다
+          required: true
