@@ -591,6 +591,11 @@ code {
               <td><span class="chip">tool guard + audit</span></td>
             </tr>
             <tr>
+              <td class="k">foreign material</td>
+              <td data-ko="다른 워크스페이스에서 받은 zip 은 목차가 먼저 나옵니다. 스택, 먼저 읽을 문서, 이미지와 해상도, 섞여 들어온 키까지 한 장에 정리됩니다. 받은 폴더는 읽을거리이지 작업 대상이 아니라서 고치지도, 실행하지도 않습니다." data-en="A handoff archive arrives as a table of contents, not a folder to crawl \u2014 stack, what to read first, images and their dimensions, and any keys that came along. The drop is reading material, never a working directory: nothing in it is edited or executed.">다른 워크스페이스에서 받은 zip 은 목차가 먼저 나옵니다. 스택, 먼저 읽을 문서, 이미지와 해상도, 섞여 들어온 키까지 한 장에 정리됩니다. 받은 폴더는 읽을거리이지 작업 대상이 아니라서 고치지도, 실행하지도 않습니다.</td>
+              <td><span class="chip">read-only inbox/</span></td>
+            </tr>
+            <tr>
               <td class="k">accidental shipping</td>
               <td data-ko="에이전트는 in_review 까지만 올릴 수 있습니다. 출고 버튼은 사람이 누릅니다." data-en="Agents can move work to in_review and no further. Shipping is a button a person presses.">에이전트는 <code>in_review</code> 까지만 올릴 수 있습니다. 출고 버튼은 사람이 누릅니다.</td>
               <td><span class="chip chip-a">humans only</span></td>
@@ -633,8 +638,8 @@ code {
           </div>
           <p data-ko="토스 앱 안에서 도는 WebView 미니앱. 수용 기준을 먼저 쓰고, 화면을 만들고, 심사 사전점검을 통과시키는 회사입니다. Vite · React · TDS 로 되어 있습니다." data-en="A WebView mini app that runs inside the Toss app. The company writes acceptance criteria first, builds the screens, and takes them through the submission preflight. Built on Vite, React and TDS.">토스 앱 안에서 도는 WebView 미니앱. 수용 기준을 먼저 쓰고, 화면을 만들고, 심사 사전점검을 통과시키는 회사입니다. Vite · React · TDS 로 되어 있습니다.</p>
           <dl class="spec">
-            <div class="spec-row"><dt data-ko="구성" data-en="ships">구성</dt><dd data-ko="미니앱 · 심사 사전점검" data-en="mini app · submission preflight">미니앱 · 심사 사전점검</dd></div>
-            <div class="spec-row"><dt data-ko="채용" data-en="hires">채용</dt><dd>spec-writer · ui-builder · release-manager</dd></div>
+            <div class="spec-row"><dt data-ko="구성" data-en="ships">구성</dt><dd data-ko="미니앱 · 스토어 에셋 · 심사 사전점검" data-en="mini app · store assets · submission preflight">미니앱 · 스토어 에셋 · 심사 사전점검</dd></div>
+            <div class="spec-row"><dt data-ko="채용" data-en="hires">채용</dt><dd>spec-writer · ui-builder · asset-maker · release-manager</dd></div>
             <div class="spec-row"><dt data-ko="게이트" data-en="gate">게이트</dt><dd>preflight → 콘솔 검수</dd></div>
             <div class="spec-row"><dt data-ko="상태" data-en="status">상태</dt><dd>preview</dd></div>
           </dl>
@@ -800,7 +805,7 @@ code {
         ["      app-in-toss     <span class='c-d'>mini app for the Toss platform</span>", 0],
         ["      blank             <span class='c-d'>org scaffold only</span>", 0],
         ["", 1],
-        ["  <span class='c-k'>✔</span> template materialized   <span class='c-d'>14 files</span>", 0],
+        ["  <span class='c-k'>✔</span> template materialized   <span class='c-d'>79 files</span>", 0],
         ["  <span class='c-k'>✔</span> 2 agents hired · 6 skills installed", 0],
         ["  <span class='c-k'>✔</span> context layer wired to SessionStart", 0],
         ["  <span class='c-k'>✔</span> review gate armed        <span class='c-d'>humans only</span>", 0],
@@ -815,7 +820,7 @@ code {
       roster: [
         { id: "blog-writer", rt: "claude", model: "opus", w: "content/posts/**",
           o: { ko: "status 를 published 로 바꾸지 않는다. 이미지를 직접 만들지 않는다.", en: "Never sets status to published. Never makes its own images." } },
-        { id: "image-maker", rt: "codex", model: "default", w: "public/images/**",
+        { id: "image-maker", rt: "codex", model: "default", w: "apps/web/public/images/**",
           o: { ko: "이미지를 만들 수 있는 유일한 에이전트. 실패하면 폴백하고 대체 도구를 찾지 않는다.", en: "The only agent that can generate an image. On failure it falls back and never substitutes a tool." } }
       ]
     },
@@ -833,9 +838,9 @@ code {
         ["    <span class='c-a'>▸ app-in-toss</span>      <span class='c-d'>mini app for the Toss platform</span>", 0],
         ["      blank             <span class='c-d'>org scaffold only</span>", 0],
         ["", 1],
-        ["  <span class='c-k'>✔</span> template materialized   <span class='c-d'>21 files</span>", 0],
+        ["  <span class='c-k'>✔</span> template materialized   <span class='c-d'>39 files</span>", 0],
         ["  <span class='c-k'>✔</span> granite runtime pinned", 0],
-        ["  <span class='c-k'>✔</span> 3 agents hired · 9 skills installed", 0],
+        ["  <span class='c-k'>✔</span> 4 agents hired · 10 skills installed", 0],
         ["  <span class='c-k'>✔</span> submission preflight armed", 0],
         ["", 1],
         ["<span class='c-p'>$</span> pnpm agent spec-writer <span class='c-d'>\"포인트 적립 화면\"</span>", 0],
@@ -850,6 +855,8 @@ code {
           o: { ko: "화면을 만들기 전에 수용 기준을 먼저 쓴다. 명세 없이 구현으로 넘기지 않는다.", en: "Writes acceptance criteria before any screen exists. Never hands off an unspecified feature." } },
         { id: "ui-builder", rt: "claude", model: "sonnet", w: "apps/miniapp/**",
           o: { ko: "명세에 있는 화면만 만든다. 플랫폼 SDK 를 우회하지 않는다.", en: "Builds only what the spec describes. Never bypasses the platform SDK." } },
+        { id: "asset-maker", rt: "codex", model: "default", w: "assets/**",
+          o: { ko: "이미지는 imagegen 으로만 만든다. 스크린샷을 그리지 않는다 \u2014 실제 화면이어야 한다.", en: "Images come from imagegen only. Never draws a screenshot \u2014 it has to be a real screen." } },
         { id: "release-manager", rt: "codex", model: "default", w: "release/**",
           o: { ko: "심사 체크리스트를 돌린다. 제출은 사람이 누른다.", en: "Runs the submission checklist. A person presses submit." } }
       ]
@@ -868,7 +875,7 @@ code {
         ["      app-in-toss     <span class='c-d'>mini app for the Toss platform</span>", 0],
         ["    <span class='c-a'>▸ blank</span>             <span class='c-d'>org scaffold only</span>", 0],
         ["", 1],
-        ["  <span class='c-k'>✔</span> core materialized       <span class='c-d'>6 files</span>", 0],
+        ["  <span class='c-k'>✔</span> template materialized   <span class='c-d'>1 file</span>", 0],
         ["  <span class='c-k'>✔</span> context layer wired to SessionStart", 0],
         ["  <span class='c-d'>·</span> roster empty            <span class='c-d'>0 agents</span>", 0],
         ["", 1],
