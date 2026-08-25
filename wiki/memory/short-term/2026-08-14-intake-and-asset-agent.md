@@ -17,13 +17,18 @@ promoted: false
 
 ## 이어서 할 것
 
-- **푸시하지 않았다.** 커밋 `3a83fde` 가 로컬 `main` 에만 있다.
+- ~~**푸시하지 않았다.** 커밋 `3a83fde` 가 로컬 `main` 에만 있다.~~
+  → 2026-08-25 푸시 완료 (`f8cd02e..8be4a48`).
 - **app-in-toss 는 여전히 `preview`.** 에셋 규격 숫자는 콘솔 MCP 도구 설명에서 그대로 옮긴
   것이지만 **실제로 심사를 통과시켜 본 적이 없다.** `stable` 로 올리기 전에 한 번은 실제
-  제출까지 가 봐야 한다.
-- **Vercel Root Directory 를 `site` 로 지정**하는 일이 여러 세션째 남아 있다. 대시보드에서만
-  가능하고 `vercel.json` 으로는 안 된다.
-- 브랜치 `refactor/agent-company-restructure` 가 로컬·원격에 남아 있다 (머지 완료됨).
+  제출까지 가 봐야 한다. ← **유일하게 남은 항목**
+- ~~**Vercel Root Directory 를 `site` 로 지정**하는 일이 여러 세션째 남아 있다. 대시보드에서만
+  가능하고 `vercel.json` 으로는 안 된다.~~
+  → 2026-08-25 완료. **그리고 근거가 틀렸었다** — `vercel.json` 으로 안 되는 것은 맞지만
+  REST API 로는 되고, CLI 배포에는 애초에 필요 없는 설정이었다.
+  [[2026-08-25-landing-refresh-and-deploy]] 참조.
+- ~~브랜치 `refactor/agent-company-restructure` 가 로컬·원격에 남아 있다 (머지 완료됨).~~
+  → 2026-08-25 로컬·원격 모두 삭제.
 
 ## 알아 둘 것
 
@@ -43,3 +48,4 @@ promoted: false
 - `templates/app-in-toss/files/agents/asset-maker/`
 - [[publish-gate]] — `miniapp_update_*` 를 금지한 근거
 - [[agent-granularity]] — asset-maker 를 별도 프로세스로 뽑은 근거
+- [[2026-08-25-landing-refresh-and-deploy]] — 위 항목 3개를 닫은 세션
