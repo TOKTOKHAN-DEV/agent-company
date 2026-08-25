@@ -13,6 +13,7 @@
 > 由 AI 团队运转的 monorepo 模板。
 > 组织架构、公司规章、跨会话留存的记忆，以及只有人能按的发布按钮。
 
+[![Website](https://img.shields.io/badge/website-agent--company.site-9A6410)](https://www.agent-company.site)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.11-339933)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A510-F69220)](https://pnpm.io)
 [![License](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)

@@ -13,6 +13,7 @@
 > AI チームが回すモノレポテンプレート。
 > 組織図、社則、セッションをまたいで残る記憶、そして人間だけが押せる出荷ボタン。
 
+[![Website](https://img.shields.io/badge/website-agent--company.site-9A6410)](https://www.agent-company.site)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.11-339933)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A510-F69220)](https://pnpm.io)
 [![License](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)

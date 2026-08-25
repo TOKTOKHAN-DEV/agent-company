@@ -21,7 +21,7 @@ site/
 
 ## 배포
 
-**운영 중** — https://agent-company-ten.vercel.app (Vercel 팀 `toktokhan-dev`)
+**운영 중** — https://www.agent-company.site (Vercel 팀 `toktokhan-dev`)
 
 프로젝트의 **Root Directory 가 `site`** 로 설정돼 있습니다. 그래서 배포는 **레포 루트에서**
 합니다 — `site/` 안에서 돌리면 Vercel 이 `site/site` 를 찾아 실패합니다.
@@ -55,13 +55,28 @@ ID 라 `.gitignore` 에 있습니다.
 
 ### 도메인
 
-`agent-company.vercel.app` 은 다른 계정이 선점했습니다. 그래서 자동 생성된
-`agent-company-ten` 이 운영 도메인입니다.
+정식 주소는 **https://www.agent-company.site** 입니다. 네임서버가 Vercel(`ns1/ns2.vercel-dns.com`)
+이고, 와일드카드 `ALIAS` 가 apex 와 `www` 를 모두 받습니다.
 
-- `agent-company-toktokhan-dev.vercel.app` — Vercel Authentication 때문에 SSO 로 302
-  리다이렉트됩니다. **공유용으로 쓸 수 없습니다.**
-- `agent-company.site` — 팀에 등록돼 있고 배포마다 별칭이 붙지만, 네임서버가 외부(Third
-  Party)라 **아직 Vercel 을 가리키지 않습니다.** DNS 를 붙이면 이쪽이 정식 주소가 됩니다.
+```
+*  ALIAS  cname.vercel-dns-016.com.
+   ALIAS  7ae3d4ca77b81dc7.vercel-dns-016.com
+```
+
+`vercel.app` 쪽 주소는 이렇습니다.
+
+| 주소 | 상태 |
+| --- | --- |
+| `agent-company-ten.vercel.app` | 살아 있음. 자동 생성 이름 — `agent-company.vercel.app` 은 다른 계정이 선점했습니다 |
+| `agent-company-toktokhan-dev.vercel.app` | Vercel Authentication 때문에 SSO 로 302. **공유용으로 쓸 수 없습니다** |
+
+**DNS 를 갓 옮겼다면 로컬 리졸버 캐시를 의심하세요.** 네임서버가 Vercel 로 바뀐 뒤에도
+로컬에서는 한동안 이전 파킹 레코드가 나옵니다. 네임서버에 직접 물어보면 구분됩니다.
+
+```bash
+dig +short @ns1.vercel-dns.com www.agent-company.site   # Vercel 이 실제로 주는 답
+dig +short @1.1.1.1 www.agent-company.site              # 공개 리졸버가 받은 답
+```
 
 ### git 연동 자동 배포
 

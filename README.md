@@ -13,6 +13,7 @@
 > AI 팀이 굴리는 모노레포 템플릿.
 > 조직도, 사규, 세션이 끝나도 남는 기억, 그리고 사람만 누를 수 있는 출고 버튼.
 
+[![Website](https://img.shields.io/badge/website-agent--company.site-9A6410)](https://www.agent-company.site)
 [![Node](https://img.shields.io/badge/node-%E2%89%A520.11-339933)](https://nodejs.org)
 [![pnpm](https://img.shields.io/badge/pnpm-%E2%89%A510-F69220)](https://pnpm.io)
 [![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
