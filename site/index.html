@@ -510,8 +510,8 @@ code {
     <div class="nav-right">
       <div class="nav-links">
         <a href="#templates" data-ko="템플릿" data-en="Templates">템플릿</a>
-        <a href="#roster" data-ko="로스터" data-en="Roster">로스터</a>
-        <a href="#bylaws" data-ko="사규" data-en="Bylaws">사규</a>
+        <a href="#roster" data-ko="에이전트" data-en="Agents">에이전트</a>
+        <a href="#bylaws" data-ko="거버넌스" data-en="Governance">거버넌스</a>
       </div>
       <div class="lang" role="group" aria-label="Language">
         <button type="button" id="ko" aria-pressed="true">KO</button>
@@ -535,7 +535,7 @@ code {
           <b>Orca</b><i>·</i><b>Paseo</b><i>·</i><b>Claude Code</b><i>·</i><b data-ko="모든 ADE" data-en="any ADE">모든 ADE</b>
         </p>
         <h1 data-ko-html="AI Company로<br><em>자동화 조직</em>을 만드세요." data-en-html="Build an <em>automated org</em><br>with AI Company.">AI Company로<br><em>자동화 조직</em>을 만드세요.</h1>
-        <p class="hero-sub" data-ko="에이전트 IDE 는 사무실을 줍니다. 병렬 워크트리, 에이전트마다 하나씩인 터미널, diff 뷰. 여기 들어갈 회사를 담았습니다. 조직도, 사규, 세션이 끝나도 남는 기억, 그리고 사람만 누를 수 있는 출고 버튼." data-en="Agent IDEs give you the office: parallel worktrees, a terminal per agent, a diff view. This is the company that moves into it. An org chart, a handbook, memory that outlives the session, and a ship button only a person can press.">에이전트 IDE 는 사무실을 줍니다. 병렬 워크트리, 에이전트마다 하나씩인 터미널, diff 뷰. 여기 들어갈 회사를 담았습니다. 조직도, 사규, 세션이 끝나도 남는 기억, 그리고 사람만 누를 수 있는 출고 버튼.</p>
+        <p class="hero-sub" data-ko="에이전트를 가장 잘 활용할 수 있는 환경을 제공합니다. 여러분의 사업을 빠르고 쉽게 시작하세요." data-en="Give your agents the environment they do their best work in. Start what you are building, faster and with less friction.">에이전트를 가장 잘 활용할 수 있는 환경을 제공합니다. 여러분의 사업을 빠르고 쉽게 시작하세요.</p>
 
         <div class="install">
           <div class="install-row">
@@ -543,7 +543,7 @@ code {
             <button class="copy" id="copyBtn" type="button" data-ko="복사" data-en="Copy">복사</button>
           </div>
           <p class="install-note">
-            <span data-ko="쓰는 코딩 에이전트에 그대로 붙여넣으면 클론부터 검증까지 알아서 끝냅니다." data-en="Paste it into whichever coding agent you use. It handles the clone, the setup, and the verification.">쓰는 코딩 에이전트에 그대로 붙여넣으면 클론부터 검증까지 알아서 끝냅니다.</span>
+            <span data-ko="쓰시던 코딩 에이전트에 그대로 붙여넣어 보세요. 클론부터 검증까지 알아서 끝냅니다." data-en="Paste it into whichever coding agent you already use. It handles the clone, the setup, and the verification.">쓰시던 코딩 에이전트에 그대로 붙여넣어 보세요. 클론부터 검증까지 알아서 끝냅니다.</span>
             <a href="https://github.com/TOKTOKHAN-DEV/agent-company/blob/main/INSTALL.md" data-ko="직접 하시려면 INSTALL.md" data-en="Rather do it by hand? INSTALL.md">직접 하시려면 INSTALL.md</a>
           </p>
         </div>
@@ -567,17 +567,17 @@ code {
     <div class="sec-rail"><p class="tag tag-accent" data-ko="문제" data-en="The problem">문제</p></div>
     <div class="sec-body">
       <div class="sec-head rv">
-        <h2 data-ko="실제 프로젝트를 맡기면 매번 같은 데서 막힙니다." data-en="Hand over a real project and it stalls in the same two places.">실제 프로젝트를 맡기면 매번 같은 데서 막힙니다.</h2>
-        <p data-ko="모델을 바꾸거나 프롬프트를 다듬어서 해결되는 문제가 아닙니다. 둘 다 저장소에 없는 것 때문에 생깁니다." data-en="Neither one is fixed by a better prompt or a better model. Both come from something the repo does not have.">모델을 바꾸거나 프롬프트를 다듬어서 해결되는 문제가 아닙니다. 둘 다 저장소에 없는 것 때문에 생깁니다.</p>
+        <h2 data-ko="에이전트에 일을 맡기다 보면, 늘 같은 자리에서 멈춥니다." data-en="Hand real work to an agent and it stalls in the same two places.">에이전트에 일을 맡기다 보면, 늘 같은 자리에서 멈춥니다.</h2>
+        <p data-ko="더 좋은 모델을 쓰거나 프롬프트를 다듬어도 그대로입니다. 원인은 저장소에 없는 것들이거든요." data-en="A better model or a better prompt will not fix either one. Both come from something the repo does not have.">더 좋은 모델을 쓰거나 프롬프트를 다듬어도 그대로입니다. 원인은 저장소에 없는 것들이거든요.</p>
       </div>
       <div class="ruled rv">
         <div class="ruled-item">
-          <h3 data-ko="지난 결정이 남지 않습니다" data-en="Past decisions don't survive">지난 결정이 남지 않습니다</h3>
-          <p data-ko="세션이 끝나거나 다른 에이전트가 이어받으면 지난 석 달의 결정이 사라집니다. 끝난 논쟁을 다시 하고, 이미 버린 방식으로 되돌아갑니다." data-en="The session ends, or another agent picks it up, and three months of decisions are gone. It reopens settled arguments and brings back the approach you threw out.">세션이 끝나거나 다른 에이전트가 이어받으면 지난 석 달의 결정이 사라집니다. 끝난 논쟁을 다시 하고, 이미 버린 방식으로 되돌아갑니다.</p>
+          <h3 data-ko="어제 나눈 이야기가 사라집니다" data-en="Yesterday's decisions don't survive">어제 나눈 이야기가 사라집니다</h3>
+          <p data-ko="세션이 끝나거나 다른 에이전트가 이어받으면 지난 석 달의 결정이 함께 사라집니다. 끝난 논쟁을 다시 하고, 이미 접었던 방식으로 돌아가게 됩니다." data-en="The session ends, or another agent picks it up, and three months of decisions go with it. You reopen settled arguments and drift back to the approach you already dropped.">세션이 끝나거나 다른 에이전트가 이어받으면 지난 석 달의 결정이 함께 사라집니다. 끝난 논쟁을 다시 하고, 이미 접었던 방식으로 돌아가게 됩니다.</p>
         </div>
         <div class="ruled-item">
-          <h3 data-ko="아무도 결과물을 막지 않습니다" data-en="Nothing stops the output">아무도 결과물을 막지 않습니다</h3>
-          <p data-ko="게이트가 없으면 에이전트가 만든 것이 그대로 나갑니다. 검수를 모델에게 맡겨도 마찬가지입니다. 자기 결과물을 채점하면 후하게 줍니다." data-en="Without a gate, whatever the agent produced is what ships. Handing the review to a model does not help. It grades its own output generously.">게이트가 없으면 에이전트가 만든 것이 그대로 나갑니다. 검수를 모델에게 맡겨도 마찬가지입니다. 자기 결과물을 채점하면 후하게 줍니다.</p>
+          <h3 data-ko="만든 것이 그대로 나갑니다" data-en="Nothing stands between draft and ship">만든 것이 그대로 나갑니다</h3>
+          <p data-ko="막아 주는 장치가 없으면 에이전트가 만든 것이 그대로 세상에 나갑니다. 검수를 모델에게 맡겨도 마찬가지예요 — 누구든 자기 결과물에는 후해집니다." data-en="With no gate, whatever the agent produced is what ships. Handing the review to a model does not help either — anything grades its own work generously.">막아 주는 장치가 없으면 에이전트가 만든 것이 그대로 세상에 나갑니다. 검수를 모델에게 맡겨도 마찬가지예요 — 누구든 자기 결과물에는 후해집니다.</p>
         </div>
       </div>
     </div>
@@ -586,43 +586,43 @@ code {
 
 <section class="sec sec-alt">
   <div class="wrap sec-grid">
-    <div class="sec-rail"><p class="tag tag-accent" data-ko="해법" data-en="The answer">해법</p></div>
+    <div class="sec-rail"><p class="tag tag-accent" data-ko="해결방법" data-en="How it works">해결방법</p></div>
     <div class="sec-body">
       <div class="sec-head rv">
-        <h2 data-ko="무너지는 지점마다 장치를 하나씩 붙였습니다." data-en="Every failure point gets a mechanism.">무너지는 지점마다 장치를 하나씩 붙였습니다.</h2>
-        <p data-ko="문서에 적어 둔 규칙은 지켜지지 않습니다. 여기 있는 것들은 누가 기억해서 실행하지 않아도 돌아갑니다." data-en="A rule written in a doc is a rule nobody follows. These run whether or not anyone remembers them.">문서에 적어 둔 규칙은 지켜지지 않습니다. 여기 있는 것들은 누가 기억해서 실행하지 않아도 돌아갑니다.</p>
+        <h2 data-ko="무너지는 자리마다, 받쳐 줄 장치를 하나씩 두었습니다." data-en="A mechanism at every place things break.">무너지는 자리마다, 받쳐 줄 장치를 하나씩 두었습니다.</h2>
+        <p data-ko="문서에만 적어 둔 규칙은 결국 지켜지지 않더군요. 그래서 아무도 기억하지 않아도 저절로 돌아가게 만들었습니다." data-en="A rule that lives only in a doc is a rule nobody follows. These run whether or not anyone remembers them.">문서에만 적어 둔 규칙은 결국 지켜지지 않더군요. 그래서 아무도 기억하지 않아도 저절로 돌아가게 만들었습니다.</p>
       </div>
       <div class="tablewrap rv">
         <table>
           <thead><tr>
-            <th scope="col" data-ko="무너지는 것" data-en="Failure">무너지는 것</th>
-            <th scope="col" data-ko="장치" data-en="Mechanism">장치</th>
-            <th scope="col" data-ko="강제 수단" data-en="Enforced by">강제 수단</th>
+            <th scope="col" data-ko="무너지는 자리" data-en="Where it breaks">무너지는 자리</th>
+            <th scope="col" data-ko="받쳐 주는 장치" data-en="The mechanism">받쳐 주는 장치</th>
+            <th scope="col" data-ko="무엇이 지켜 주나" data-en="What enforces it">무엇이 지켜 주나</th>
           </tr></thead>
           <tbody>
             <tr>
               <td class="k">context loss</td>
-              <td data-ko="핸드북·위키·장단기 메모리가 세션 시작마다 자동으로 올라옵니다. 전문이 아니라 인덱스만 올려서 컨텍스트를 아낍니다." data-en="Handbook, wiki, and long/short-term memory load at every session start. An index, not the full text, so the context window survives.">핸드북·위키·장단기 메모리가 세션 시작마다 자동으로 올라옵니다. 전문이 아니라 인덱스만 올려서 컨텍스트를 아낍니다.</td>
+              <td data-ko="핸드북과 위키, 그동안 쌓인 기억이 세션을 열 때마다 알아서 올라옵니다. 전문이 아니라 인덱스만 올려 컨텍스트를 아낍니다." data-en="The handbook, the wiki, and everything remembered so far load the moment a session opens. An index rather than the full text, so the context window survives.">핸드북과 위키, 그동안 쌓인 기억이 세션을 열 때마다 알아서 올라옵니다. 전문이 아니라 인덱스만 올려 컨텍스트를 아낍니다.</td>
               <td><span class="chip">SessionStart hook</span></td>
             </tr>
             <tr>
               <td class="k">quality drift</td>
-              <td data-ko="출고 게이트는 결정적 함수입니다. 같은 입력이면 사람이 보든 에이전트가 보든 같은 판정이 나옵니다." data-en="A deterministic audit function gates shipping. Same input, same verdict, for humans and agents alike.">출고 게이트는 결정적 함수입니다. 같은 입력이면 사람이 보든 에이전트가 보든 같은 판정이 나옵니다.</td>
+              <td data-ko="출고 게이트는 결정적 함수입니다. 같은 입력이라면 사람이 보든 에이전트가 보든 판정이 같습니다." data-en="A deterministic audit function gates shipping. Same input, same verdict, whoever is looking.">출고 게이트는 결정적 함수입니다. 같은 입력이라면 사람이 보든 에이전트가 보든 판정이 같습니다.</td>
               <td><span class="chip">no LLM in the gate</span></td>
             </tr>
             <tr>
               <td class="k">role bleed</td>
-              <td data-ko="에이전트마다 런타임·모델·쓰기 범위를 레지스트리에 적어 둡니다. 서브에이전트가 아니라 각자의 터미널에서 병렬로 도는 독립 프로세스입니다." data-en="Runtime, model, and write scope are declared per agent in the registry. These are independent processes in parallel terminals, not subagents.">에이전트마다 런타임·모델·쓰기 범위를 레지스트리에 적어 둡니다. 서브에이전트가 아니라 각자의 터미널에서 병렬로 도는 독립 프로세스입니다.</td>
+              <td data-ko="에이전트마다 런타임과 모델, 건드릴 수 있는 범위를 레지스트리에 적어 둡니다. 서브에이전트가 아니라 각자의 터미널에서 나란히 도는 독립 프로세스입니다." data-en="Runtime, model, and write scope are declared per agent in the registry. These are independent processes in their own terminals, not subagents.">에이전트마다 런타임과 모델, 건드릴 수 있는 범위를 레지스트리에 적어 둡니다. 서브에이전트가 아니라 각자의 터미널에서 나란히 도는 독립 프로세스입니다.</td>
               <td><span class="chip">registry.yaml</span></td>
             </tr>
             <tr>
               <td class="k">untraceable assets</td>
-              <td data-ko="이미지 생성 경로는 하나뿐이고, 모든 자산에 출처가 기록됩니다." data-en="One sanctioned path for image generation, with provenance recorded on every asset.">이미지 생성 경로는 하나뿐이고, 모든 자산에 출처가 기록됩니다.</td>
+              <td data-ko="이미지를 만드는 길은 하나뿐이고, 모든 자산에 출처가 남습니다." data-en="One sanctioned path for image generation, with provenance recorded on every asset.">이미지를 만드는 길은 하나뿐이고, 모든 자산에 출처가 남습니다.</td>
               <td><span class="chip">tool guard + audit</span></td>
             </tr>
             <tr>
               <td class="k">foreign material</td>
-              <td data-ko="다른 워크스페이스에서 받은 zip 은 목차가 먼저 나옵니다. 스택, 먼저 읽을 문서, 이미지와 해상도, 섞여 들어온 키까지 한 장에 정리됩니다. 받은 폴더는 읽을거리이지 작업 대상이 아니라서 고치지도, 실행하지도 않습니다." data-en="A handoff archive arrives as a table of contents, not a folder to crawl \u2014 stack, what to read first, images and their dimensions, and any keys that came along. The drop is reading material, never a working directory: nothing in it is edited or executed.">다른 워크스페이스에서 받은 zip 은 목차가 먼저 나옵니다. 스택, 먼저 읽을 문서, 이미지와 해상도, 섞여 들어온 키까지 한 장에 정리됩니다. 받은 폴더는 읽을거리이지 작업 대상이 아니라서 고치지도, 실행하지도 않습니다.</td>
+              <td data-ko="다른 곳에서 받은 zip 은 목차부터 나옵니다. 스택, 먼저 읽을 문서, 이미지와 해상도, 섞여 들어온 키까지 한 장에 정리해 드립니다. 받은 폴더는 읽을거리이지 작업 대상이 아니라서 고치지도, 실행하지도 않습니다." data-en="A handoff archive arrives as a table of contents, not a folder to crawl \u2014 stack, what to read first, images and their dimensions, and any keys that came along. The drop is reading material, never a working directory: nothing in it is edited or executed.">다른 곳에서 받은 zip 은 목차부터 나옵니다. 스택, 먼저 읽을 문서, 이미지와 해상도, 섞여 들어온 키까지 한 장에 정리해 드립니다. 받은 폴더는 읽을거리이지 작업 대상이 아니라서 고치지도, 실행하지도 않습니다.</td>
               <td><span class="chip">read-only inbox/</span></td>
             </tr>
             <tr>
@@ -642,8 +642,8 @@ code {
     <div class="sec-rail"><p class="tag tag-accent" data-ko="템플릿" data-en="Templates">템플릿</p></div>
     <div class="sec-body">
       <div class="sec-head rv">
-        <h2 data-ko="어떤 회사를 차릴지 고르세요." data-en="Pick the company you're starting.">어떤 회사를 차릴지 고르세요.</h2>
-        <p data-ko="훅·메모리·런처·검수 게이트로 이루어진 코어는 어느 템플릿에서나 같습니다. 템플릿은 이 회사가 무엇을 만들고 누구를 뽑는지만 정합니다. 눌러 보면 위 터미널과 아래 로스터가 바뀝니다." data-en="The core is the same in every template: hooks, memory, the agent launcher, the review gate. A template only decides what the company makes and who it hires. Click one and the terminal above and the roster below change with it.">훅·메모리·런처·검수 게이트로 이루어진 코어는 어느 템플릿에서나 같습니다. 템플릿은 이 회사가 무엇을 만들고 누구를 뽑는지만 정합니다. 눌러 보면 위 터미널과 아래 로스터가 바뀝니다.</p>
+        <h2 data-ko="어떤 회사를 차리시겠어요?" data-en="Which company are you starting?">어떤 회사를 차리시겠어요?</h2>
+        <p data-ko="훅·메모리·런처·검수 게이트로 이루어진 코어는 어느 템플릿에서나 같습니다. 템플릿은 무엇을 만들고 누구를 뽑을지만 정합니다. 하나 눌러 보세요 — 위 터미널과 아래 팀이 함께 바뀝니다." data-en="The core is the same in every template: hooks, memory, the agent launcher, the review gate. A template only decides what the company makes and who it hires. Pick one and the terminal above and the team below change with it.">훅·메모리·런처·검수 게이트로 이루어진 코어는 어느 템플릿에서나 같습니다. 템플릿은 무엇을 만들고 누구를 뽑을지만 정합니다. 하나 눌러 보세요 — 위 터미널과 아래 팀이 함께 바뀝니다.</p>
       </div>
 
       <div class="picker rv" role="tablist" aria-label="Templates">
@@ -652,7 +652,7 @@ code {
             <h3>blog</h3>
             <span class="pick-state" data-ko="선택됨" data-en="Selected">선택됨</span>
           </div>
-          <p data-ko="조사하고, 초안을 쓰고, SEO 와 답변엔진 메타데이터를 채운 뒤 검수 앞에서 멈추는 편집국. 마크다운 파일이 진실이라 CMS 와 어긋날 일이 없습니다." data-en="A publication that researches, drafts, fills in SEO and answer-engine metadata, then stops at review. Markdown files are the source of truth, so there is no CMS to drift from.">조사하고, 초안을 쓰고, SEO 와 답변엔진 메타데이터를 채운 뒤 검수 앞에서 멈추는 편집국. 마크다운 파일이 진실이라 CMS 와 어긋날 일이 없습니다.</p>
+          <p data-ko="조사하고, 초안을 쓰고, SEO 와 답변엔진 메타데이터를 채운 뒤 검수 앞에서 멈추는 편집국입니다. 마크다운 파일이 곧 원본이라 CMS 와 어긋날 일이 없습니다." data-en="A publication that researches, drafts, fills in SEO and answer-engine metadata, then stops at review. Markdown files are the source of truth, so there is no CMS to drift from.">조사하고, 초안을 쓰고, SEO 와 답변엔진 메타데이터를 채운 뒤 검수 앞에서 멈추는 편집국입니다. 마크다운 파일이 곧 원본이라 CMS 와 어긋날 일이 없습니다.</p>
           <dl class="spec">
             <div class="spec-row"><dt data-ko="구성" data-en="ships">구성</dt><dd data-ko="공개 사이트 · 검수 데스크" data-en="public site · admin desk">공개 사이트 · 검수 데스크</dd></div>
             <div class="spec-row"><dt data-ko="채용" data-en="hires">채용</dt><dd>blog-writer · image-maker</dd></div>
@@ -666,7 +666,7 @@ code {
             <h3>app-in-toss</h3>
             <span class="pick-state" data-ko="선택" data-en="Select">선택</span>
           </div>
-          <p data-ko="토스 앱 안에서 도는 WebView 미니앱. 수용 기준을 먼저 쓰고, 화면을 만들고, 심사 사전점검을 통과시키는 회사입니다. Vite · React · TDS 로 되어 있습니다." data-en="A WebView mini app that runs inside the Toss app. The company writes acceptance criteria first, builds the screens, and takes them through the submission preflight. Built on Vite, React and TDS.">토스 앱 안에서 도는 WebView 미니앱. 수용 기준을 먼저 쓰고, 화면을 만들고, 심사 사전점검을 통과시키는 회사입니다. Vite · React · TDS 로 되어 있습니다.</p>
+          <p data-ko="토스 앱 안에서 도는 WebView 미니앱입니다. 수용 기준을 먼저 쓰고, 화면을 만들고, 심사 사전점검까지 통과시킵니다. Vite · React · TDS 로 되어 있습니다." data-en="A WebView mini app that runs inside the Toss app. It writes acceptance criteria first, builds the screens, then takes them through the submission preflight. Built on Vite, React and TDS.">토스 앱 안에서 도는 WebView 미니앱입니다. 수용 기준을 먼저 쓰고, 화면을 만들고, 심사 사전점검까지 통과시킵니다. Vite · React · TDS 로 되어 있습니다.</p>
           <dl class="spec">
             <div class="spec-row"><dt data-ko="구성" data-en="ships">구성</dt><dd data-ko="미니앱 · 스토어 에셋 · 심사 사전점검" data-en="mini app · store assets · submission preflight">미니앱 · 스토어 에셋 · 심사 사전점검</dd></div>
             <div class="spec-row"><dt data-ko="채용" data-en="hires">채용</dt><dd>spec-writer · ui-builder · asset-maker · release-manager</dd></div>
@@ -680,7 +680,7 @@ code {
             <h3>blank</h3>
             <span class="pick-state" data-ko="선택" data-en="Select">선택</span>
           </div>
-          <p data-ko="빈 템플릿. 훅·메모리·레지스트리·런처만 있고 로스터는 비어 있습니다. 만들려는 것이 위 둘 중 어느 쪽도 아니라면, 지우면서 시작하는 것보다 이쪽이 빠릅니다." data-en="An empty template. Hooks, memory, registry and launcher are there; the roster is not. If what you are building is neither of the above, starting here beats deleting your way there.">빈 템플릿. 훅·메모리·레지스트리·런처만 있고 로스터는 비어 있습니다. 만들려는 것이 위 둘 중 어느 쪽도 아니라면, 지우면서 시작하는 것보다 이쪽이 빠릅니다.</p>
+          <p data-ko="빈 템플릿입니다. 훅·메모리·레지스트리·런처만 있고 팀은 비어 있습니다. 만들려는 것이 위 둘 중 어느 쪽도 아니라면, 지우면서 시작하는 것보다 이쪽이 빠릅니다." data-en="An empty template. Hooks, memory, registry and launcher are there; the team is not. If what you are building is neither of the above, starting here beats deleting your way there.">빈 템플릿입니다. 훅·메모리·레지스트리·런처만 있고 팀은 비어 있습니다. 만들려는 것이 위 둘 중 어느 쪽도 아니라면, 지우면서 시작하는 것보다 이쪽이 빠릅니다.</p>
           <dl class="spec">
             <div class="spec-row"><dt data-ko="구성" data-en="ships">구성</dt><dd data-ko="코어만" data-en="core only">코어만</dd></div>
             <div class="spec-row"><dt data-ko="채용" data-en="hires">채용</dt><dd data-ko="직접 정하세요" data-en="you decide">직접 정하세요</dd></div>
@@ -695,11 +695,11 @@ code {
 
 <section class="sec sec-alt" id="roster">
   <div class="wrap sec-grid">
-    <div class="sec-rail"><p class="tag tag-accent" data-ko="로스터" data-en="The roster">로스터</p></div>
+    <div class="sec-rail"><p class="tag tag-accent" data-ko="에이전트" data-en="Agents">에이전트</p></div>
     <div class="sec-body">
       <div class="sec-head rv">
-        <h2 data-ko="직원마다 런타임과 모델, 그리고 벗어날 수 없는 자리가 있습니다." data-en="Every hire has a runtime, a model, and a desk it cannot leave.">직원마다 런타임과 모델, 그리고 벗어날 수 없는 자리가 있습니다.</h2>
-        <p><span id="rosterCaption" data-ko="지금 보고 있는 건 blog 의 로스터입니다." data-en="You're looking at the blog roster.">지금 보고 있는 건 blog 의 로스터입니다.</span> <span data-ko="에이전트는 각자의 터미널에서 도는 독립 프로세스입니다. CLI 도 모델도 다르고 동시에 돕니다. 쓰기 범위는 registry.yaml 에 적혀 있고, 상시 지시는 AGENT.md 에서 옵니다." data-en="Agents are independent processes in their own terminals, on different CLIs and different models, running at the same time. Write scope lives in registry.yaml; the standing order comes from AGENT.md.">에이전트는 각자의 터미널에서 도는 독립 프로세스입니다. CLI 도 모델도 다르고 동시에 돕니다. 쓰기 범위는 registry.yaml 에 적혀 있고, 상시 지시는 AGENT.md 에서 옵니다.</span></p>
+        <h2 data-ko="직원마다 맡은 자리가 분명합니다." data-en="Every hire has a desk it does not leave.">직원마다 맡은 자리가 분명합니다.</h2>
+        <p><span id="rosterCaption" data-ko="지금은 blog 의 팀을 보고 계십니다." data-en="You're looking at the blog team.">지금은 blog 의 팀을 보고 계십니다.</span> <span data-ko="에이전트는 각자의 터미널에서 도는 독립 프로세스입니다. CLI 도 모델도 다르고, 서로 방해하지 않으니 동시에 돌릴 수 있습니다. 건드릴 수 있는 범위는 registry.yaml 에, 상시 지시는 AGENT.md 에 적혀 있습니다." data-en="Agents are independent processes in their own terminals, on different CLIs and different models. They stay out of each other's way, so they run at the same time. Write scope lives in registry.yaml; the standing order comes from AGENT.md.">에이전트는 각자의 터미널에서 도는 독립 프로세스입니다. CLI 도 모델도 다르고, 서로 방해하지 않으니 동시에 돌릴 수 있습니다. 건드릴 수 있는 범위는 registry.yaml 에, 상시 지시는 AGENT.md 에 적혀 있습니다.</span></p>
       </div>
       <div class="tablewrap rv">
         <table id="roster-table">
@@ -707,7 +707,7 @@ code {
             <th scope="col" data-ko="에이전트" data-en="Agent">에이전트</th>
             <th scope="col" data-ko="런타임" data-en="Runtime">런타임</th>
             <th scope="col" data-ko="모델" data-en="Model">모델</th>
-            <th scope="col" data-ko="쓰기 범위" data-en="Writes to">쓰기 범위</th>
+            <th scope="col" data-ko="맡은 자리" data-en="Desk">맡은 자리</th>
             <th scope="col" data-ko="상시 지시" data-en="Standing order">상시 지시</th>
           </tr></thead>
           <tbody id="rosterBody"></tbody>
@@ -719,16 +719,16 @@ code {
 
 <section class="sec" id="bylaws">
   <div class="wrap sec-grid">
-    <div class="sec-rail"><p class="tag tag-accent" data-ko="사규" data-en="The bylaws">사규</p></div>
+    <div class="sec-rail"><p class="tag tag-accent" data-ko="거버넌스" data-en="Governance">거버넌스</p></div>
     <div class="sec-body">
       <div class="sec-head rv">
-        <h2 data-ko="코드보다 오래 남는 다섯 조항." data-en="Five rules that outlive the code.">코드보다 오래 남는 다섯 조항.</h2>
-        <p data-ko="세션이 시작될 때마다 모든 에이전트에 주입됩니다. 하나를 바꾸려면 wiki/decisions 에 ADR 을 먼저 써야 합니다. 바꾸기 번거롭게 만들어 둔 것입니다." data-en="Injected into every agent at session start. Changing one means writing an ADR in wiki/decisions first. They are deliberately awkward to change.">세션이 시작될 때마다 모든 에이전트에 주입됩니다. 하나를 바꾸려면 wiki/decisions 에 ADR 을 먼저 써야 합니다. 바꾸기 번거롭게 만들어 둔 것입니다.</p>
+        <h2 data-ko="코드보다 오래 남을 다섯 가지 원칙." data-en="Five rules that outlive the code.">코드보다 오래 남을 다섯 가지 원칙.</h2>
+        <p data-ko="세션이 시작될 때마다 모든 에이전트에 주입됩니다. 하나를 바꾸려면 wiki/decisions 에 ADR 을 먼저 써야 합니다 — 일부러 번거롭게 만들어 두었습니다." data-en="Injected into every agent at session start. Changing one means writing an ADR in wiki/decisions first. They are deliberately awkward to change.">세션이 시작될 때마다 모든 에이전트에 주입됩니다. 하나를 바꾸려면 wiki/decisions 에 ADR 을 먼저 써야 합니다 — 일부러 번거롭게 만들어 두었습니다.</p>
       </div>
       <div class="numbered rv">
         <div class="num-item"><div class="num-body">
           <strong data-ko="이미지 생성 경로는 하나다." data-en="One path for image generation.">이미지 생성 경로는 하나다.</strong>
-          <span data-ko="허가된 도구 하나만 쓰고 자산에 출처를 남깁니다. 다른 이미지 모델을 부르거나 SVG 로 대신 그리는 것은 훅이 막습니다." data-en="One sanctioned tool, with provenance recorded on the asset. A hook blocks any other image model and any SVG stand-in.">허가된 도구 하나만 쓰고 자산에 출처를 남깁니다. 다른 이미지 모델을 부르거나 SVG 로 대신 그리는 것은 훅이 막습니다.</span>
+          <span data-ko="허가된 도구 하나만 쓰고 자산에 출처를 남깁니다. 다른 이미지 모델을 부르거나 SVG 로 대신 그리려 하면 훅이 막아섭니다." data-en="One sanctioned tool, with provenance recorded on the asset. A hook blocks any other image model and any SVG stand-in.">허가된 도구 하나만 쓰고 자산에 출처를 남깁니다. 다른 이미지 모델을 부르거나 SVG 로 대신 그리려 하면 훅이 막아섭니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <strong data-ko="출고 버튼은 사람이 누른다." data-en="A person presses the ship button.">출고 버튼은 사람이 누른다.</strong>
@@ -736,15 +736,15 @@ code {
         </div></div>
         <div class="num-item"><div class="num-body">
           <strong data-ko="진실은 파일에 있다." data-en="Files are the source of truth.">진실은 파일에 있다.</strong>
-          <span data-ko="결과물도 결정도 코드와 같은 저장소에서 버전 관리됩니다. 데이터베이스를 붙여도 원본은 파일 쪽입니다." data-en="Output and decisions are versioned in the same repo as the code. Attach a database and the files are still the record.">결과물도 결정도 코드와 같은 저장소에서 버전 관리됩니다. 데이터베이스를 붙여도 원본은 파일 쪽입니다.</span>
+          <span data-ko="결과물도 결정도 코드와 같은 저장소에서 버전 관리됩니다. 데이터베이스를 붙이더라도 원본은 언제나 파일 쪽입니다." data-en="Output and decisions are versioned in the same repo as the code. Attach a database and the files are still the record.">결과물도 결정도 코드와 같은 저장소에서 버전 관리됩니다. 데이터베이스를 붙이더라도 원본은 언제나 파일 쪽입니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <strong data-ko="게이트는 결정적이다." data-en="The gate is deterministic.">게이트는 결정적이다.</strong>
-          <span data-ko="검수 함수에 모델 호출을 넣지 않습니다. 어드민 화면과 CLI 가 같은 함수를 부르므로 사람과 에이전트가 같은 판정을 봅니다." data-en="No model call inside the audit function. The admin screen and the CLI call the same function, so people and agents see the same verdict.">검수 함수에 모델 호출을 넣지 않습니다. 어드민 화면과 CLI 가 같은 함수를 부르므로 사람과 에이전트가 같은 판정을 봅니다.</span>
+          <span data-ko="검수 함수에 모델 호출을 넣지 않습니다. 어드민 화면과 CLI 가 같은 함수를 부르니, 사람과 에이전트가 언제나 같은 판정을 봅니다." data-en="No model call inside the audit function. The admin screen and the CLI call the same function, so people and agents see the same verdict.">검수 함수에 모델 호출을 넣지 않습니다. 어드민 화면과 CLI 가 같은 함수를 부르니, 사람과 에이전트가 언제나 같은 판정을 봅니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <strong data-ko="컨텍스트는 스스로 올라온다." data-en="Context loads itself.">컨텍스트는 스스로 올라온다.</strong>
-          <span data-ko="SessionStart 훅이 핸드북·위키 인덱스·메모리를 붙여 줍니다. 누구도 챙겨올 필요가 없습니다." data-en="A SessionStart hook attaches the handbook, the wiki index, and memory. Nobody has to remember to bring them.">SessionStart 훅이 핸드북·위키 인덱스·메모리를 붙여 줍니다. 누구도 챙겨올 필요가 없습니다.</span>
+          <span data-ko="SessionStart 훅이 핸드북과 위키 인덱스, 메모리를 알아서 붙여 줍니다. 아무도 챙길 필요가 없습니다." data-en="A SessionStart hook attaches the handbook, the wiki index, and memory. Nobody has to remember to bring them.">SessionStart 훅이 핸드북과 위키 인덱스, 메모리를 알아서 붙여 줍니다. 아무도 챙길 필요가 없습니다.</span>
         </div></div>
       </div>
     </div>
@@ -753,27 +753,27 @@ code {
 
 <section class="sec sec-alt">
   <div class="wrap sec-grid">
-    <div class="sec-rail"><p class="tag tag-accent" data-ko="부팅" data-en="Boot sequence">부팅</p></div>
+    <div class="sec-rail"><p class="tag tag-accent" data-ko="쉬운 실행" data-en="Getting started">쉬운 실행</p></div>
     <div class="sec-body">
       <div class="sec-head rv">
-        <h2 data-ko="빈 폴더에서 돌아가는 회사까지 명령 네 개." data-en="Four commands from empty folder to working company.">빈 폴더에서 돌아가는 회사까지 명령 네 개.</h2>
+        <h2 data-ko="명령 네 개면, 빈 폴더가 회사가 됩니다." data-en="Four commands turn an empty folder into a working company.">명령 네 개면, 빈 폴더가 회사가 됩니다.</h2>
       </div>
       <div class="numbered rv">
         <div class="num-item"><div class="num-body">
           <span class="cmd">pnpm install</span>
-          <span data-ko="워크스페이스를 받습니다. 필수 조건은 Node 20.11+ 와 pnpm 10+ 둘뿐입니다." data-en="Pull the workspace. Node 20.11+ and pnpm 10+ are the only hard requirements.">워크스페이스를 받습니다. 필수 조건은 Node 20.11+ 와 pnpm 10+ 둘뿐입니다.</span>
+          <span data-ko="워크스페이스를 받습니다. 필요한 건 Node 20.11+ 와 pnpm 10+ 둘뿐입니다." data-en="Pull the workspace. Node 20.11+ and pnpm 10+ are all you need.">워크스페이스를 받습니다. 필요한 건 Node 20.11+ 와 pnpm 10+ 둘뿐입니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <span class="cmd">pnpm company-setup</span>
-          <span data-ko="의존성을 전수 검사하고 환경을 준비한 뒤 어떤 템플릿을 펼칠지 묻습니다. 셸 스크립트라 두 번 돌려도 같은 상태를 보고합니다." data-en="Checks every dependency, prepares the environment, then asks which template to lay down. It is a shell script, so a second run reports the same state.">의존성을 전수 검사하고 환경을 준비한 뒤 어떤 템플릿을 펼칠지 묻습니다. 셸 스크립트라 두 번 돌려도 같은 상태를 보고합니다.</span>
+          <span data-ko="의존성을 전수 검사하고 환경을 갖춘 뒤, 어떤 회사를 차릴지 물어봅니다. 셸 스크립트라 두 번 돌려도 같은 답을 줍니다." data-en="Checks every dependency, prepares the environment, then asks which company you are starting. It is a shell script, so a second run reports the same state.">의존성을 전수 검사하고 환경을 갖춘 뒤, 어떤 회사를 차릴지 물어봅니다. 셸 스크립트라 두 번 돌려도 같은 답을 줍니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <span class="cmd">pnpm dev</span>
-          <span data-ko="템플릿이 가진 것이 뜹니다. 편집국이라면 공개 사이트와 검수 데스크입니다." data-en="Whatever the template ships comes up. For the editorial company, that's the public site and the review desk.">템플릿이 가진 것이 뜹니다. 편집국이라면 공개 사이트와 검수 데스크입니다.</span>
+          <span data-ko="템플릿이 가진 것이 그대로 뜹니다. 편집국이라면 공개 사이트와 검수 데스크겠지요." data-en="Whatever the template ships comes up. For the editorial company, that's the public site and the review desk.">템플릿이 가진 것이 그대로 뜹니다. 편집국이라면 공개 사이트와 검수 데스크겠지요.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <span class="cmd">pnpm agent &lt;id&gt; "&lt;task&gt;"</span>
-          <span data-ko="핸드북과 역할, 스킬이 이미 올라간 상태로 에이전트를 자기 터미널에 띄웁니다. 쓰기 범위가 겹치지 않으면 여러 개를 동시에 돌려도 됩니다." data-en="Opens an agent in its own terminal with the handbook, its role, and its skills already loaded. Run several at once as long as their write scopes do not overlap.">핸드북과 역할, 스킬이 이미 올라간 상태로 에이전트를 자기 터미널에 띄웁니다. 쓰기 범위가 겹치지 않으면 여러 개를 동시에 돌려도 됩니다.</span>
+          <span data-ko="핸드북과 역할, 스킬이 이미 올라간 상태로 에이전트가 자기 터미널에 뜹니다. 맡은 자리가 겹치지 않으면 여러 명을 동시에 일 시켜도 됩니다." data-en="Opens an agent in its own terminal with the handbook, its role, and its skills already loaded. Run several at once, as long as their desks do not overlap.">핸드북과 역할, 스킬이 이미 올라간 상태로 에이전트가 자기 터미널에 뜹니다. 맡은 자리가 겹치지 않으면 여러 명을 동시에 일 시켜도 됩니다.</span>
         </div></div>
       </div>
     </div>
@@ -783,7 +783,7 @@ code {
 <section class="sec">
   <div class="wrap close-in">
     <p class="tag tag-accent" data-ko="MIT 라이선스 · 셀프호스트 · 계정 없음" data-en="MIT licensed · self-hosted · no account">MIT 라이선스 · 셀프호스트 · 계정 없음</p>
-    <h2 data-ko="클론하고, 템플릿을 고르고, 첫 에이전트를 띄우세요." data-en="Clone it, pick a template, start your first agent.">클론하고, 템플릿을 고르고, 첫 에이전트를 띄우세요.</h2>
+    <h2 data-ko="이제 여러분의 회사를 차릴 차례입니다." data-en="Now go start your company.">이제 여러분의 회사를 차릴 차례입니다.</h2>
     <a class="btn" href="https://github.com/TOKTOKHAN-DEV/agent-company" data-ko="GitHub 에서 보기 →" data-en="View on GitHub →">GitHub 에서 보기 →</a>
   </div>
 </section>
@@ -823,7 +823,7 @@ code {
   var T = {
     blog: {
       cwd: "~/acme-co",
-      caption: { ko: "지금 보고 있는 건 blog 의 로스터입니다.", en: "You're looking at the blog roster." },
+      caption: { ko: "지금은 blog 의 팀을 보고 계십니다.", en: "You're looking at the blog team." },
       boot: [
         ["<span class='c-p'>$</span> pnpm company-setup", 0],
         ["", 1],
@@ -856,7 +856,7 @@ code {
     },
     toss: {
       cwd: "~/toss-miniapp",
-      caption: { ko: "지금 보고 있는 건 app-in-toss 의 로스터입니다.", en: "You're looking at the app-in-toss roster." },
+      caption: { ko: "지금은 app-in-toss 의 팀을 보고 계십니다.", en: "You're looking at the app-in-toss team." },
       boot: [
         ["<span class='c-p'>$</span> pnpm company-setup", 0],
         ["", 1],
@@ -893,7 +893,7 @@ code {
     },
     blank: {
       cwd: "~/new-co",
-      caption: { ko: "blank 는 빈 로스터로 시작합니다. 첫 직원은 직접 정합니다.", en: "blank starts with an empty roster. The first hire is yours to define." },
+      caption: { ko: "blank 는 빈 팀으로 시작합니다. 첫 직원은 직접 정하세요.", en: "blank starts with an empty team. The first hire is yours to define." },
       boot: [
         ["<span class='c-p'>$</span> pnpm company-setup", 0],
         ["", 1],
@@ -995,7 +995,7 @@ code {
       renderRoster();
       runBoot(key);
       /* 예전에는 여기서 term.scrollIntoView 를 불렀습니다. 터미널이 히어로에 있어서
-         카드를 고를 때마다 페이지 맨 위로 튀었습니다 — 바로 아래 로스터를 보려던
+         카드를 고를 때마다 페이지 맨 위로 튀었습니다 — 바로 아래 팀 표를 보려던
          사람에게는 방해였습니다. 카드 선택은 제자리에서 끝나야 합니다. */
     });
   }
