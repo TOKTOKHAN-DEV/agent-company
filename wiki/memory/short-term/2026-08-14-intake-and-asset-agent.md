@@ -7,7 +7,7 @@ confidence: high
 promoted: false
 ---
 
-# 인계 + 에셋 에이전트 작업 (커밋 3a83fde, 미푸시)
+# 인계 + 에셋 에이전트 작업 (커밋 3a83fde, 2026-08-25 푸시됨)
 
 ## 무엇
 
