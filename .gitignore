@@ -40,3 +40,6 @@ inbox/
 
 # Generated images land in the repo, but codex scratch does not
 .codex-tmp/
+
+# Vercel (CLI 가 만드는 프로젝트 링크 — 계정에 묶인 ID 라 커밋하지 않습니다)
+.vercel
