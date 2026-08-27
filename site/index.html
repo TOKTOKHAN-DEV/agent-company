@@ -590,7 +590,7 @@ code {
     <div class="sec-body">
       <div class="sec-head rv">
         <h2 data-ko="하네스를 통해 운영 시스템으로 구축했습니다." data-en="Built into an operating system through the harness.">하네스를 통해 운영 시스템으로 구축했습니다.</h2>
-        <p data-ko="문서에만 적어 둔 규칙은 결국 지켜지지 않더군요. 그래서 아무도 기억하지 않아도 저절로 돌아가게 만들었습니다." data-en="A rule that lives only in a doc is a rule nobody follows. These run whether or not anyone remembers them.">문서에만 적어 둔 규칙은 결국 지켜지지 않더군요. 그래서 아무도 기억하지 않아도 저절로 돌아가게 만들었습니다.</p>
+        <p data-ko="문서에만 적어 둔 규칙은 결국 지켜지지 않더군요. 그래서 훅과 스크립트, 검수 게이트를 하나로 엮었습니다. 아무도 기억하지 않아도 저절로 돌아갑니다." data-en="A rule that lives only in a doc is a rule nobody follows. So the hooks, the scripts and the review gate are wired together into one harness that runs whether or not anyone remembers it.">문서에만 적어 둔 규칙은 결국 지켜지지 않더군요. 그래서 훅과 스크립트, 검수 게이트를 하나로 엮었습니다. 아무도 기억하지 않아도 저절로 돌아갑니다.</p>
       </div>
       <div class="tablewrap rv">
         <table>
@@ -723,28 +723,28 @@ code {
     <div class="sec-body">
       <div class="sec-head rv">
         <h2 data-ko="구조보다 업무 방식을 거버넌스로" data-en="Govern how the work gets done, not how the code is arranged.">구조보다 업무 방식을 거버넌스로</h2>
-        <p data-ko="세션이 시작될 때마다 모든 에이전트에 주입됩니다. 하나를 바꾸려면 wiki/decisions 에 ADR 을 먼저 써야 합니다 — 일부러 번거롭게 만들어 두었습니다." data-en="Injected into every agent at session start. Changing one means writing an ADR in wiki/decisions first. They are deliberately awkward to change.">세션이 시작될 때마다 모든 에이전트에 주입됩니다. 하나를 바꾸려면 wiki/decisions 에 ADR 을 먼저 써야 합니다 — 일부러 번거롭게 만들어 두었습니다.</p>
+        <p data-ko="폴더를 어떻게 나눌지가 아니라, 일을 어떻게 할지를 정해 두었습니다. 세션이 시작될 때마다 모든 에이전트에 주입되고, 하나를 바꾸려면 wiki/decisions 에 ADR 을 먼저 써야 합니다 — 일부러 번거롭게 만들어 두었습니다." data-en="These decide how the work gets done, not how the folders are arranged. They are injected into every agent at session start, and changing one means writing an ADR in wiki/decisions first — deliberately awkward to change.">폴더를 어떻게 나눌지가 아니라, 일을 어떻게 할지를 정해 두었습니다. 세션이 시작될 때마다 모든 에이전트에 주입되고, 하나를 바꾸려면 wiki/decisions 에 ADR 을 먼저 써야 합니다 — 일부러 번거롭게 만들어 두었습니다.</p>
       </div>
       <div class="numbered rv">
         <div class="num-item"><div class="num-body">
           <strong data-ko="이미지 생성은 codex만 가능합니다." data-en="Image generation runs through Codex only.">이미지 생성은 codex만 가능합니다.</strong>
-          <span data-ko="허가된 도구 하나만 쓰고 자산에 출처를 남깁니다. 다른 이미지 모델을 부르거나 SVG 로 대신 그리려 하면 훅이 막아섭니다." data-en="One sanctioned tool, with provenance recorded on the asset. A hook blocks any other image model and any SVG stand-in.">허가된 도구 하나만 쓰고 자산에 출처를 남깁니다. 다른 이미지 모델을 부르거나 SVG 로 대신 그리려 하면 훅이 막아섭니다.</span>
+          <span data-ko="이미지를 만드는 길은 Codex 하나뿐입니다. 다른 이미지 모델을 부르거나 SVG 로 대신 그리려 하면 PreToolUse 훅이 막아서고, 만들어진 자산에는 출처가 함께 기록됩니다." data-en="Codex is the only route to an image. A PreToolUse hook blocks every other image model and every SVG stand-in, and provenance is recorded on whatever gets made.">이미지를 만드는 길은 Codex 하나뿐입니다. 다른 이미지 모델을 부르거나 SVG 로 대신 그리려 하면 PreToolUse 훅이 막아서고, 만들어진 자산에는 출처가 함께 기록됩니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <strong data-ko="운영 배포는 사람이 최종 결정합니다." data-en="A person makes the final call on shipping.">운영 배포는 사람이 최종 결정합니다.</strong>
-          <span data-ko="에이전트는 in_review 까지 올리고 멈춥니다. 버튼은 검수 데스크에 있고, 타입에도 그 경로가 없습니다." data-en="Agents raise work to in_review and stop. The button lives in the admin desk, and the type system has no other route to published.">에이전트는 <code>in_review</code> 까지 올리고 멈춥니다. 버튼은 검수 데스크에 있고, 타입에도 그 경로가 없습니다.</span>
+          <span data-ko="에이전트는 in_review 까지 올리고 멈춥니다. 마지막 판단은 검수 데스크 앞에 앉은 사람의 몫이고, 타입에도 published 로 가는 길이 없어 에이전트는 누를 수조차 없습니다." data-en="Agents raise work to in_review and stop there. The last call belongs to whoever is at the review desk, and the type system has no route to published, so an agent could not press it even if it tried.">에이전트는 <code>in_review</code> 까지 올리고 멈춥니다. 마지막 판단은 검수 데스크 앞에 앉은 사람의 몫이고, 타입에도 <code>published</code> 로 가는 길이 없어 에이전트는 누를 수조차 없습니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <strong data-ko="wiki를 통해 모든 것을 기록합니다." data-en="Everything is recorded in the wiki.">wiki를 통해 모든 것을 기록합니다.</strong>
-          <span data-ko="결과물도 결정도 코드와 같은 저장소에서 버전 관리됩니다. 데이터베이스를 붙이더라도 원본은 언제나 파일 쪽입니다." data-en="Output and decisions are versioned in the same repo as the code. Attach a database and the files are still the record.">결과물도 결정도 코드와 같은 저장소에서 버전 관리됩니다. 데이터베이스를 붙이더라도 원본은 언제나 파일 쪽입니다.</span>
+          <span data-ko="무엇을 왜 그렇게 정했는지가 wiki 에 남습니다. 결과물도 결정도 코드와 같은 저장소에서 버전 관리되니, 세션이 끝나도 사람이 바뀌어도 다시 읽을 수 있습니다. 데이터베이스를 붙이더라도 원본은 언제나 파일 쪽입니다." data-en="What was decided, and why, lives in the wiki. Output and decisions are versioned in the same repo as the code, so they are still readable after the session ends and after the people change. Attach a database and the files are still the record.">무엇을 왜 그렇게 정했는지가 wiki 에 남습니다. 결과물도 결정도 코드와 같은 저장소에서 버전 관리되니, 세션이 끝나도 사람이 바뀌어도 다시 읽을 수 있습니다. 데이터베이스를 붙이더라도 원본은 언제나 파일 쪽입니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <strong data-ko="HITL을 적재적소에 활용합니다." data-en="Human-in-the-loop, exactly where it matters.">HITL을 적재적소에 활용합니다.</strong>
-          <span data-ko="검수 함수에 모델 호출을 넣지 않습니다. 어드민 화면과 CLI 가 같은 함수를 부르니, 사람과 에이전트가 언제나 같은 판정을 봅니다." data-en="No model call inside the audit function. The admin screen and the CLI call the same function, so people and agents see the same verdict.">검수 함수에 모델 호출을 넣지 않습니다. 어드민 화면과 CLI 가 같은 함수를 부르니, 사람과 에이전트가 언제나 같은 판정을 봅니다.</span>
+          <span data-ko="기계가 판정할 수 있는 것은 결정적 함수에 맡기고, 판단이 필요한 자리에만 사람을 둡니다. 검수 함수에는 모델 호출이 없어 어드민 화면과 CLI 가 같은 답을 내놓습니다 — 사람이 볼 화면과 에이전트가 볼 결과가 갈리지 않습니다." data-en="Anything a machine can settle goes to a deterministic function; a person is placed only where judgment is actually needed. The audit function makes no model call, so the admin screen and the CLI return the same answer — what a person sees never diverges from what an agent sees.">기계가 판정할 수 있는 것은 결정적 함수에 맡기고, 판단이 필요한 자리에만 사람을 둡니다. 검수 함수에는 모델 호출이 없어 어드민 화면과 CLI 가 같은 답을 내놓습니다 — 사람이 볼 화면과 에이전트가 볼 결과가 갈리지 않습니다.</span>
         </div></div>
         <div class="num-item"><div class="num-body">
           <strong data-ko="hook으로 자동으로 메모리를 인식합니다." data-en="Hooks load memory automatically.">hook으로 자동으로 메모리를 인식합니다.</strong>
-          <span data-ko="SessionStart 훅이 핸드북과 위키 인덱스, 메모리를 알아서 붙여 줍니다. 아무도 챙길 필요가 없습니다." data-en="A SessionStart hook attaches the handbook, the wiki index, and memory. Nobody has to remember to bring them.">SessionStart 훅이 핸드북과 위키 인덱스, 메모리를 알아서 붙여 줍니다. 아무도 챙길 필요가 없습니다.</span>
+          <span data-ko="SessionStart 훅이 핸드북과 위키 인덱스, 지난 세션의 기억을 알아서 붙여 줍니다. 누가 잊지 않고 챙겨 오기를 기대하지 않아도 됩니다." data-en="A SessionStart hook attaches the handbook, the wiki index, and what the last sessions remembered. Nobody has to be counted on to bring them.">SessionStart 훅이 핸드북과 위키 인덱스, 지난 세션의 기억을 알아서 붙여 줍니다. 누가 잊지 않고 챙겨 오기를 기대하지 않아도 됩니다.</span>
         </div></div>
       </div>
     </div>
