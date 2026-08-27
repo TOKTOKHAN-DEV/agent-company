@@ -28,7 +28,7 @@ site/
 그래서 **HTML 의 폴백 숫자도 가끔 최신으로 맞춰 주세요.** 실패했을 때 보이는 값이 그것입니다.
 
 ```html
-<span class="gh-n" id="ghStars">28</span>
+<span class="gh-n" id="ghStars">60</span>
 ```
 
 비인증 GitHub API 는 IP 당 시간 60회입니다. 재방문이 한도를 태우지 않도록 6시간
